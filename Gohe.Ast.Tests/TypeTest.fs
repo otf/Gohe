@@ -24,3 +24,12 @@ let ``IntValueをパースできる`` (input, expected) =
 [<TestCase("-100.001", -100.001)>]
 let ``FloatValueをパースできる`` (input, expected) =  
     parse Ast.pFloatValue input |> should equal (Some <| Ast.FloatValue expected)
+
+[<Test>]
+let ``PrimitiveTypeをパースできる`` () =  
+    (parse Ast.pType "Bool") |> should equal (Some <| Ast.Bool)
+    (parse Ast.pType "String") |> should equal (Some <| Ast.String)
+    (parse Ast.pType "Int") |> should equal (Some <| Ast.Int)
+    (parse Ast.pType "Float") |> should equal (Some <| Ast.Float)
+    (parse Ast.pType "BigInt") |> should equal (Some <| Ast.BigInt)
+    (parse Ast.pType "Guid") |> should equal (Some <| Ast.Guid)
