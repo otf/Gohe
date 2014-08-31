@@ -60,9 +60,16 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library1.fs" />
+    <Compile Include="TypeTest.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">
+      <Name>Gohe.Ast</Name>
+      <Project>{2c259491-fadc-4a41-90d5-2d2334a53c49}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
