@@ -3,7 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gohe", "Gohe\Gohe.fsproj", "{52E7E021-8E28-4FB9-9F26-EB0CDF88E780}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gohe.Ast", "Gohe.Ast\Gohe.Ast.fsproj", "{2C259491-FADC-4A41-90D5-2D2334A53C49}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Gohe.Ast.Tests", "Gohe.Ast.Tests\Gohe.Ast.Tests.fsproj", "{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{393DA65A-6EF6-43DC-96C2-7F897C5333D5}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +20,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{52E7E021-8E28-4FB9-9F26-EB0CDF88E780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52E7E021-8E28-4FB9-9F26-EB0CDF88E780}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52E7E021-8E28-4FB9-9F26-EB0CDF88E780}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52E7E021-8E28-4FB9-9F26-EB0CDF88E780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C259491-FADC-4A41-90D5-2D2334A53C49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C259491-FADC-4A41-90D5-2D2334A53C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C259491-FADC-4A41-90D5-2D2334A53C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C259491-FADC-4A41-90D5-2D2334A53C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
