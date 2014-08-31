@@ -9,6 +9,7 @@ type Type =
   | DateTime of format : string option | TimeSpan of format : string option
   | ChoiceStringValues of string list
   | IntRange of int * int
+  | Regex of pattern:string
 
 // [b, e)
 let intRange b e = IntRange(b, e - 1)
@@ -39,10 +40,14 @@ let pIntRange2 : Parser<_> =
   between (pstring "[") (spaces *> pstring "]") <|
   (intRange2 <!> spaces *> pint32 <* spaces <* pchar ',' <* spaces <*> pint32 <* spaces)
 
+let pRegexChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
+let pRegex : Parser<_> = Regex <!> pchar '/' *> manyChars pRegexChar <* pchar '/' 
+
 let pType =
   pChoiceStringValues
   <|> pIntRange |> attempt
   <|> pIntRange2
+  <|> pRegex
   <|> pStringValue
   <|> pIntValue
   <|> pFloatValue

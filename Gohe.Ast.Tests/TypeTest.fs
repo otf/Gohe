@@ -58,3 +58,8 @@ let ``ChoiceStringValuesをパースできる`` (input, expected) =
 [<TestCase("[ 0 , 100 ]", 0, 100)>]
 let ``IntRangeをパースできる`` (input, expectedMin, expectedMax) =  
     (parse Ast.pType input) |> should equal (Some <| Ast.IntRange(expectedMin, expectedMax))
+
+[<TestCase("/.*/", ".*")>]
+[<TestCase("/\/*/", "/*")>]
+let ``Regexをパースできる`` (input, expected) =  
+    (parse Ast.pType input) |> should equal (Some <| Ast.Regex(expected))
