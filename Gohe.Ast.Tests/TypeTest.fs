@@ -33,3 +33,9 @@ let ``PrimitiveTypeをパースできる`` () =
     (parse Ast.pType "Float") |> should equal (Some <| Ast.Float)
     (parse Ast.pType "BigInt") |> should equal (Some <| Ast.BigInt)
     (parse Ast.pType "Guid") |> should equal (Some <| Ast.Guid)
+
+[<TestCase("DateTime", null)>]
+[<TestCase("DateTime<yyyy/MM/dd>", "yyyy/MM/dd")>]
+[<TestCase("DateTime<\>>", ">")>]
+let ``DateTimeをパースできる`` (input, expected) =  
+    (parse Ast.pType input) |> should equal (Some <| Ast.DateTime (if expected <> null then Some expected else None))
