@@ -47,3 +47,29 @@ let ``子要素持ちのXdefElementをパースできる`` () =
 
     parse Ast.pXdefElement xdef
     |> should equal (Some <| expected)
+
+[<Test>]
+let ``複雑なXdefNodeをパースできる`` () =  
+    let xdef = """
+Root
+  @Id : Guid -- ID属性
+  Description : String -- 詳細
+  Children
+    Child* : [0,10)
+  Behavior
+    OptionA? : "Enabled" """.Trim()
+
+    let expected = 
+      Ast.Element <| Ast.xdefElement "Root" None None [
+        Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
+        Ast.ValueElement <| Ast.xdefValueElement "Description" None Ast.String (Some "詳細")
+        Ast.Element <| Ast.xdefElement "Children" None None [
+            Ast.ValueElement <| Ast.xdefValueElement "Child" (Some Ast.XdefRestriction.Many) (Ast.intRange 0 10) None
+          ]
+        Ast.Element <| Ast.xdefElement "Behavior" None None [
+            Ast.ValueElement <| Ast.xdefValueElement "OptionA" (Some Ast.XdefRestriction.Option) (Ast.StringValue "Enabled") None
+          ]
+        ]
+
+    parse Ast.pNode xdef
+    |> should equal (Some <| expected)
