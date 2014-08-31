@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TypeTest.fs" />
+    <Compile Include="XdefTest.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>
