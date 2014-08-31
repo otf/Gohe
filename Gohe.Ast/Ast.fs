@@ -6,7 +6,7 @@ open FParsec.Applicative
 type Type = 
   | StringValue of string | IntValue of int | FloatValue of float
   | Bool | String | Int  | Float | BigInt | Guid 
-  | DateTime of format : string option
+  | DateTime of format : string option | TimeSpan of format : string option
 
 type Parser<'t> = Parser<'t, unit>
 
@@ -31,3 +31,4 @@ let pType =
   <|> pPrimitiveType BigInt "BigInt" 
   <|> pPrimitiveType Guid "Guid" 
   <|> pPrimitiveTypeWithFormat DateTime "DateTime"
+  <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan"

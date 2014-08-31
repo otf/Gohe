@@ -39,3 +39,9 @@ let ``PrimitiveTypeをパースできる`` () =
 [<TestCase("DateTime<\>>", ">")>]
 let ``DateTimeをパースできる`` (input, expected) =  
     (parse Ast.pType input) |> should equal (Some <| Ast.DateTime (if expected <> null then Some expected else None))
+
+[<TestCase("TimeSpan", null)>]
+[<TestCase("TimeSpan<hh:mm:ss>", "hh:mm:ss")>]
+[<TestCase("TimeSpan<\>>", ">")>]
+let ``TimeSpanをパースできる`` (input, expected) =  
+    (parse Ast.pType input) |> should equal (Some <| Ast.TimeSpan (if expected <> null then Some expected else None))
