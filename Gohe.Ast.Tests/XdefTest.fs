@@ -37,7 +37,17 @@ let ``出現回数(RequiredMany)付XdefSimpleElementをパースできる`` () =
 [<Test>]
 let ``出現回数(Specified)付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name{1..10} : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurrence.Specified (1, 10)) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurrence.Specified (Some 1, Some 10)) Ast.Type.String None)
+
+[<Test>]
+let ``出現回数(Specified_開始がunbound)付XdefSimpleElementをパースできる`` () =  
+    parse Ast.pXdefSimpleElement "Name{..10} : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurrence.Specified (None, Some 10)) Ast.Type.String None)
+
+[<Test>]
+let ``出現回数(Specified_終了がunbound)付XdefSimpleElementをパースできる`` () =  
+    parse Ast.pXdefSimpleElement "Name{1..} : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurrence.Specified (Some 1, None)) Ast.Type.String None)
 
 [<Test>]
 let ``XdefOrder(Sequence)の指定をパースできる`` () =  

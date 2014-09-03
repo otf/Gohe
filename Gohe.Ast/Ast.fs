@@ -22,7 +22,7 @@ type XdefOccurrence =
   | Many
   | RequiredMany
   | Optional
-  | Specified of min : int * max : int
+  | Specified of min : int option * max : int option
 
 let xdefSpecified min max = Specified (min, max)
 
@@ -126,7 +126,7 @@ let pOrdered =
   <|> (preturn Sequence)
 
 let pOccurrence : Parser<_> =
-  (between (pstring "{") (pstring "}") (xdefSpecified <!> pSpaces *> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> pint32 <* pSpaces)) |> attempt
+  (between (pstring "{") (pstring "}") (xdefSpecified <!> pSpaces *> (pint32 |> opt) <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt) <* pSpaces)) |> attempt
   <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")
