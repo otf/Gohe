@@ -17,29 +17,29 @@ let ``XdefAttributeをパースできる`` () =
 [<Test>]
 let ``XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" None Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.Required Ast.Type.String None)
 
 [<Test>]
 let ``出現回数付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name? : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Optional) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.Optional Ast.Type.String None)
 
     parse Ast.pXdefSimpleElement "Name* : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Many) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.Many Ast.Type.String None)
 
 [<Test>]
 let ``XdefSequenceElementをパースできる`` () =  
     parse Ast.pXdefSequenceElement "Root"
-    |> should equal (Some <| Ast.xdefSequenceElement "Root" None None [])
+    |> should equal (Some <| Ast.xdefSequenceElement "Root" Ast.XdefOccurs.Required None [])
 
 [<Test>]
 let ``子要素持ちのXdefSequenceElementをパースできる`` () =  
     let xdef = "Root\n  @Name : String\n  Description : String"
 
     let expected = 
-      Ast.xdefSequenceElement "Root" None None [
+      Ast.xdefSequenceElement "Root" Ast.Required None [
         Ast.Attribute <| Ast.xdefAttribute "Name" Ast.String None 
-        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String None
+        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurs.Required Ast.String None
         ]
 
     parse Ast.pXdefSequenceElement xdef
@@ -57,14 +57,14 @@ Root
     OptionA? : "Enabled" """.Trim()
 
     let expected = 
-      Ast.SequenceElement <| Ast.xdefSequenceElement "Root" None None [
+      Ast.SequenceElement <| Ast.xdefSequenceElement "Root" Ast.XdefOccurs.Required None [
         Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
-        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String (Some "詳細")
-        Ast.SequenceElement <| Ast.xdefSequenceElement "Children" None None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "Child" (Some Ast.XdefOccurs.Many) (Ast.intRange 0 10) None
+        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurs.Required Ast.String (Some "詳細")
+        Ast.SequenceElement <| Ast.xdefSequenceElement "Children" Ast.XdefOccurs.Required None [
+            Ast.SimpleElement <| Ast.xdefSimpleElement "Child" Ast.XdefOccurs.Many (Ast.intRange 0 10) None
           ]
-        Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" None None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefOccurs.Optional) (Ast.StringValue "Enabled") None
+        Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" Ast.XdefOccurs.Required None [
+            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" Ast.XdefOccurs.Optional (Ast.StringValue "Enabled") None
           ]
         ]
 

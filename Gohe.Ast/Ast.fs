@@ -18,6 +18,7 @@ let intRange b e = IntRange(b, e - 1)
 let intRange2 b e = IntRange(b, e)
 
 type XdefOccurs =
+  | Required
   | Many
   | Optional
 
@@ -31,7 +32,7 @@ let xdefAttribute nm typ comm = { Name = nm; Type = typ; Comment = comm }
 
 type XdefSimpleElement = {
   Name : string
-  Occurs : XdefOccurs option
+  Occurs : XdefOccurs
   Type : Type
   Comment : string option
 }
@@ -40,7 +41,7 @@ let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurs = occurs; Type = 
 
 type XdefSequenceElement = {
   Name : string
-  Occurs : XdefOccurs option
+  Occurs : XdefOccurs
   Nodes : XdefNode list
   Comment : string option
 }
@@ -107,6 +108,7 @@ let pTyped = spaces *> pchar ':' *> spaces *> pType
 let pOccurs : Parser<_> =
   (Many <! pstring "*")
   <|> (Optional <! pstring "?")
+  <|> (preturn Required)
 
 let pIndent = attempt <| parse { 
   let! indentLevel = getUserState
@@ -126,10 +128,10 @@ let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> (opt pOccurs) <*> pTyped <*> pComment
+  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurs <*> pTyped <*> pComment
 
 let pXdefSequenceElement =
-  xdefSequenceElement <!> pIndent *> pXdefName <*> (opt pOccurs) <*> pComment <*> indent *> pNodes
+  xdefSequenceElement <!> pIndent *> pXdefName <*> pOccurs <*> pComment <*> indent *> pNodes
 
 do pNodesImpl := (many pNode) <* unindent
 
