@@ -76,7 +76,7 @@ Root
             Ast.SimpleElement <| Ast.xdefSimpleElement "Child" Ast.XdefOccurs.Many (Ast.intRange 0 10) None
           ]
         Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" Ast.XdefOccurs.Required None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" Ast.XdefOccurs.Optional (Ast.StringValue "Enabled") None
+            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" Ast.XdefOccurs.Optional (Ast.FixedString "Enabled") None
           ]
         ]
 

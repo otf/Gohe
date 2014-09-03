@@ -4,7 +4,7 @@ open FParsec
 open FParsec.Applicative
 
 type Type = 
-  | StringValue of string | IntValue of int | FloatValue of float
+  | FixedString of string | FixedInt of int | FixedFloat of float
   | Bool | String | Int  | Float | Decimal | Guid 
   | DateTime of format : string option | TimeSpan of format : string option
   | RestrictedString of string list
@@ -66,10 +66,10 @@ let indent = updateUserState ((+) 1)
 let unindent = updateUserState (fun x -> System.Math.Max(x - 1, 0))
 
 let pXdefName : Parser<_> = regex "\w+"
-let pStringValueChar : Parser<_> = attempt ('"' <! pstring "\\\"") <|> noneOf "\""
-let pStringValue : Parser<_> = StringValue <!> pchar '"' *> manyChars pStringValueChar <* pchar '"' 
-let pIntValue : Parser<_> = IntValue <!> pint32
-let pFloatValue : Parser<_> = FloatValue <!> pfloat
+let pFixedStringChar : Parser<_> = attempt ('"' <! pstring "\\\"") <|> noneOf "\""
+let pFixedString : Parser<_> = FixedString <!> pchar '"' *> manyChars pFixedStringChar <* pchar '"' 
+let pFixedInt : Parser<_> = FixedInt <!> pint32
+let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
 let pPrimitiveType f typeName = f <! pstring typeName
 let pFormatChar : Parser<_> =  attempt ('>' <! pstring "\\>") <|> noneOf ">"
 let pFormatText = manyChars pFormatChar
@@ -77,7 +77,7 @@ let pFormat = between (pstring "<") (pstring ">") pFormatText
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
 let pRestrictedString = 
   between (pstring "(") (pstring ")") <|
-  ((List.map (function StringValue v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (spaces *> pStringValue <* spaces) (pchar '|')))
+  ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (spaces *> pFixedString <* spaces) (pchar '|')))
 
 let pIntRange : Parser<_> = 
   between (pstring "[") (pstring ")") <|
@@ -95,9 +95,9 @@ let pType =
   <|> pIntRange |> attempt
   <|> pIntRange2
   <|> pRegex
-  <|> pStringValue
-  <|> pIntValue
-  <|> pFloatValue
+  <|> pFixedString
+  <|> pFixedInt
+  <|> pFixedFloat
   <|> pPrimitiveType Bool "Bool"
   <|> pPrimitiveType String "String"
   <|> pPrimitiveType Int "Int" 

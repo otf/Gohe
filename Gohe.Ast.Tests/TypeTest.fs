@@ -12,18 +12,18 @@ let parse p input =
 [<TestCase("\"hello\"", "hello")>]
 [<TestCase("\"\"", "")>]
 [<TestCase("\"\\\"\"", "\"")>]
-let ``StringValueをパースできる`` (input, expected) =  
-    parse Ast.pStringValue input |> should equal (Some <| Ast.StringValue expected)
+let ``FixedStringをパースできる`` (input, expected) =  
+    parse Ast.pFixedString input |> should equal (Some <| Ast.FixedString expected)
 
 [<TestCase("100", 100)>]
 [<TestCase("-100", -100)>]
-let ``IntValueをパースできる`` (input, expected) =  
-    parse Ast.pIntValue input |> should equal (Some <| Ast.IntValue expected)
+let ``FixedIntをパースできる`` (input, expected) =  
+    parse Ast.pFixedInt input |> should equal (Some <| Ast.FixedInt expected)
 
 [<TestCase("100.001", 100.001)>]
 [<TestCase("-100.001", -100.001)>]
-let ``FloatValueをパースできる`` (input, expected) =  
-    parse Ast.pFloatValue input |> should equal (Some <| Ast.FloatValue expected)
+let ``FixedFloatをパースできる`` (input, expected) =  
+    parse Ast.pFixedFloat input |> should equal (Some <| Ast.FixedFloat expected)
 
 [<Test>]
 let ``PrimitiveTypeをパースできる`` () =  
