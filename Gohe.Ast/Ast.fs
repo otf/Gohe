@@ -71,6 +71,7 @@ type Parser<'t> = Parser<'t, UserState>
 let indent = updateUserState ((+) 1)
 let unindent = updateUserState (fun x -> System.Math.Max(x - 1, 0))
 
+let pSpaces : Parser<_> = many (pchar ' ')
 let pXdefName : Parser<_> = regex "\w+"
 let pFixedStringChar : Parser<_> = attempt ('"' <! pstring "\\\"") <|> noneOf "\""
 let pFixedString : Parser<_> = FixedString <!> pchar '"' *> manyChars pFixedStringChar <* pchar '"' 
@@ -83,15 +84,15 @@ let pFormat = between (pstring "<") (pstring ">") pFormatText
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
 let pRestrictedString = 
   between (pstring "(") (pstring ")") <|
-  ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (spaces *> pFixedString <* spaces) (pchar '|')))
+  ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (pSpaces *> pFixedString <* pSpaces) (pchar '|')))
 
 let pIntRange : Parser<_> = 
   between (pstring "[") (pstring ")") <|
-  (intRange <!> spaces *> pint32 <* spaces <* pchar ',' <* spaces <*> pint32 <* spaces)
+  (intRange <!> pSpaces *> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32 <* pSpaces)
   
 let pIntRange2 : Parser<_> = 
-  between (pstring "[") (spaces *> pstring "]") <|
-  (intRange2 <!> spaces *> pint32 <* spaces <* pchar ',' <* spaces <*> pint32 <* spaces)
+  between (pstring "[") (pSpaces *> pstring "]") <|
+  (intRange2 <!> pSpaces *> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32 <* pSpaces)
 
 let pPatternChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
 let pPattern : Parser<_> = Pattern <!> pchar '/' *> manyChars pPatternChar <* pchar '/' 
@@ -113,7 +114,7 @@ let pType =
   <|> pPrimitiveTypeWithFormat DateTime "DateTime"
   <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan"
 
-let pTyped = spaces *> pchar ':' *> spaces *> pType
+let pTyped = pchar ':' *> pSpaces *> pType
 
 let pOrder =
   (Sequence <! pstring "Sequence") |> attempt
@@ -121,11 +122,11 @@ let pOrder =
   <|> (All <! pstring "All")
 
 let pOrdered = 
-  (spaces *> pstring "::" *> spaces *> pOrder) |> attempt
+  (pstring "::" *> pSpaces *> pOrder) |> attempt
   <|> (preturn Sequence)
 
 let pOccurrence : Parser<_> =
-  (between (pstring "{") (pstring "}") (xdefSpecified <!> spaces *> pint32 <* spaces <* pstring ".." <* spaces <*> pint32 <* spaces)) |> attempt
+  (between (pstring "{") (pstring "}") (xdefSpecified <!> pSpaces *> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> pint32 <* pSpaces)) |> attempt
   <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")
@@ -139,20 +140,20 @@ let pIndent = attempt <| parse {
 
 let pCommentChar : Parser<_> = noneOf ['\n'; '\r']
 let pComment : Parser<_> = 
-  (spaces *> pstring "--" *> spaces *> manyChars pCommentChar |> opt) |> attempt
+  (pstring "--" *> pSpaces *> manyChars pCommentChar |> opt) |> attempt
   <|> (preturn None)
 
 let pXdefAttribute = 
-  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pTyped <*> pComment <* (newline |> opt)
+  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pSpaces *> pTyped <*> pSpaces *> pComment <* (newline |> opt)
 
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <*> pTyped <*> pComment <* (newline |> opt)
+  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pTyped <*> pSpaces *> pComment <* (newline |> opt)
 
 let pXdefComplexElement =
-  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <*> pOrdered <*> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
+  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pOrdered <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
 
 do pNodesImpl := many pNode <* unindent
 
