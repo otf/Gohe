@@ -31,21 +31,21 @@ let ``制約付XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Choice) Ast.Type.String None)
 
 [<Test>]
-let ``XdefElementをパースできる`` () =  
-    parse Ast.pXdefElement "Root"
-    |> should equal (Some <| Ast.xdefElement "Root" None None [])
+let ``XdefSequenceElementをパースできる`` () =  
+    parse Ast.pXdefSequenceElement "Root"
+    |> should equal (Some <| Ast.xdefSequenceElement "Root" None None [])
 
 [<Test>]
-let ``子要素持ちのXdefElementをパースできる`` () =  
+let ``子要素持ちのXdefSequenceElementをパースできる`` () =  
     let xdef = "Root\n  @Name : String\n  Description : String"
 
     let expected = 
-      Ast.xdefElement "Root" None None [
+      Ast.xdefSequenceElement "Root" None None [
         Ast.Attribute <| Ast.xdefAttribute "Name" Ast.String None 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String None
         ]
 
-    parse Ast.pXdefElement xdef
+    parse Ast.pXdefSequenceElement xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -60,13 +60,13 @@ Root
     OptionA? : "Enabled" """.Trim()
 
     let expected = 
-      Ast.Element <| Ast.xdefElement "Root" None None [
+      Ast.SequenceElement <| Ast.xdefSequenceElement "Root" None None [
         Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String (Some "詳細")
-        Ast.Element <| Ast.xdefElement "Children" None None [
+        Ast.SequenceElement <| Ast.xdefSequenceElement "Children" None None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "Child" (Some Ast.XdefRestriction.Many) (Ast.intRange 0 10) None
           ]
-        Ast.Element <| Ast.xdefElement "Behavior" None None [
+        Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" None None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefRestriction.Option) (Ast.StringValue "Enabled") None
           ]
         ]

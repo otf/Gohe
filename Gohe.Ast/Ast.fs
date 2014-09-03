@@ -39,7 +39,7 @@ type XdefSimpleElement = {
 
 let xdefSimpleElement nm r typ comm = { Name = nm; Restriction = r; Type = typ; Comment = comm }
 
-type XdefElement = {
+type XdefSequenceElement = {
   Name : string
   Restriction : XdefRestriction option
   Nodes : XdefNode list
@@ -47,12 +47,12 @@ type XdefElement = {
 }
 
 and XdefNode = 
-  | Element of XdefElement
+  | SequenceElement of XdefSequenceElement
   | SimpleElement of XdefSimpleElement
   | Attribute of XdefAttribute
 // TODO:  | Module of string
 
-let xdefElement nm r comm nodes = { Name = nm; Restriction = r; Nodes = nodes; Comment = comm }
+let xdefSequenceElement nm r comm nodes = { Name = nm; Restriction = r; Nodes = nodes; Comment = comm }
 
 
 type IndentLevel = int
@@ -130,12 +130,12 @@ let (pNode, pNodeImpl) = createParserForwardedToRef ()
 let pXdefSimpleElement = 
   xdefSimpleElement <!> pIndent *> pXdefName <*> (opt pRestriction) <*> pTyped <*> pComment
 
-let pXdefElement =
-  xdefElement <!> pIndent *> pXdefName <*> (opt pRestriction) <*> pComment <*> indent *> pNodes
+let pXdefSequenceElement =
+  xdefSequenceElement <!> pIndent *> pXdefName <*> (opt pRestriction) <*> pComment <*> indent *> pNodes
 
 do pNodesImpl := (many pNode) <* unindent
 
 do pNodeImpl :=
     (Attribute <!> pXdefAttribute) |> attempt
     <|> (SimpleElement <!> pXdefSimpleElement) |> attempt
-    <|> (Element <!> pXdefElement)
+    <|> (SequenceElement <!> pXdefSequenceElement)
