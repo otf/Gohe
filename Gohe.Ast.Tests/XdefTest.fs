@@ -40,21 +40,21 @@ let ``出現回数(Specified)付XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurs.Specified (1, 10)) Ast.Type.String None)
 
 [<Test>]
-let ``XdefSequenceElementをパースできる`` () =  
-    parse Ast.pXdefSequenceElement "Root"
-    |> should equal (Some <| Ast.xdefSequenceElement "Root" Ast.XdefOccurs.Required None [])
+let ``XdefComplexElementをパースできる`` () =  
+    parse Ast.pXdefComplexElement "Root"
+    |> should equal (Some <| Ast.xdefComplexElement "Root" Ast.XdefOccurs.Required None [])
 
 [<Test>]
-let ``子要素持ちのXdefSequenceElementをパースできる`` () =  
+let ``子要素持ちのXdefComplexElementをパースできる`` () =  
     let xdef = "Root\n  @Name : String\n  Description : String"
 
     let expected = 
-      Ast.xdefSequenceElement "Root" Ast.Required None [
+      Ast.xdefComplexElement "Root" Ast.Required None [
         Ast.Attribute <| Ast.xdefAttribute "Name" Ast.String None 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurs.Required Ast.String None
         ]
 
-    parse Ast.pXdefSequenceElement xdef
+    parse Ast.pXdefComplexElement xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -69,13 +69,13 @@ Root
     OptionA? : "Enabled" """.Trim()
 
     let expected = 
-      Ast.SequenceElement <| Ast.xdefSequenceElement "Root" Ast.XdefOccurs.Required None [
+      Ast.ComplexElement <| Ast.xdefComplexElement "Root" Ast.XdefOccurs.Required None [
         Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurs.Required Ast.String (Some "詳細")
-        Ast.SequenceElement <| Ast.xdefSequenceElement "Children" Ast.XdefOccurs.Required None [
+        Ast.ComplexElement <| Ast.xdefComplexElement "Children" Ast.XdefOccurs.Required None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "Child" Ast.XdefOccurs.Many (Ast.intRange 0 10) None
           ]
-        Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" Ast.XdefOccurs.Required None [
+        Ast.ComplexElement <| Ast.xdefComplexElement "Behavior" Ast.XdefOccurs.Required None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" Ast.XdefOccurs.Optional (Ast.FixedString "Enabled") None
           ]
         ]
