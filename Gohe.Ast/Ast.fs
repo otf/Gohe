@@ -139,22 +139,22 @@ let pIndent = attempt <| parse {
 
 let pCommentChar : Parser<_> = noneOf ['\n'; '\r']
 let pComment : Parser<_> = 
-  (spaces *> pstring "--" *> spaces *> manyChars pCommentChar <* (skipNewline <|> eof) |> opt) |> attempt
-  <|> (None <! (skipNewline <|> eof))
+  (spaces *> pstring "--" *> spaces *> manyChars pCommentChar |> opt) |> attempt
+  <|> (preturn None)
 
 let pXdefAttribute = 
-  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pTyped <*> pComment
+  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pTyped <*> pComment <* (newline |> opt)
 
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <*> pTyped <*> pComment
+  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <*> pTyped <*> pComment <* (newline |> opt)
 
 let pXdefComplexElement =
-  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <*> pOrdered <*> pComment <*> indent *> pNodes
+  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <*> pOrdered <*> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
 
-do pNodesImpl := (many pNode) <* unindent
+do pNodesImpl := many pNode <* unindent
 
 do pNodeImpl :=
     (Attribute <!> pXdefAttribute) |> attempt

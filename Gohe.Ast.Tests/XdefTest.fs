@@ -40,6 +40,16 @@ let ``出現回数(Specified)付XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurrence.Specified (1, 10)) Ast.Type.String None)
 
 [<Test>]
+let ``XdefOrder(Sequence)の指定をパースできる`` () =  
+    parse Ast.pOrdered "::Sequence"
+    |> should equal (Some Ast.XdefOrder.Sequence)
+
+[<Test>]
+let ``XdefOrder(Sequence)の指定(空文字あり)をパースできる`` () =  
+    parse Ast.pOrdered "  :: Sequence  "
+    |> should equal (Some Ast.XdefOrder.Sequence)
+
+[<Test>]
 let ``XdefComplexElement(Sequence)をパースできる`` () =  
     parse Ast.pXdefComplexElement "Root"
     |> should equal (Some <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [])
