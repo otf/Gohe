@@ -46,6 +46,7 @@ let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurrence = occurs; Typ
 type XdefOrder =
   | Sequence
   | Choice
+  | All
 
 type XdefComplexElement = {
   Order : XdefOrder
@@ -115,8 +116,9 @@ let pType =
 let pTyped = spaces *> pchar ':' *> spaces *> pType
 
 let pOrder =
-  (Sequence <! pstring "Sequence")
-  <|> (Choice <! pstring "Choice")
+  (Sequence <! pstring "Sequence") |> attempt
+  <|> (Choice <! pstring "Choice") |> attempt
+  <|> (All <! pstring "All")
 
 let pOrdered = 
   (spaces *> pstring "::" *> spaces *> pOrder) |> attempt

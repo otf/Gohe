@@ -76,6 +76,24 @@ let ``子要素持ちのXdefComplexElement(Choice)をパースできる`` () =
     |> should equal (Some <| expected)
 
 [<Test>]
+let ``XdefComplexElement(All)をパースできる`` () =  
+    parse Ast.pXdefComplexElement"Root :: All"
+    |> should equal (Some <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.All None [])
+
+[<Test>]
+let ``子要素持ちのXdefComplexElement(All)をパースできる`` () =  
+    let xdef = "AorB :: All\n  A : String\n  B : String"
+
+    let expected = 
+      Ast.xdefComplexElement "AorB" Ast.Required Ast.XdefOrder.All None [
+        Ast.SimpleElement <| Ast.xdefSimpleElement "A" Ast.XdefOccurrence.Required Ast.String None
+        Ast.SimpleElement <| Ast.xdefSimpleElement "B" Ast.XdefOccurrence.Required Ast.String None
+        ]
+
+    parse Ast.pXdefComplexElement xdef
+    |> should equal (Some <| expected)
+
+[<Test>]
 let ``複雑なXdefNodeをパースできる`` () =  
     let xdef = """
 Root
