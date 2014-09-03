@@ -12,7 +12,12 @@ let parse p input =
 [<Test>]
 let ``XdefAttributeをパースできる`` () =  
     parse Ast.pXdefAttribute "@Name : String"
-    |> should equal (Some <| Ast.xdefAttribute "Name" Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefAttribute "Name" Ast.XdefOccurrence.Required  Ast.Type.String None)
+
+[<Test>]
+let ``出現回数(Optional)付XdefAttributeをパースできる`` () =  
+    parse Ast.pXdefAttribute "@Name? : String" 
+    |> should equal (Some <| Ast.xdefAttribute "Name" Ast.XdefOccurrence.Optional Ast.Type.String None)
 
 [<Test>]
 let ``XdefSimpleElementをパースできる`` () =  
@@ -70,7 +75,7 @@ let ``子要素持ちのXdefComplexElement(Sequence)をパースできる`` () =
 
     let expected = 
       Ast.xdefComplexElement "Root" Ast.Required Ast.XdefOrder.Sequence None [
-        Ast.Attribute <| Ast.xdefAttribute "Name" Ast.String None 
+        Ast.Attribute <| Ast.xdefAttribute "Name" Ast.XdefOccurrence.Required Ast.String None 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurrence.Required Ast.String None
         ]
 
@@ -126,7 +131,7 @@ Root
 
     let expected = 
       Ast.ComplexElement <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
-        Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
+        Ast.Attribute <| Ast.xdefAttribute "Id" Ast.XdefOccurrence.Required Ast.Guid (Some "ID属性") 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurrence.Required Ast.String (Some "詳細")
         Ast.ComplexElement <| Ast.xdefComplexElement "Children" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "Child" Ast.XdefOccurrence.Many (Ast.intRange 0 10) None

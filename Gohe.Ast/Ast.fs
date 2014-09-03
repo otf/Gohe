@@ -28,11 +28,12 @@ let xdefSpecified min max = Specified (min, max)
 
 type XdefAttribute = {
   Name : string
+  Occurrence : XdefOccurrence
   Type : Type
   Comment : string option
 }
 
-let xdefAttribute nm typ comm = { Name = nm; Type = typ; Comment = comm }
+let xdefAttribute nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
 type XdefSimpleElement = {
   Name : string
@@ -125,6 +126,10 @@ let pOrdered =
   (pstring "::" *> pSpaces *> pOrder) |> attempt
   <|> (preturn Sequence)
 
+let pAttributeOccurrence : Parser<_> =
+  (Optional <! pstring "?")
+  <|> (preturn Required)
+
 let pOccurrence : Parser<_> =
   (between (pstring "{") (pstring "}") (xdefSpecified <!> pSpaces *> (pint32 |> opt) <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt) <* pSpaces)) |> attempt
   <|> (Many <! pstring "*")
@@ -144,7 +149,7 @@ let pComment : Parser<_> =
   <|> (preturn None)
 
 let pXdefAttribute = 
-  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pSpaces *> pTyped <*> pSpaces *> pComment <* (newline |> opt)
+  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pAttributeOccurrence <*> pSpaces *> pTyped <*> pSpaces *> pComment <* (newline |> opt)
 
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
