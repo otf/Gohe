@@ -49,9 +49,9 @@ type XdefOrder =
   | All
 
 type XdefComplexElement = {
-  Order : XdefOrder
   Name : string
   Occurrence : XdefOccurrence
+  Order : XdefOrder
   Nodes : XdefNode list
   Comment : string option
 }
@@ -62,7 +62,7 @@ and XdefNode =
   | Attribute of XdefAttribute
 // TODO:  | Module of string
 
-let xdefComplexElement nm occurs order comm nodes = { Order = order; Name = nm; Occurrence = occurs; Nodes = nodes; Comment = comm }
+let xdefComplexElement nm occurs order comm nodes = { Name = nm; Occurrence = occurs; Order = order; Nodes = nodes; Comment = comm }
 
 
 type IndentLevel = int
