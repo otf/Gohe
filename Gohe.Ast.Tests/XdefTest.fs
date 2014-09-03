@@ -15,20 +15,20 @@ let ``XdefAttributeをパースできる`` () =
     |> should equal (Some <| Ast.xdefAttribute "Name" Ast.Type.String None)
 
 [<Test>]
-let ``XdefValueElementをパースできる`` () =  
-    parse Ast.pXdefValueElement "Name : String" 
-    |> should equal (Some <| Ast.xdefValueElement "Name" None Ast.Type.String None)
+let ``XdefSimpleElementをパースできる`` () =  
+    parse Ast.pXdefSimpleElement "Name : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" None Ast.Type.String None)
 
 [<Test>]
-let ``制約付XdefValueElementをパースできる`` () =  
-    parse Ast.pXdefValueElement "Name? : String" 
-    |> should equal (Some <| Ast.xdefValueElement "Name" (Some Ast.XdefRestriction.Option) Ast.Type.String None)
+let ``制約付XdefSimpleElementをパースできる`` () =  
+    parse Ast.pXdefSimpleElement "Name? : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Option) Ast.Type.String None)
 
-    parse Ast.pXdefValueElement "Name* : String" 
-    |> should equal (Some <| Ast.xdefValueElement "Name" (Some Ast.XdefRestriction.Many) Ast.Type.String None)
+    parse Ast.pXdefSimpleElement "Name* : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Many) Ast.Type.String None)
 
-    parse Ast.pXdefValueElement "Name| : String" 
-    |> should equal (Some <| Ast.xdefValueElement "Name" (Some Ast.XdefRestriction.Choice) Ast.Type.String None)
+    parse Ast.pXdefSimpleElement "Name| : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Choice) Ast.Type.String None)
 
 [<Test>]
 let ``XdefElementをパースできる`` () =  
@@ -42,7 +42,7 @@ let ``子要素持ちのXdefElementをパースできる`` () =
     let expected = 
       Ast.xdefElement "Root" None None [
         Ast.Attribute <| Ast.xdefAttribute "Name" Ast.String None 
-        Ast.ValueElement <| Ast.xdefValueElement "Description" None Ast.String None
+        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String None
         ]
 
     parse Ast.pXdefElement xdef
@@ -62,12 +62,12 @@ Root
     let expected = 
       Ast.Element <| Ast.xdefElement "Root" None None [
         Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
-        Ast.ValueElement <| Ast.xdefValueElement "Description" None Ast.String (Some "詳細")
+        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String (Some "詳細")
         Ast.Element <| Ast.xdefElement "Children" None None [
-            Ast.ValueElement <| Ast.xdefValueElement "Child" (Some Ast.XdefRestriction.Many) (Ast.intRange 0 10) None
+            Ast.SimpleElement <| Ast.xdefSimpleElement "Child" (Some Ast.XdefRestriction.Many) (Ast.intRange 0 10) None
           ]
         Ast.Element <| Ast.xdefElement "Behavior" None None [
-            Ast.ValueElement <| Ast.xdefValueElement "OptionA" (Some Ast.XdefRestriction.Option) (Ast.StringValue "Enabled") None
+            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefRestriction.Option) (Ast.StringValue "Enabled") None
           ]
         ]
 
