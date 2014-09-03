@@ -35,6 +35,11 @@ let ``出現回数(RequiredMany)付XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.RequiredMany Ast.Type.String None)
 
 [<Test>]
+let ``出現回数(Specified)付XdefSimpleElementをパースできる`` () =  
+    parse Ast.pXdefSimpleElement "Name{1..10} : String" 
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurs.Specified (1, 10)) Ast.Type.String None)
+
+[<Test>]
 let ``XdefSequenceElementをパースできる`` () =  
     parse Ast.pXdefSequenceElement "Root"
     |> should equal (Some <| Ast.xdefSequenceElement "Root" Ast.XdefOccurs.Required None [])

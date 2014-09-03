@@ -22,6 +22,9 @@ type XdefOccurs =
   | Many
   | RequiredMany
   | Optional
+  | Specified of min : int * max : int
+
+let xdefSpecified min max = Specified (min, max)
 
 type XdefAttribute = {
   Name : string
@@ -107,7 +110,8 @@ let pType =
 let pTyped = spaces *> pchar ':' *> spaces *> pType
 
 let pOccurs : Parser<_> =
-  (Many <! pstring "*")
+  (between (pstring "{") (pstring "}") (xdefSpecified <!> spaces *> pint32 <* spaces <* pstring ".." <* spaces <*> pint32 <* spaces)) |> attempt
+  <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")
   <|> (preturn Required)
