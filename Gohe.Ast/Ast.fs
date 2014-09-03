@@ -43,7 +43,12 @@ type XdefSimpleElement = {
 
 let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
+type XdefOrder =
+  | Sequence
+  | Choice
+
 type XdefComplexElement = {
+  Order : XdefOrder
   Name : string
   Occurrence : XdefOccurrence
   Nodes : XdefNode list
@@ -56,7 +61,7 @@ and XdefNode =
   | Attribute of XdefAttribute
 // TODO:  | Module of string
 
-let xdefComplexElement nm occurs comm nodes = { Name = nm; Occurrence = occurs; Nodes = nodes; Comment = comm }
+let xdefComplexElement nm occurs order comm nodes = { Order = order; Name = nm; Occurrence = occurs; Nodes = nodes; Comment = comm }
 
 
 type IndentLevel = int
@@ -109,6 +114,14 @@ let pType =
 
 let pTyped = spaces *> pchar ':' *> spaces *> pType
 
+let pOrder =
+  (Sequence <! pstring "Sequence")
+  <|> (Choice <! pstring "Choice")
+
+let pOrdered = 
+  (spaces *> pstring "::" *> spaces *> pOrder) |> attempt
+  <|> (preturn Sequence)
+
 let pOccurrence : Parser<_> =
   (between (pstring "{") (pstring "}") (xdefSpecified <!> spaces *> pint32 <* spaces <* pstring ".." <* spaces <*> pint32 <* spaces)) |> attempt
   <|> (Many <! pstring "*")
@@ -137,7 +150,7 @@ let pXdefSimpleElement =
   xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <*> pTyped <*> pComment
 
 let pXdefComplexElement =
-  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <*> pComment <*> indent *> pNodes
+  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <*> pOrdered <*> pComment <*> indent *> pNodes
 
 do pNodesImpl := (many pNode) <* unindent
 

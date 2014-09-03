@@ -40,18 +40,36 @@ let ``出現回数(Specified)付XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" (Ast.XdefOccurrence.Specified (1, 10)) Ast.Type.String None)
 
 [<Test>]
-let ``XdefComplexElementをパースできる`` () =  
+let ``XdefComplexElement(Sequence)をパースできる`` () =  
     parse Ast.pXdefComplexElement "Root"
-    |> should equal (Some <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required None [])
+    |> should equal (Some <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [])
 
 [<Test>]
-let ``子要素持ちのXdefComplexElementをパースできる`` () =  
+let ``子要素持ちのXdefComplexElement(Sequence)をパースできる`` () =  
     let xdef = "Root\n  @Name : String\n  Description : String"
 
     let expected = 
-      Ast.xdefComplexElement "Root" Ast.Required None [
+      Ast.xdefComplexElement "Root" Ast.Required Ast.XdefOrder.Sequence None [
         Ast.Attribute <| Ast.xdefAttribute "Name" Ast.String None 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurrence.Required Ast.String None
+        ]
+
+    parse Ast.pXdefComplexElement xdef
+    |> should equal (Some <| expected)
+
+[<Test>]
+let ``XdefComplexElement(Choice)をパースできる`` () =  
+    parse Ast.pXdefComplexElement"Root :: Choice"
+    |> should equal (Some <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.Choice None [])
+
+[<Test>]
+let ``子要素持ちのXdefComplexElement(Choice)をパースできる`` () =  
+    let xdef = "AxorB :: Choice\n  A : String\n  B : String"
+
+    let expected = 
+      Ast.xdefComplexElement "AxorB" Ast.Required Ast.XdefOrder.Choice None [
+        Ast.SimpleElement <| Ast.xdefSimpleElement "A" Ast.XdefOccurrence.Required Ast.String None
+        Ast.SimpleElement <| Ast.xdefSimpleElement "B" Ast.XdefOccurrence.Required Ast.String None
         ]
 
     parse Ast.pXdefComplexElement xdef
@@ -69,13 +87,13 @@ Root
     OptionA? : "Enabled" """.Trim()
 
     let expected = 
-      Ast.ComplexElement <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required None [
+      Ast.ComplexElement <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
         Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurrence.Required Ast.String (Some "詳細")
-        Ast.ComplexElement <| Ast.xdefComplexElement "Children" Ast.XdefOccurrence.Required None [
+        Ast.ComplexElement <| Ast.xdefComplexElement "Children" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "Child" Ast.XdefOccurrence.Many (Ast.intRange 0 10) None
           ]
-        Ast.ComplexElement <| Ast.xdefComplexElement "Behavior" Ast.XdefOccurrence.Required None [
+        Ast.ComplexElement <| Ast.xdefComplexElement "Behavior" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
             Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" Ast.XdefOccurrence.Optional (Ast.FixedString "Enabled") None
           ]
         ]
