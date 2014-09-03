@@ -17,7 +17,7 @@ let intRange b e = IntRange(b, e - 1)
 // [b, e]
 let intRange2 b e = IntRange(b, e)
 
-type XdefOccurs =
+type XdefOccurrence =
   | Required
   | Many
   | RequiredMany
@@ -36,16 +36,16 @@ let xdefAttribute nm typ comm = { Name = nm; Type = typ; Comment = comm }
 
 type XdefSimpleElement = {
   Name : string
-  Occurs : XdefOccurs
+  Occurrence : XdefOccurrence
   Type : Type
   Comment : string option
 }
 
-let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurs = occurs; Type = typ; Comment = comm }
+let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
 type XdefComplexElement = {
   Name : string
-  Occurs : XdefOccurs
+  Occurrence : XdefOccurrence
   Nodes : XdefNode list
   Comment : string option
 }
@@ -56,7 +56,7 @@ and XdefNode =
   | Attribute of XdefAttribute
 // TODO:  | Module of string
 
-let xdefComplexElement nm occurs comm nodes = { Name = nm; Occurs = occurs; Nodes = nodes; Comment = comm }
+let xdefComplexElement nm occurs comm nodes = { Name = nm; Occurrence = occurs; Nodes = nodes; Comment = comm }
 
 
 type IndentLevel = int
@@ -109,7 +109,7 @@ let pType =
 
 let pTyped = spaces *> pchar ':' *> spaces *> pType
 
-let pOccurs : Parser<_> =
+let pOccurrence : Parser<_> =
   (between (pstring "{") (pstring "}") (xdefSpecified <!> spaces *> pint32 <* spaces <* pstring ".." <* spaces <*> pint32 <* spaces)) |> attempt
   <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
@@ -134,10 +134,10 @@ let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurs <*> pTyped <*> pComment
+  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <*> pTyped <*> pComment
 
 let pXdefComplexElement =
-  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurs <*> pComment <*> indent *> pNodes
+  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <*> pComment <*> indent *> pNodes
 
 do pNodesImpl := (many pNode) <* unindent
 
