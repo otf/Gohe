@@ -27,9 +27,6 @@ let ``出現回数付XdefSimpleElementをパースできる`` () =
     parse Ast.pXdefSimpleElement "Name* : String" 
     |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Many) Ast.Type.String None)
 
-    parse Ast.pXdefSimpleElement "Name| : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Choice) Ast.Type.String None)
-
 [<Test>]
 let ``XdefSequenceElementをパースできる`` () =  
     parse Ast.pXdefSequenceElement "Root"

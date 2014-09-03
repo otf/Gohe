@@ -19,7 +19,6 @@ let intRange2 b e = IntRange(b, e)
 
 type XdefOccurs =
   | Many
-  | Choice
   | Option
 
 type XdefAttribute = {
@@ -108,7 +107,6 @@ let pTyped = spaces *> pchar ':' *> spaces *> pType
 let pOccurs : Parser<_> =
   (Many <! pstring "*")
   <|> (Option <! pstring "?")
-  <|> (Choice <! pstring "|")
 
 let pIndent = attempt <| parse { 
   let! indentLevel = getUserState
