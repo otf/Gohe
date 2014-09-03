@@ -20,15 +20,15 @@ let ``XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" None Ast.Type.String None)
 
 [<Test>]
-let ``制約付XdefSimpleElementをパースできる`` () =  
+let ``出現回数付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name? : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Option) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Option) Ast.Type.String None)
 
     parse Ast.pXdefSimpleElement "Name* : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Many) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Many) Ast.Type.String None)
 
     parse Ast.pXdefSimpleElement "Name| : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefRestriction.Choice) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Choice) Ast.Type.String None)
 
 [<Test>]
 let ``XdefSequenceElementをパースできる`` () =  
@@ -64,10 +64,10 @@ Root
         Ast.Attribute <| Ast.xdefAttribute "Id" Ast.Guid (Some "ID属性") 
         Ast.SimpleElement <| Ast.xdefSimpleElement "Description" None Ast.String (Some "詳細")
         Ast.SequenceElement <| Ast.xdefSequenceElement "Children" None None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "Child" (Some Ast.XdefRestriction.Many) (Ast.intRange 0 10) None
+            Ast.SimpleElement <| Ast.xdefSimpleElement "Child" (Some Ast.XdefOccurs.Many) (Ast.intRange 0 10) None
           ]
         Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" None None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefRestriction.Option) (Ast.StringValue "Enabled") None
+            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefOccurs.Option) (Ast.StringValue "Enabled") None
           ]
         ]
 

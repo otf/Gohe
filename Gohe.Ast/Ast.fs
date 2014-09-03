@@ -17,7 +17,7 @@ let intRange b e = IntRange(b, e - 1)
 // [b, e]
 let intRange2 b e = IntRange(b, e)
 
-type XdefRestriction =
+type XdefOccurs =
   | Many
   | Choice
   | Option
@@ -32,16 +32,16 @@ let xdefAttribute nm typ comm = { Name = nm; Type = typ; Comment = comm }
 
 type XdefSimpleElement = {
   Name : string
-  Restriction : XdefRestriction option
+  Occurs : XdefOccurs option
   Type : Type
   Comment : string option
 }
 
-let xdefSimpleElement nm r typ comm = { Name = nm; Restriction = r; Type = typ; Comment = comm }
+let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurs = occurs; Type = typ; Comment = comm }
 
 type XdefSequenceElement = {
   Name : string
-  Restriction : XdefRestriction option
+  Occurs : XdefOccurs option
   Nodes : XdefNode list
   Comment : string option
 }
@@ -52,7 +52,7 @@ and XdefNode =
   | Attribute of XdefAttribute
 // TODO:  | Module of string
 
-let xdefSequenceElement nm r comm nodes = { Name = nm; Restriction = r; Nodes = nodes; Comment = comm }
+let xdefSequenceElement nm occurs comm nodes = { Name = nm; Occurs = occurs; Nodes = nodes; Comment = comm }
 
 
 type IndentLevel = int
@@ -105,7 +105,7 @@ let pType =
 
 let pTyped = spaces *> pchar ':' *> spaces *> pType
 
-let pRestriction : Parser<_> =
+let pOccurs : Parser<_> =
   (Many <! pstring "*")
   <|> (Option <! pstring "?")
   <|> (Choice <! pstring "|")
@@ -128,10 +128,10 @@ let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> (opt pRestriction) <*> pTyped <*> pComment
+  xdefSimpleElement <!> pIndent *> pXdefName <*> (opt pOccurs) <*> pTyped <*> pComment
 
 let pXdefSequenceElement =
-  xdefSequenceElement <!> pIndent *> pXdefName <*> (opt pRestriction) <*> pComment <*> indent *> pNodes
+  xdefSequenceElement <!> pIndent *> pXdefName <*> (opt pOccurs) <*> pComment <*> indent *> pNodes
 
 do pNodesImpl := (many pNode) <* unindent
 
