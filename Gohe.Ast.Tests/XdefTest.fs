@@ -22,7 +22,7 @@ let ``XdefSimpleElementをパースできる`` () =
 [<Test>]
 let ``出現回数付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name? : String" 
-    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Option) Ast.Type.String None)
+    |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Optional) Ast.Type.String None)
 
     parse Ast.pXdefSimpleElement "Name* : String" 
     |> should equal (Some <| Ast.xdefSimpleElement "Name" (Some Ast.XdefOccurs.Many) Ast.Type.String None)
@@ -64,7 +64,7 @@ Root
             Ast.SimpleElement <| Ast.xdefSimpleElement "Child" (Some Ast.XdefOccurs.Many) (Ast.intRange 0 10) None
           ]
         Ast.SequenceElement <| Ast.xdefSequenceElement "Behavior" None None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefOccurs.Option) (Ast.StringValue "Enabled") None
+            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" (Some Ast.XdefOccurs.Optional) (Ast.StringValue "Enabled") None
           ]
         ]
 
