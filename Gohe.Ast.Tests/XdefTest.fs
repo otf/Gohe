@@ -20,13 +20,17 @@ let ``XdefSimpleElementをパースできる`` () =
     |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.Required Ast.Type.String None)
 
 [<Test>]
-let ``出現回数付XdefSimpleElementをパースできる`` () =  
+let ``出現回数(Optional)付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name? : String" 
     |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.Optional Ast.Type.String None)
 
+[<Test>]
+let ``出現回数(Many)付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name* : String" 
     |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.Many Ast.Type.String None)
 
+[<Test>]
+let ``出現回数(RequiredMany)付XdefSimpleElementをパースできる`` () =  
     parse Ast.pXdefSimpleElement "Name+ : String" 
     |> should equal (Some <| Ast.xdefSimpleElement "Name" Ast.XdefOccurs.RequiredMany Ast.Type.String None)
 
