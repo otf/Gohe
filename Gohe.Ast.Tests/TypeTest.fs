@@ -49,8 +49,8 @@ let ``TimeSpanをパースできる`` (input, expected) =
 [<TestCase("(\"aaa\"|\"bbb\")", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" )", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" | \"ccc\" )", [| "aaa"; "bbb"; "ccc" |])>]
-let ``ChoiceStringValuesをパースできる`` (input, expected) =  
-    (parse Ast.pType input) |> should equal (Some <| Ast.ChoiceStringValues (expected |> Array.toList))
+let ``RestrictedStringをパースできる`` (input, expected) =  
+    (parse Ast.pType input) |> should equal (Some <| Ast.RestrictedString (expected |> Array.toList))
 
 [<TestCase("[0,100)", 0, 99)>]
 [<TestCase("[0,100]", 0, 100)>]

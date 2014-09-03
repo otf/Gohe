@@ -7,7 +7,7 @@ type Type =
   | StringValue of string | IntValue of int | FloatValue of float
   | Bool | String | Int  | Float | BigInt | Guid 
   | DateTime of format : string option | TimeSpan of format : string option
-  | ChoiceStringValues of string list
+  | RestrictedString of string list
   | IntRange of int * int
   | Regex of pattern:string
 
@@ -70,9 +70,9 @@ let pFormatChar : Parser<_> =  attempt ('>' <! pstring "\\>") <|> noneOf ">"
 let pFormatText = manyChars pFormatChar
 let pFormat = between (pstring "<") (pstring ">") pFormatText
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
-let pChoiceStringValues = 
+let pRestrictedString = 
   between (pstring "(") (pstring ")") <|
-  ((List.map (function StringValue v -> v | _ -> failwith "internal error") >> ChoiceStringValues) <!> (sepBy1 (spaces *> pStringValue <* spaces) (pchar '|')))
+  ((List.map (function StringValue v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (spaces *> pStringValue <* spaces) (pchar '|')))
 
 let pIntRange : Parser<_> = 
   between (pstring "[") (pstring ")") <|
@@ -86,7 +86,7 @@ let pRegexChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
 let pRegex : Parser<_> = Regex <!> pchar '/' *> manyChars pRegexChar <* pchar '/' 
 
 let pType =
-  pChoiceStringValues
+  pRestrictedString
   <|> pIntRange |> attempt
   <|> pIntRange2
   <|> pRegex
