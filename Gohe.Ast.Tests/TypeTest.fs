@@ -61,5 +61,5 @@ let ``IntRangeをパースできる`` (input, expectedMin, expectedMax) =
 
 [<TestCase("/.*/", ".*")>]
 [<TestCase("/\/*/", "/*")>]
-let ``Regexをパースできる`` (input, expected) =  
-    (parse Ast.pType input) |> should equal (Some <| Ast.Regex(expected))
+let ``Patternをパースできる`` (input, expected) =  
+    (parse Ast.pType input) |> should equal (Some <| Ast.Pattern(expected))

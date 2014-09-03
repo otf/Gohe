@@ -9,7 +9,7 @@ type Type =
   | DateTime of format : string option | TimeSpan of format : string option
   | RestrictedString of string list
   | IntRange of int * int
-  | Regex of pattern:string
+  | Pattern of string
 
 // [b, e)
 let intRange b e = IntRange(b, e - 1)
@@ -87,14 +87,14 @@ let pIntRange2 : Parser<_> =
   between (pstring "[") (spaces *> pstring "]") <|
   (intRange2 <!> spaces *> pint32 <* spaces <* pchar ',' <* spaces <*> pint32 <* spaces)
 
-let pRegexChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
-let pRegex : Parser<_> = Regex <!> pchar '/' *> manyChars pRegexChar <* pchar '/' 
+let pPatternChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
+let pPattern : Parser<_> = Pattern <!> pchar '/' *> manyChars pPatternChar <* pchar '/' 
 
 let pType =
   pRestrictedString
   <|> pIntRange |> attempt
   <|> pIntRange2
-  <|> pRegex
+  <|> pPattern
   <|> pFixedString
   <|> pFixedInt
   <|> pFixedFloat
