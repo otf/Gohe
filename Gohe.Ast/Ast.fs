@@ -5,7 +5,7 @@ open FParsec.Applicative
 
 type Type = 
   | StringValue of string | IntValue of int | FloatValue of float
-  | Bool | String | Int  | Float | BigInt | Guid 
+  | Bool | String | Int  | Float | Decimal | Guid 
   | DateTime of format : string option | TimeSpan of format : string option
   | RestrictedString of string list
   | IntRange of int * int
@@ -102,7 +102,7 @@ let pType =
   <|> pPrimitiveType String "String"
   <|> pPrimitiveType Int "Int" 
   <|> pPrimitiveType Float "Float" 
-  <|> pPrimitiveType BigInt "BigInt" 
+  <|> pPrimitiveType Decimal "Decimal" 
   <|> pPrimitiveType Guid "Guid" 
   <|> pPrimitiveTypeWithFormat DateTime "DateTime"
   <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan"

@@ -31,7 +31,7 @@ let ``PrimitiveTypeをパースできる`` () =
     (parse Ast.pType "String") |> should equal (Some <| Ast.String)
     (parse Ast.pType "Int") |> should equal (Some <| Ast.Int)
     (parse Ast.pType "Float") |> should equal (Some <| Ast.Float)
-    (parse Ast.pType "BigInt") |> should equal (Some <| Ast.BigInt)
+    (parse Ast.pType "Decimal") |> should equal (Some <| Ast.Decimal)
     (parse Ast.pType "Guid") |> should equal (Some <| Ast.Guid)
 
 [<TestCase("DateTime", null)>]
