@@ -20,6 +20,7 @@ let intRange2 b e = IntRange(b, e)
 type XdefOccurs =
   | Required
   | Many
+  | RequiredMany
   | Optional
 
 type XdefAttribute = {
@@ -107,6 +108,7 @@ let pTyped = spaces *> pchar ':' *> spaces *> pType
 
 let pOccurs : Parser<_> =
   (Many <! pstring "*")
+  <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")
   <|> (preturn Required)
 
