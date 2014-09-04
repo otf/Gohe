@@ -17,6 +17,8 @@ let intRange b e = IntRange(b, e - 1)
 // [b, e]
 let intRange2 b e = IntRange(b, e)
 
+/// 出現回数を表す型です。
+/// 明示的に指定されなかった場合、Requiredと推論されます。
 type XdefOccurrence =
   | Required
   | Many
@@ -26,6 +28,8 @@ type XdefOccurrence =
 
 let xdefSpecified min max = Specified (min, max)
 
+/// 属性を表す型です。
+/// OccurrenceはRequiredもしくはOptionalを指定することができます。
 type XdefAttribute = {
   Name : string
   Occurrence : XdefOccurrence
@@ -35,6 +39,8 @@ type XdefAttribute = {
 
 let xdefAttribute nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
+/// 順序インジケータを表す型です。
+/// 明示的に指定されなかった場合、Sequenceと推論されます。
 type XdefOrder =
   | Sequence
   | Choice
@@ -46,6 +52,8 @@ type XdefComplexType = {
   Nodes : XdefNode list
 }
 
+/// 要素型を表す型です。
+/// 明示的に指定されなかった場合、Complex(順序インジケータはSequence)と推論されます。
 and XdefElementType =
   | Simple of XdefSimpleType
   | Complex of XdefComplexType
