@@ -77,7 +77,7 @@ type IndentLevel = int
 type UserState = IndentLevel
 type Parser<'t> = Parser<'t, UserState>
 let indent = updateUserState ((+) 1)
-let unindent = updateUserState (fun x -> System.Math.Max(x - 1, 0))
+let unindent = updateUserState (fun x -> x - 1)
 
 let pSpaces : Parser<_> = many (pchar ' ')
 let pBracket openString closeString p = between (pstring openString) (pstring closeString) (pSpaces *> p <* pSpaces)
@@ -171,7 +171,7 @@ let pXdefComplexElement =
   (fun nm occurs fType comm nodes -> xdefElement nm occurs (Complex <| fType nodes) comm)
   <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pXdefComplexTyped <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
 
-do pNodesImpl := many pNode <* unindent
+do pNodesImpl := (many pNode <* unindent) |> attempt
 
 do pNodeImpl :=
     (Attribute <!> pXdefAttribute) |> attempt
