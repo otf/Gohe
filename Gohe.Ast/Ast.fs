@@ -35,36 +35,35 @@ type XdefAttribute = {
 
 let xdefAttribute nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
-type XdefSimpleElement = {
-  Name : string
-  Occurrence : XdefOccurrence
-  Type : XdefSimpleType
-  Comment : string option
-}
-
-let xdefSimpleElement nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
-
 type XdefOrder =
   | Sequence
   | Choice
   | All
 
-type XdefComplexElement = {
+type XdefComplexType = {
+  Order : XdefOrder
+  Occurrence : XdefOccurrence
+  Nodes : XdefNode list
+}
+
+and XdefElementType =
+  | Simple of XdefSimpleType
+  | Complex of XdefComplexType
+
+and XdefElement = {
   Name : string
   Occurrence : XdefOccurrence
-  Order : XdefOrder
-  Nodes : XdefNode list
+  Type : XdefElementType
   Comment : string option
 }
 
 and XdefNode = 
-  | ComplexElement of XdefComplexElement
-  | SimpleElement of XdefSimpleElement
+  | Element of XdefElement
   | Attribute of XdefAttribute
 // TODO:  | Module of string
 
-let xdefComplexElement nm occurs order comm nodes = { Name = nm; Occurrence = occurs; Order = order; Nodes = nodes; Comment = comm }
-
+let xdefComplexType order occurs nodes = { Order = order; Occurrence = occurs; Nodes = nodes }
+let xdefElement nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
 type IndentLevel = int
 type UserState = IndentLevel
@@ -122,10 +121,6 @@ let pOrder =
   <|> (Choice <! pstring "Choice") |> attempt
   <|> (All <! pstring "All")
 
-let pOrdered = 
-  (pstring "::" *> pSpaces *> pOrder) |> attempt
-  <|> (preturn Sequence)
-
 let pAttributeOccurrence : Parser<_> =
   (Optional <! pstring "?")
   <|> (preturn Required)
@@ -155,14 +150,20 @@ let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pXdefSimpleTyped <*> pSpaces *> pComment <* (newline |> opt)
+  xdefElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> (Simple <!> pXdefSimpleTyped) <*> pSpaces *> pComment <* (newline |> opt)
+
+// CommentはElementに対してつけたいため、NodesだけあとでParseする
+let pXdefComplexTyped = 
+  (xdefComplexType <!> pstring "::" *> pSpaces *> pOrder <*> pOccurrence) |> attempt
+  <|> (preturn <| xdefComplexType Sequence Required)
 
 let pXdefComplexElement =
-  xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pOrdered <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
+  (fun nm occurs fType comm nodes -> xdefElement nm occurs (Complex <| fType nodes) comm)
+  <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pXdefComplexTyped <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
 
 do pNodesImpl := many pNode <* unindent
 
 do pNodeImpl :=
     (Attribute <!> pXdefAttribute) |> attempt
-    <|> (SimpleElement <!> pXdefSimpleElement) |> attempt
-    <|> (ComplexElement <!> pXdefComplexElement)
+    <|> (Element <!> pXdefSimpleElement) |> attempt
+    <|> (Element <!> pXdefComplexElement)
