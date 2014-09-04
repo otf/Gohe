@@ -27,16 +27,16 @@ Root
 [<Test>]
 let ``コメントが指定されたXdefNodeをパースできる`` () =  
     let xdef = """
-Root -- RootElementComment
-  @Id : Guid -- AttributeComment
-  Children -- ComplexElementComment
-    Child* : [0,10) -- SimpleElementComment""".Trim()
+Root -- Root Element Comment
+  @Id : Guid -- Attribute Comment
+  Children -- Complex Element Comment
+    Child* : [0,10) -- Simple Element Comment""".Trim()
 
     let expected = 
-      celm "Root" required (Some "RootElementComment") <| seq required [
-          attr "Id" required (Some "AttributeComment") Ast.Guid
-          celm "Children" required (Some "ComplexElementComment") <| seq required [
-              elm "Child" many (Some "SimpleElementComment") (Ast.intRange 0 10) 
+      celm "Root" required (Some "Root Element Comment") <| seq required [
+          attr "Id" required (Some "Attribute Comment") Ast.Guid
+          celm "Children" required (Some "Complex Element Comment") <| seq required [
+              elm "Child" many (Some "Simple Element Comment") (Ast.intRange 0 10) 
             ] 
         ]
 
