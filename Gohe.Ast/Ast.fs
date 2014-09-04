@@ -99,7 +99,7 @@ let pIntRange : Parser<_> =
   (intRange <!> pSpaces *> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32 <* pSpaces)
   
 let pIntRange2 : Parser<_> = 
-  between (pstring "[") (pSpaces *> pstring "]") <|
+  between (pstring "[") (pstring "]") <|
   (intRange2 <!> pSpaces *> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32 <* pSpaces)
 
 let pPatternChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
