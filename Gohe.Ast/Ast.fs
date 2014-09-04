@@ -3,7 +3,7 @@
 open FParsec
 open FParsec.Applicative
 
-type Type = 
+type XdefSimpleType = 
   | FixedString of string | FixedInt of int | FixedFloat of float
   | Bool | String | Int  | Float | Decimal | Guid 
   | DateTime of format : string option | TimeSpan of format : string option
@@ -29,7 +29,7 @@ let xdefSpecified min max = Specified (min, max)
 type XdefAttribute = {
   Name : string
   Occurrence : XdefOccurrence
-  Type : Type
+  Type : XdefSimpleType
   Comment : string option
 }
 
@@ -38,7 +38,7 @@ let xdefAttribute nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = 
 type XdefSimpleElement = {
   Name : string
   Occurrence : XdefOccurrence
-  Type : Type
+  Type : XdefSimpleType
   Comment : string option
 }
 
@@ -98,7 +98,7 @@ let pIntRange2 : Parser<_> =
 let pPatternChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
 let pPattern : Parser<_> = Pattern <!> pchar '/' *> manyChars pPatternChar <* pchar '/' 
 
-let pType =
+let pXdefSimpleType =
   pRestrictedString
   <|> pIntRange |> attempt
   <|> pIntRange2
@@ -115,7 +115,7 @@ let pType =
   <|> pPrimitiveTypeWithFormat DateTime "DateTime"
   <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan"
 
-let pTyped = pchar ':' *> pSpaces *> pType
+let pXdefSimpleTyped = pchar ':' *> pSpaces *> pXdefSimpleType
 
 let pOrder =
   (Sequence <! pstring "Sequence") |> attempt
@@ -149,13 +149,13 @@ let pComment : Parser<_> =
   <|> (preturn None)
 
 let pXdefAttribute = 
-  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pAttributeOccurrence <*> pSpaces *> pTyped <*> pSpaces *> pComment <* (newline |> opt)
+  xdefAttribute <!> pIndent *> pchar '@' *> pXdefName <*> pAttributeOccurrence <*> pSpaces *> pXdefSimpleTyped <*> pSpaces *> pComment <* (newline |> opt)
 
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 let pXdefSimpleElement = 
-  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pTyped <*> pSpaces *> pComment <* (newline |> opt)
+  xdefSimpleElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pXdefSimpleTyped <*> pSpaces *> pComment <* (newline |> opt)
 
 let pXdefComplexElement =
   xdefComplexElement <!> pIndent *> pXdefName <*> pOccurrence <* pSpaces <*> pOrdered <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
