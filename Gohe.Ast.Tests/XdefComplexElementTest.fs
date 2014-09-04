@@ -25,12 +25,12 @@ let ``子要素持ちのXdefComplexElement(Sequence)をパースできる`` () =
     let xdef = "Root\n  @Name : String\n  Description : String"
 
     let expected = 
-      Ast.xdefComplexElement "Root" Ast.Required Ast.XdefOrder.Sequence None [
-        Ast.Attribute <| Ast.xdefAttribute "Name" Ast.XdefOccurrence.Required Ast.String None 
-        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurrence.Required Ast.String None
+      celm "Root" required None seq [
+          attr "Name" required  None Ast.String
+          elm "Description" required None Ast.String
         ]
 
-    parse Ast.pXdefComplexElement xdef
+    parse Ast.pNode xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -43,12 +43,12 @@ let ``子要素持ちのXdefComplexElement(Choice)をパースできる`` () =
     let xdef = "AxorB :: Choice\n  A : String\n  B : String"
 
     let expected = 
-      Ast.xdefComplexElement "AxorB" Ast.Required Ast.XdefOrder.Choice None [
-        Ast.SimpleElement <| Ast.xdefSimpleElement "A" Ast.XdefOccurrence.Required Ast.String None
-        Ast.SimpleElement <| Ast.xdefSimpleElement "B" Ast.XdefOccurrence.Required Ast.String None
+      celm "AxorB" required None choice [
+          elm "A" required None Ast.String
+          elm "B" required None Ast.String
         ]
 
-    parse Ast.pXdefComplexElement xdef
+    parse Ast.pNode xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -61,12 +61,12 @@ let ``子要素持ちのXdefComplexElement(All)をパースできる`` () =
     let xdef = "AorB :: All\n  A : String\n  B : String"
 
     let expected = 
-      Ast.xdefComplexElement "AorB" Ast.Required Ast.XdefOrder.All None [
-        Ast.SimpleElement <| Ast.xdefSimpleElement "A" Ast.XdefOccurrence.Required Ast.String None
-        Ast.SimpleElement <| Ast.xdefSimpleElement "B" Ast.XdefOccurrence.Required Ast.String None
+      celm "AorB" required None all [
+          elm "A" required None Ast.String
+          elm "B" required None Ast.String
         ]
 
-    parse Ast.pXdefComplexElement xdef
+    parse Ast.pNode xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -81,15 +81,15 @@ Root
     OptionA? : "Enabled" """.Trim()
 
     let expected = 
-      Ast.ComplexElement <| Ast.xdefComplexElement "Root" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
-        Ast.Attribute <| Ast.xdefAttribute "Id" Ast.XdefOccurrence.Required Ast.Guid (Some "ID属性") 
-        Ast.SimpleElement <| Ast.xdefSimpleElement "Description" Ast.XdefOccurrence.Required Ast.String (Some "詳細")
-        Ast.ComplexElement <| Ast.xdefComplexElement "Children" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "Child" Ast.XdefOccurrence.Many (Ast.intRange 0 10) None
-          ]
-        Ast.ComplexElement <| Ast.xdefComplexElement "Behavior" Ast.XdefOccurrence.Required Ast.XdefOrder.Sequence None [
-            Ast.SimpleElement <| Ast.xdefSimpleElement "OptionA" Ast.XdefOccurrence.Optional (Ast.FixedString "Enabled") None
-          ]
+      celm "Root" required None seq [
+          attr "Id" required (Some "ID属性") Ast.Guid
+          elm "Description" required (Some "詳細") Ast.String
+          celm "Children" required None seq [
+              elm "Child" Ast.Many None (Ast.intRange 0 10) 
+            ] 
+          celm "Behavior" required None seq [
+              elm "OptionA" Ast.Optional None (Ast.FixedString "Enabled") 
+            ] 
         ]
 
     parse Ast.pNode xdef

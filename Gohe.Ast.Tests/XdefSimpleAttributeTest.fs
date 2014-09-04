@@ -7,10 +7,10 @@ open AstUtility
 
 [<Test>]
 let ``XdefAttributeをパースできる`` () =  
-    parse Ast.pXdefAttribute "@Name : String"
-    |> should equal (Some <| Ast.xdefAttribute "Name" Ast.XdefOccurrence.Required  Ast.XdefSimpleType.String None)
+    parse Ast.pNode "@Name : String"
+    |> should equal (Some <| attr "Name" required None Ast.String)
 
 [<Test>]
 let ``出現回数(Optional)付XdefAttributeをパースできる`` () =  
-    parse Ast.pXdefAttribute "@Name? : String" 
-    |> should equal (Some <| Ast.xdefAttribute "Name" Ast.XdefOccurrence.Optional Ast.XdefSimpleType.String None)
+    parse Ast.pNode "@Name? : String" 
+    |> should equal (Some <| attr "Name" optional None Ast.String)
