@@ -127,8 +127,8 @@ let pXdefSimpleType =
 let pXdefSimpleTyped = pchar ':' *> pSpaces *> pXdefSimpleType
 
 let pOrder =
-  (Sequence <! pstring "Sequence") |> attempt
-  <|> (Choice <! pstring "Choice") |> attempt
+  (Sequence <! pstring "Sequence")
+  <|> (Choice <! pstring "Choice")
   <|> (All <! pstring "All")
 
 let pAttributeOccurrence : Parser<_> =
@@ -142,7 +142,7 @@ let pOccurrence : Parser<_> =
   <|> (Optional <! pstring "?")
   <|> (preturn Required)
 
-let pIndent = attempt <| parse { 
+let pIndent = parse { 
   let! indentLevel = getUserState
   let indentLevel = (indentLevel) * 2
   do! skipManyMinMaxSatisfy indentLevel indentLevel ((=) ' ')
