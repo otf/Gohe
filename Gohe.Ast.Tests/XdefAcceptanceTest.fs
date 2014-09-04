@@ -13,6 +13,9 @@ Root
   Description : String -- 詳細
   Children
     Child* : [0,10)
+  MustSeq* :: Sequence{0..10}
+  MustChoice* :: Choice{0..10}
+  MustAll* :: All{0..10}
   Behavior
     OptionA? : "Enabled" """.Trim()
 
@@ -23,6 +26,9 @@ Root
           celm "Children" required None <| seq required [
               elm "Child" many None (Ast.intRange 0 10) 
             ] 
+          celm "MustSeq" many None <| seq (specific 0 10) [ ] 
+          celm "MustChoice" many None <| choice (specific 0 10) [ ] 
+          celm "MustAll" many None <| all (specific 0 10) [ ] 
           celm "Behavior" required None <| seq required [
               elm "OptionA" optional None (Ast.FixedString "Enabled") 
             ] 
