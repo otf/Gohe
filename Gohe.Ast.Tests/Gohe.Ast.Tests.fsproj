@@ -60,10 +60,13 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AstUtility.fs" />
     <Compile Include="XdefSimpleTypeTest.fs" />
-    <Compile Include="XdefTest.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+    <Compile Include="XdefComplexElementTest.fs" />
+    <Compile Include="XdefSimpleAttributeTest.fs" />
+    <Compile Include="XdefSimpleElementTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">
