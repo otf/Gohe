@@ -80,6 +80,7 @@ let indent = updateUserState ((+) 1)
 let unindent = updateUserState (fun x -> System.Math.Max(x - 1, 0))
 
 let pSpaces : Parser<_> = many (pchar ' ')
+let pBracket openString closeString p = between (pstring openString) (pstring closeString) (pSpaces *> p <* pSpaces)
 let pXdefName : Parser<_> = regex "\w+"
 let pFixedStringChar : Parser<_> = attempt ('"' <! pstring "\\\"") <|> noneOf "\""
 let pFixedString : Parser<_> = FixedString <!> pchar '"' *> manyChars pFixedStringChar <* pchar '"' 
@@ -88,19 +89,19 @@ let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
 let pPrimitiveType f typeName = f <! pstring typeName
 let pFormatChar : Parser<_> =  attempt ('>' <! pstring "\\>") <|> noneOf ">"
 let pFormatText = manyChars pFormatChar
-let pFormat = between (pstring "<") (pstring ">") pFormatText
+let pFormat = pBracket "<" ">" pFormatText
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
 let pRestrictedString = 
-  between (pstring "(") (pstring ")") <|
+  pBracket "(" ")" <|
   ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (pSpaces *> pFixedString <* pSpaces) (pchar '|')))
 
 let pIntRange : Parser<_> = 
-  between (pstring "[") (pstring ")") <|
-  (intRange <!> pSpaces *> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32 <* pSpaces)
+  pBracket "[" ")" <|
+  (intRange <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32)
   
 let pIntRange2 : Parser<_> = 
-  between (pstring "[") (pstring "]") <|
-  (intRange2 <!> pSpaces *> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32 <* pSpaces)
+  pBracket "[" "]" <|
+  (intRange2 <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32)
 
 let pPatternChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
 let pPattern : Parser<_> = Pattern <!> pchar '/' *> manyChars pPatternChar <* pchar '/' 
@@ -134,7 +135,7 @@ let pAttributeOccurrence : Parser<_> =
   <|> (preturn Required)
 
 let pOccurrence : Parser<_> =
-  (between (pstring "{") (pstring "}") (xdefSpecified <!> pSpaces *> (pint32 |> opt) <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt) <* pSpaces)) |> attempt
+  (pBracket "{" "}" (xdefSpecified <!> (pint32 |> opt) <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt))) |> attempt
   <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")
