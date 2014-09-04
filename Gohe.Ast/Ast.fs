@@ -82,14 +82,16 @@ let unindent = updateUserState (fun x -> System.Math.Max(x - 1, 0))
 let pSpaces : Parser<_> = many (pchar ' ')
 let pBracket openString closeString p = between (pstring openString) (pstring closeString) (pSpaces *> p <* pSpaces)
 let pXdefName : Parser<_> = regex "\w+"
-let pFixedStringChar : Parser<_> = attempt ('"' <! pstring "\\\"") <|> noneOf "\""
-let pFixedString : Parser<_> = FixedString <!> pchar '"' *> manyChars pFixedStringChar <* pchar '"' 
+let pEscapedString openChar closeChar : Parser<_> = 
+  let pEscapedStringChar : Parser<_> =
+    (closeChar <! pstring ("\\" + (closeChar.ToString()))) |> attempt
+    <|> noneOf [closeChar]
+  pchar openChar *> manyChars pEscapedStringChar <* pchar closeChar 
+let pFixedString : Parser<_> = FixedString <!> pEscapedString '"' '"'
 let pFixedInt : Parser<_> = FixedInt <!> pint32
 let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
 let pPrimitiveType f typeName = f <! pstring typeName
-let pFormatChar : Parser<_> =  attempt ('>' <! pstring "\\>") <|> noneOf ">"
-let pFormatText = manyChars pFormatChar
-let pFormat = pBracket "<" ">" pFormatText
+let pFormat = pEscapedString '<' '>'
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
 let pRestrictedString = 
   pBracket "(" ")" <|
@@ -103,8 +105,7 @@ let pIntRange2 : Parser<_> =
   pBracket "[" "]" <|
   (intRange2 <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> pint32)
 
-let pPatternChar : Parser<_> = attempt ('/' <! pstring "\\/") <|> noneOf "/"
-let pPattern : Parser<_> = Pattern <!> pchar '/' *> manyChars pPatternChar <* pchar '/' 
+let pPattern : Parser<_> = Pattern <!> pEscapedString '/' '/'
 
 let pXdefSimpleType =
   pRestrictedString
