@@ -47,15 +47,15 @@ Root -- RootElementComment
 let ``明示的に順序インジケータが指定されたXdefNodeをパースできる`` () =  
     let xdef = """
 Root
-  MustSeq* :: Sequence{0..10}
-  MustChoice* :: Choice{0..10}
-  MustAll* :: All{0..10}""".Trim()
+  MustSeq :: Sequence{0..10}
+  MustChoice :: Choice{0..10}
+  MustAll :: All{0..10}""".Trim()
 
     let expected = 
       celm "Root" required None <| seq required [
-          celm "MustSeq" many None <| seq (specific 0 10) [ ] 
-          celm "MustChoice" many None <| choice (specific 0 10) [ ] 
-          celm "MustAll" many None <| all (specific 0 10) [ ] 
+          celm "MustSeq" required None <| seq (specific 0 10) [ ] 
+          celm "MustChoice" required None <| choice (specific 0 10) [ ] 
+          celm "MustAll" required None <| all (specific 0 10) [ ] 
         ]
 
     parse Ast.pNode xdef
