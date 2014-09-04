@@ -44,15 +44,18 @@ Root -- RootElementComment
     |> should equal (Some <| expected)
 
 [<Test>]
-let ``明示的に順序インジケータが指定されたXdefNodeをパースできる`` () =  
+let ``順序インジケータが指定されたXdefNodeをパースできる`` () =  
     let xdef = """
 Root
+  MustSeqImplicitly
   MustSeq :: Sequence{0..10}
   MustChoice :: Choice{0..10}
   MustAll :: All{0..10}""".Trim()
 
     let expected = 
       celm "Root" required None <| seq required [
+          // 順序インジケータが明示的に指定されなかった場合、Sequenceと推論される。またそのときの出現回数はrequiredになる
+          celm "MustSeqImplicitly" required None <| seq required [ ]
           celm "MustSeq" required None <| seq (specific 0 10) [ ] 
           celm "MustChoice" required None <| choice (specific 0 10) [ ] 
           celm "MustAll" required None <| all (specific 0 10) [ ] 
