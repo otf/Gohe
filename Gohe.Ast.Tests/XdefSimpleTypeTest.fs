@@ -21,14 +21,18 @@ let ``FixedIntをパースできる`` (input, expected) =
 let ``FixedFloatをパースできる`` (input, expected) =  
     parse Ast.pFixedFloat input |> should equal (Some <| Ast.FixedFloat expected)
 
-[<Test>]
-let ``PrimitiveTypeをパースできる`` () =  
-    (parse Ast.pXdefSimpleType "Bool") |> should equal (Some <| Ast.Bool)
-    (parse Ast.pXdefSimpleType "String") |> should equal (Some <| Ast.String)
-    (parse Ast.pXdefSimpleType "Int") |> should equal (Some <| Ast.Int)
-    (parse Ast.pXdefSimpleType "Float") |> should equal (Some <| Ast.Float)
-    (parse Ast.pXdefSimpleType "Decimal") |> should equal (Some <| Ast.Decimal)
-    (parse Ast.pXdefSimpleType "Guid") |> should equal (Some <| Ast.Guid)
+let primitiveTypeTestCases : obj [][] = [|
+  [|"Bool"; Ast.Bool|]
+  [|"String"; Ast.String|]
+  [|"Int"; Ast.Int|]
+  [|"Float"; Ast.Float|]
+  [|"Decimal"; Ast.Decimal|]
+  [|"Guid"; Ast.Guid|]
+|]
+
+[<TestCaseSource("primitiveTypeTestCases")>]
+let ``PrimitiveTypeをパースできる`` input expected =  
+    (parse Ast.pXdefSimpleType input) |> should equal (Some <| expected)
 
 [<TestCase("DateTime", null)>]
 [<TestCase("DateTime<yyyy/MM/dd>", "yyyy/MM/dd")>]
