@@ -18,7 +18,6 @@ let primitiveTypeTestCases : obj [][] = [|
   [|Xdef.Int; "integer"|]
   [|Xdef.Float; "float"|]
   [|Xdef.Decimal; "decimal"|]
-//  [|Xdef.Guid, ""|]
 |]
 
 let fixedTypeTestCases : obj [][] = [|

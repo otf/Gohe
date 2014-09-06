@@ -27,7 +27,6 @@ let primitiveTypeTestCases : obj [][] = [|
   [|"Int"; Xdef.Int|]
   [|"Float"; Xdef.Float|]
   [|"Decimal"; Xdef.Decimal|]
-  [|"Guid"; Xdef.Guid|]
 |]
 
 [<TestCaseSource("primitiveTypeTestCases")>]

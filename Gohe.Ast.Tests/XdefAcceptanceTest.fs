@@ -9,13 +9,13 @@ open XdefUtility
 let ``XdefNodeをパースできる`` () =  
   let xdef = """
 Root
-  @Id : Guid
+  @Id : Int
   Children
     Child* : [0,10)""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [
-      attr "Id" required None Xdef.Guid
+      attr "Id" required None Xdef.Int
       celm "Children" required None <| seq required [
         elm "Child" many None (Xdef.intRange 0 10) 
       ] 
@@ -28,13 +28,13 @@ Root
 let ``コメントが指定されたXdefNodeをパースできる`` () =  
   let xdef = """
 Root -- Root Element Comment
-  @Id : Guid -- Attribute Comment
+  @Id : Int -- Attribute Comment
   Children -- Complex Element Comment
     Child* : [0,10) -- Simple Element Comment""".Trim()
 
   let expected = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
-      attr "Id" required (Some "Attribute Comment") Xdef.Guid
+      attr "Id" required (Some "Attribute Comment") Xdef.Int
       celm "Children" required (Some "Complex Element Comment") <| seq required [
         elm "Child" many (Some "Simple Element Comment") (Xdef.intRange 0 10) 
       ] 
