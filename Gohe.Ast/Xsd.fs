@@ -35,6 +35,12 @@ let private setOccurrence occurs (particle:XmlSchemaParticle) =
   let (minOccursString, maxOccursString) = fromOccurrence occurs
   particle.MinOccursString <- minOccursString
   particle.MaxOccursString <- maxOccursString
+
+let private setOccurrenceForAttr occurs (attr:XmlSchemaAttribute) =
+  match occurs with
+  | Required -> attr.Use <- XmlSchemaUse.Required
+  | Optional -> attr.Use <- XmlSchemaUse.Optional
+  | _ -> failwith "この出現回数は属性には使用できません"
   
 
 let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = nodes } = 
@@ -68,7 +74,18 @@ and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
 
   result
 
+and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType } : Attribute) =
+  let result = XmlSchemaAttribute()
+  result.Name <- name
+  setOccurrenceForAttr occurs result 
+  match fromSimpleType sType with
+  | QName qname -> 
+      result.SchemaTypeName <- qname
+  | FixedValue value ->
+      result.FixedValue <- value
+  result
+
 and fromNode node = 
   match node with
-  | Element element -> fromElement element 
-  | _ -> failwith ""
+  | Element element -> fromElement element :> XmlSchemaObject
+  | Attribute attr -> fromAttribute attr :> _

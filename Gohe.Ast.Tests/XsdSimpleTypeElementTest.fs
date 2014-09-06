@@ -27,15 +27,15 @@ let fixedTypeTestCases : obj [][] = [|
 let ``PrimitiveTypeの要素をXsd化できる`` inputType expected = 
   let input = elm "Root" required None inputType
   
-  Xsd.fromNode input |> name |> should equal "Root"
-  Xsd.fromNode input |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
+  Xsd.fromNode input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode input |> asElm |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
 
 [<TestCaseSource("fixedTypeTestCases")>]
 let ``PrimitiveType(Fixed)の要素をXsd化できる`` inputType expected = 
   let input = elm "Root" required None inputType
   
-  Xsd.fromNode input |> name |> should equal "Root"
-  Xsd.fromNode input |> fixedValue |> should equal expected
+  Xsd.fromNode input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode input |> asElm |> fixedValue |> should equal expected
 
 let occursTestFactors = [
   required, 1, Some 1
@@ -54,5 +54,5 @@ let occursTestCases : obj [][] = [|
 let ``PrimitiveTypeの要素(出現回数指定)をXsd化できる`` occursInput (minOccursExpected : int) (maxOccursExpected : int option) = 
   let input = elm "Root" occursInput None Xdef.String
   
-  Xsd.fromNode input |> minOccurs |> should equal minOccursExpected
-  Xsd.fromNode input |> maxOccurs |> should equal maxOccursExpected
+  Xsd.fromNode input |> asElm |> minOccurs |> should equal minOccursExpected
+  Xsd.fromNode input |> asElm |> maxOccurs |> should equal maxOccursExpected
