@@ -37,3 +37,8 @@ let minLengthString (x: XmlSchemaType) =
   let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
   let minFacet = facets.[0] :?> XmlSchemaMinLengthFacet
   minFacet.Value |> int
+let intRange (x: XmlSchemaType) = 
+  let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
+  let minFacet = facets.[0] :?> XmlSchemaMinInclusiveFacet
+  let maxFacet = facets.[1] :?> XmlSchemaMaxInclusiveFacet
+  (minFacet.Value |> int, maxFacet.Value |> int)

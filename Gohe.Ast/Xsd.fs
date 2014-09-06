@@ -58,6 +58,12 @@ let private fromSimpleType etype =
       let maxFacet = XmlSchemaMaxLengthFacet()
       maxFacet.Value <- max.ToString()
       SimpleTypeWithFacets <| fromFacets (qName "string") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
+  | IntRange(min, max) -> 
+      let minFacet = XmlSchemaMinInclusiveFacet()
+      minFacet.Value <- min.ToString()
+      let maxFacet = XmlSchemaMaxInclusiveFacet()
+      maxFacet.Value <- max.ToString()
+      SimpleTypeWithFacets <| fromFacets (qName "integer") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
   | _ -> failwith "unsupported type"
 
 let inline private setSimpleType sType (x:^a) =

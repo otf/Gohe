@@ -62,6 +62,12 @@ let ``PrimitiveType(VariableLengthString(minのみ指定))の要素をXsd化で�
   
   Xsd.fromNode input |> asElm |> typeOf |> minLengthString |> should equal (100)
 
+[<Test>]
+let ``PrimitiveType(IntRange)の要素をXsd化できる`` () = 
+  let input = elm "Root" required None (Xdef.IntRange(0, 100))
+  
+  Xsd.fromNode input |> asElm |> typeOf |> intRange |> should equal (0, 100)
+
 let occursTestFactors = [
   required, 1, Some 1
   optional, 0, Some 1
