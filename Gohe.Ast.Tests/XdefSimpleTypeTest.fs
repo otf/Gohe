@@ -10,6 +10,11 @@ open XdefUtility
 let ``FixedBoolをパースできる`` (input, expected) =  
   parse Xdef.pFixedBool input |> should equal (Some <| Xdef.FixedBool expected)
 
+[<TestCase("127y", 127y)>]
+[<TestCase("-128y", -128y)>]
+let ``FixedByteをパースできる`` (input, expected) =  
+  parse Xdef.pFixedByte input |> should equal (Some <| Xdef.FixedByte expected)
+
 [<TestCase("\"hello\"", "hello")>]
 [<TestCase("\"\"", "")>]
 [<TestCase("\"\\\"\"", "\"")>]

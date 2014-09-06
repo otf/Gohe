@@ -20,6 +20,7 @@ let primitiveTypeTestCases : obj [][] = [|
 
 let fixedTypeTestCases : obj [][] = [|
   [|Xdef.FixedBool(true); "true"|]
+  [|Xdef.FixedByte(100y); "100"|]
   [|Xdef.FixedString("hello"); "hello"|]
   [|Xdef.FixedInt(100); "100"|]
   [|Xdef.FixedFloat(100.001); "100.001"|]

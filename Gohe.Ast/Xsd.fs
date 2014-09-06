@@ -31,6 +31,7 @@ let private fromSimpleType etype =
   | Float -> QName <| qName "float"
   | Decimal -> QName <| qName "decimal"
   | FixedBool value -> FixedValue ((value.ToString()).ToLower())
+  | FixedByte value -> FixedValue (value.ToString())
   | FixedString value -> FixedValue value
   | FixedInt value -> FixedValue <| value.ToString()
   | FixedFloat value -> FixedValue <| value.ToString()

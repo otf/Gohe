@@ -4,7 +4,7 @@ open FParsec
 open FParsec.Applicative
 
 type SimpleType = 
-  | FixedBool of bool | FixedString of string | FixedInt of int | FixedFloat of float
+  | FixedBool of bool | FixedByte of sbyte | FixedString of string | FixedInt of int | FixedFloat of float
   | Bool | Byte | String | Int  | Float | Decimal
   | DateTime of format : string option | TimeSpan of format : string option
   | EnumeratedString of string list
@@ -98,6 +98,7 @@ let pStringLiteral openChar closeChar : Parser<_> =
     <|> noneOf [closeChar]
   pchar openChar *> manyChars pEscapedStringChar <* pchar closeChar 
 let pFixedBool : Parser<_> = FixedBool <!> ((true <! pstring "True") <|> (false <! pstring "False"))
+let pFixedByte : Parser<_> = FixedByte <!> (pint8 <* pchar 'y')
 let pFixedString : Parser<_> = FixedString <!> pStringLiteral '"' '"'
 let pFixedInt : Parser<_> = FixedInt <!> pint32
 let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
@@ -129,6 +130,7 @@ let pSimpleType =
   <|> pIntRange2
   <|> pPattern
   <|> pFixedBool
+  <|> pFixedByte |> attempt
   <|> pFixedString
   <|> pFixedInt
   <|> pFixedFloat
