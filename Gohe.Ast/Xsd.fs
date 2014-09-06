@@ -23,17 +23,6 @@ let private fromSimpleType etype =
   | FixedFloat value -> FixedValue <| value.ToString()
   | _ -> failwith "unsupported type"
 
-let private fromComplexType order = 
-  let cType particle =
-    let cType = XmlSchemaComplexType()
-    cType.Particle <- particle
-    cType
-
-  match order with
-  | Sequence -> cType (XmlSchemaSequence())
-  | Choice -> cType (XmlSchemaChoice())
-  | All -> cType (XmlSchemaAll())
-
 let private fromOccurrence occurs =
   match occurs with
   | Required -> "1", "1"
@@ -42,6 +31,20 @@ let private fromOccurrence occurs =
   | RequiredMany -> "1", "unbounded"
   | Specified(min, max) -> (match min with Some n -> n.ToString() | None -> "0"), (match max with Some n -> n.ToString() | None -> "unbounded")
 
+let private fromComplexType order occurs = 
+  let cType particle =
+    let cType = XmlSchemaComplexType()
+    cType.Particle <- particle
+    let (minOccursString, maxOccursString) = fromOccurrence occurs
+    particle.MinOccursString <- minOccursString
+    particle.MaxOccursString <- maxOccursString
+    cType
+
+  match order with
+  | Sequence -> cType (XmlSchemaSequence())
+  | Choice -> cType (XmlSchemaChoice())
+  | All -> cType (XmlSchemaAll())
+
 let fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
@@ -49,7 +52,6 @@ let fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
   result.MinOccursString <- minOccursString
   result.MaxOccursString <- maxOccursString
   
-
   match eType with
   | Simple sType ->
       match fromSimpleType sType with
@@ -57,8 +59,8 @@ let fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
           result.SchemaTypeName <- qname
       | FixedValue value ->
           result.FixedValue <- value
-  | Complex { Order = order } ->
-      result.SchemaType <- fromComplexType order
+  | Complex { Order = order; Occurrence = occurs } ->
+      result.SchemaType <- fromComplexType order occurs
 
   result
 
