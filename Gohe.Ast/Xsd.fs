@@ -33,6 +33,15 @@ let private fromSimpleType etype =
         enum.Value <- value
         restriction.Facets.Add(enum) |> ignore
       SimpleTypeWithFacets <| simpleTypeWithFacets
+  | FixedLengthString length -> 
+      let simpleTypeWithFacets = XmlSchemaSimpleType()
+      let restriction = XmlSchemaSimpleTypeRestriction()
+      simpleTypeWithFacets.Content <- restriction
+      restriction.BaseTypeName <- qName "string"
+      let lengthFacet = XmlSchemaLengthFacet()
+      lengthFacet.Value <- length.ToString()
+      restriction.Facets.Add(lengthFacet) |> ignore
+      SimpleTypeWithFacets <| simpleTypeWithFacets
   | _ -> failwith "unsupported type"
 
 let inline private setSimpleType sType (x:^a) =

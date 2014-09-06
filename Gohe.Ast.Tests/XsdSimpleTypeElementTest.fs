@@ -44,6 +44,12 @@ let ``PrimitiveType(EnumeratedString)の要素をXsd化できる`` () =
   
   Xsd.fromNode input |> asElm |> typeOf |> enumString  |> should equal ["A"; "B"]
 
+[<Test>]
+let ``PrimitiveType(FixedLengthString)の要素をXsd化できる`` () = 
+  let input = elm "Root" required None (Xdef.FixedLengthString 100)
+  
+  Xsd.fromNode input |> asElm |> typeOf |> fixedLengthString  |> should equal 100
+
 
 let occursTestFactors = [
   required, 1, Some 1

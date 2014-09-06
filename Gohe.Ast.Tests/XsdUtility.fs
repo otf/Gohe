@@ -24,3 +24,7 @@ let enumString (x: XmlSchemaType) =
     let facet = facet :?> XmlSchemaEnumerationFacet
     yield facet.Value
   ]
+let fixedLengthString (x: XmlSchemaType) = 
+  let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
+  let facet = facets.[0] :?> XmlSchemaLengthFacet
+  facet.Value |> int
