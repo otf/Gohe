@@ -9,7 +9,7 @@ type SimpleType =
   | DateTime of format : string option | TimeSpan of format : string option
   | EnumeratedString of string list
   | FixedLengthString of int
-  | VariableLengthString of min : int option * max : int option
+  | VariableLengthString of min : int * max : int option
   | IntRange of int * int
   | Pattern of string
 
@@ -28,7 +28,7 @@ type Occurrence =
   | Many
   | RequiredMany
   | Optional
-  | Specified of min : int option * max : int option
+  | Specified of min : int * max : int option
 
 let specific min max = Specified (min, max)
 
@@ -115,7 +115,7 @@ let pPattern : Parser<_> = Pattern <!> pStringLiteral '/' '/'
 let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "String" *> (pBracket "[" "]" pint32)
 let pVariableLengthString : Parser<_> = 
   pstring "String" *> 
-  pBracket "[" "]" (variableLengthString <!> (opt pint32) <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
+  pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
 
 let pSimpleType =
   pEnumeratedString
@@ -148,7 +148,7 @@ let pAttributeOccurrence : Parser<_> =
   <|> (preturn Required)
 
 let pOccurrence : Parser<_> =
-  (pBracket "{" "}" (specific <!> (pint32 |> opt) <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt))) |> attempt
+  (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt))) |> attempt
   <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")

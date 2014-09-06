@@ -37,7 +37,7 @@ let private fromOccurrence occurs =
   | Optional -> "0", "1"
   | Many -> "0", "unbounded"
   | RequiredMany -> "1", "unbounded"
-  | Specified(min, max) -> (match min with Some n -> n.ToString() | None -> "0"), (match max with Some n -> n.ToString() | None -> "unbounded")
+  | Specified(min, max) -> min.ToString(), (match max with Some n -> n.ToString() | None -> "unbounded")
 
 let private setOccurrence occurs (particle:XmlSchemaParticle) =
   let (minOccursString, maxOccursString) = fromOccurrence occurs

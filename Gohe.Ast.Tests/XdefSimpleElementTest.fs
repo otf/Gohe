@@ -16,7 +16,6 @@ let occursTestFactors = [
   "*", many
   "+", requiredMany
   "{0..100}", specific 0 100
-  "{..100}", max 100
   "{100..}", min 100
 ]
 
