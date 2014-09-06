@@ -207,3 +207,5 @@ do pNodeImpl :=
   (Attribute <!> pXdefAttribute) |> attempt
   <|> (Element <!> pSimpleElement) |> attempt
   <|> (Element <!> pComplexElement)
+
+let parse input = runParserOnString pNode 0 "" input
