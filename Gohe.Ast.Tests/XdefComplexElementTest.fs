@@ -16,9 +16,25 @@ let ``XdefElement(暗黙のSequence)をパースできる`` () =
     parse Ast.pNode "Root"
     |> should equal (Some expected)
 
+let orderTestFactors = [
+  "Sequence", seq
+  "Choice", choice
+  "All", all
+]
+
+let occursTestFactors = [
+  "", required
+  "?", optional
+  "*", many
+  "+", requiredMany
+  "{0..100}", specific 0 100
+  "{..100}", max 100
+  "{100..}", min 100
+]
+
 let orderAndOccursTestCases : obj [][] = [|
-  for (orderInput, orderExpected) in [("Sequence", seq); ("Choice", choice); ("All", all)] do
-  for (occursInput, occursExpected) in [("", required); ("?", optional); ("*", many); ("+", requiredMany); ("{0..100}", specific 0 100); ("{..100}", max 100); ("{100..}", min 100)] do
+  for (orderInput, orderExpected) in orderTestFactors do
+  for (occursInput, occursExpected) in occursTestFactors do
     yield [| orderInput; orderExpected; occursInput; occursExpected |]
 |]
 
