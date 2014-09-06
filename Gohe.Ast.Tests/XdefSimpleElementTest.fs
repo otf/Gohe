@@ -10,32 +10,13 @@ let ``XdefSimpleElementをパースできる`` () =
     parse Ast.pNode "Name : String" 
     |> should equal (Some <| elm "Name" required None Ast.String)
 
-[<Test>]
-let ``出現回数(Optional)付XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name? : String" 
-    |> should equal (Some <| elm "Name" optional None Ast.String)
+let occursTestCases : obj [][] = [|
+  for (occursInput, occursExpected) in [("", required); ("?", optional); ("*", many); ("+", requiredMany); ("{0..100}", specific 0 100); ("{..100}", max 100); ("{100..}", min 100)] do
+    yield [| occursInput; occursExpected |]
+|]
 
-[<Test>]
-let ``出現回数(Many)付XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name* : String" 
-    |> should equal (Some <| elm "Name" many None Ast.String)
-
-[<Test>]
-let ``出現回数(RequiredMany)付XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name+ : String" 
-    |> should equal (Some <| elm "Name" requiredMany None Ast.String)
-
-[<Test>]
-let ``出現回数(Specified)付XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name{1..10} : String" 
-    |> should equal (Some <| elm "Name" (specific 1 10) None Ast.String)
-
-[<Test>]
-let ``出現回数(Specified_開始がunbound)付XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name{..10} : String" 
-    |> should equal (Some <| elm "Name" (max 10) None Ast.String)
-
-[<Test>]
-let ``出現回数(Specified_終了がunbound)付XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name{1..} : String" 
-    |> should equal (Some <| elm "Name" (min 1) None Ast.String)
+[<TestCaseSource("occursTestCases")>]
+let ``出現回数が指定されたXdefSimpleElementをパースできる`` occursInput occursExpected =
+    let expected = elm "Root" occursExpected None Ast.String
+    parse Ast.pNode (sprintf "Root%s : String" occursInput)
+    |> should equal (Some expected)
