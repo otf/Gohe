@@ -58,16 +58,18 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="XdefUtility.fs" />
-    <Compile Include="XdefSimpleTypeTest.fs" />
-    <Compile Include="XdefAcceptanceTest.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
+    <Compile Include="XdefUtility.fs" />
+    <Compile Include="XdefSimpleTypeTest.fs" />
     <Compile Include="XdefSimpleAttributeTest.fs" />
     <Compile Include="XdefSimpleElementTest.fs" />
     <Compile Include="XdefComplexElementTest.fs" />
+    <Compile Include="XdefAcceptanceTest.fs" />
+    <Compile Include="XsdSimpleTypeElementTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">
