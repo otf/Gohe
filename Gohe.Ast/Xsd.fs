@@ -34,9 +34,20 @@ let private fromSimpleType etype =
   | FixedInt value -> FixedValue <| value.ToString()
   | FixedFloat value -> FixedValue <| value.ToString()
   | EnumeratedString values -> 
-      SimpleTypeWithFacets <| fromFacets (qName "string") (values |> List.map (fun v -> let r = XmlSchemaEnumerationFacet() in r.Value <- v; r))
+      let facets = [ 
+        for value in values do
+          let r = XmlSchemaEnumerationFacet()
+          r.Value <- value
+          yield r
+      ]
+      SimpleTypeWithFacets <| fromFacets (qName "string") facets
   | FixedLengthString length -> 
-      SimpleTypeWithFacets <| fromFacets (qName "string") [let r = XmlSchemaLengthFacet() in r.Value <- length.ToString(); yield r]
+      let facets =[
+        let r = XmlSchemaLengthFacet()
+        r.Value <- length.ToString()
+        yield r
+      ]
+      SimpleTypeWithFacets <| fromFacets (qName "string") facets
   | VariableLengthString(min, None) -> 
       let minFacet = XmlSchemaMinLengthFacet()
       minFacet.Value <- min.ToString()
