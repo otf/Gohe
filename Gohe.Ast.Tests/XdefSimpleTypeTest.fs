@@ -52,6 +52,10 @@ let ``TimeSpanをパースできる`` (input, expected) =
 let ``EnumeratedStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.EnumeratedString (expected |> Array.toList))
 
+[<TestCase("String[100]", 100)>]
+let ``FixedLengthStringをパースできる`` (input, expected) =  
+  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.FixedLengthString(expected))
+
 [<TestCase("[0,100)", 0, 99)>]
 [<TestCase("[0,100]", 0, 100)>]
 [<TestCase("[ 0 , 100 )", 0, 99)>]

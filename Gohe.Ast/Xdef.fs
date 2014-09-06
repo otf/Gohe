@@ -8,6 +8,7 @@ type SimpleType =
   | Bool | String | Int  | Float | Decimal | Guid 
   | DateTime of format : string option | TimeSpan of format : string option
   | EnumeratedString of string list
+  | FixedLengthString of int
   | IntRange of int * int
   | Pattern of string
 
@@ -107,6 +108,8 @@ let pIntRange2 : Parser<_> =
 
 let pPattern : Parser<_> = Pattern <!> pStringLiteral '/' '/'
 
+let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "String" *> (pBracket "[" "]" pint32)
+
 let pSimpleType =
   pEnumeratedString
   <|> pIntRange |> attempt
@@ -116,6 +119,7 @@ let pSimpleType =
   <|> pFixedInt
   <|> pFixedFloat
   <|> pPrimitiveType Bool "Bool"
+  <|> pFixedLengthString |> attempt
   <|> pPrimitiveType String "String"
   <|> pPrimitiveType Int "Int" 
   <|> pPrimitiveType Float "Float" 
