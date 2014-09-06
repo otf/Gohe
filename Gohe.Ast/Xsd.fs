@@ -23,6 +23,13 @@ let private fromSimpleType etype =
   | FixedFloat value -> FixedValue <| value.ToString()
   | _ -> failwith "unsupported type"
 
+let inline private setSimpleType sType (x:^a) =
+  match fromSimpleType sType with
+  | QName qname -> 
+      ((^a) : (member set_SchemaTypeName : XmlQualifiedName -> unit) (x, qname))
+  | FixedValue value ->
+      ((^a) : (member set_FixedValue : string -> unit) (x, value))
+
 let private fromOccurrence occurs =
   match occurs with
   | Required -> "1", "1"
@@ -64,11 +71,7 @@ and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
   
   match eType with
   | Simple sType ->
-      match fromSimpleType sType with
-      | QName qname -> 
-          result.SchemaTypeName <- qname
-      | FixedValue value ->
-          result.FixedValue <- value
+      setSimpleType sType result
   | Complex cType ->
       result.SchemaType <- fromComplexType cType
 
@@ -78,11 +81,7 @@ and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType } : Attribut
   let result = XmlSchemaAttribute()
   result.Name <- name
   setOccurrenceForAttr occurs result 
-  match fromSimpleType sType with
-  | QName qname -> 
-      result.SchemaTypeName <- qname
-  | FixedValue value ->
-      result.FixedValue <- value
+  setSimpleType sType result
   result
 
 and fromNode node = 
