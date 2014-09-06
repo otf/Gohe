@@ -38,6 +38,13 @@ let ``PrimitiveType(Fixed)の要素をXsd化できる`` inputType expected =
   Xsd.fromNode input |> asElm |> name |> should equal "Root"
   Xsd.fromNode input |> asElm |> fixedValue |> should equal expected
 
+[<Test>]
+let ``PrimitiveType(EnumeratedString)の要素をXsd化できる`` () = 
+  let input = elm "Root" required None (Xdef.EnumeratedString ["A"; "B"])
+  
+  Xsd.fromNode input |> asElm |> typeOf |> enumString  |> should equal ["A"; "B"]
+
+
 let occursTestFactors = [
   required, 1, Some 1
   optional, 0, Some 1

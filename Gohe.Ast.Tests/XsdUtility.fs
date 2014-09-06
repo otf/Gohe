@@ -17,3 +17,10 @@ let maxOccurs (x:XmlSchemaObject) =
 let inline useOfAttr (x:XmlSchemaAttribute) = x.Use
 let asElm (x : XmlSchemaObject) = x :?> XmlSchemaElement
 let asAttr (x : XmlSchemaObject) = x :?> XmlSchemaAttribute
+let enumString (x: XmlSchemaType) = 
+  let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
+  [
+    for facet in facets do
+    let facet = facet :?> XmlSchemaEnumerationFacet
+    yield facet.Value
+  ]

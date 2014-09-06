@@ -9,19 +9,30 @@ open Xdef
 type private ElementType = 
   | QName of XmlQualifiedName
   | FixedValue of string
+  | SimpleTypeWithFacets of XmlSchemaSimpleType
 
 let private fromSimpleType etype = 
-  let qName nm = QName <| XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
+  let qName nm =  XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
   match etype with
-  | Bool -> qName "boolean"
-  | String -> qName "string"
-  | Int -> qName "integer"
-  | Float -> qName "float"
-  | Decimal -> qName "decimal"
+  | Bool -> QName <| qName "boolean"
+  | String -> QName <| qName "string"
+  | Int -> QName <| qName "integer"
+  | Float -> QName <| qName "float"
+  | Decimal -> QName <| qName "decimal"
   | FixedBool value -> FixedValue ((value.ToString()).ToLower())
   | FixedString value -> FixedValue value
   | FixedInt value -> FixedValue <| value.ToString()
   | FixedFloat value -> FixedValue <| value.ToString()
+  | EnumeratedString values -> 
+      let simpleTypeWithFacets = XmlSchemaSimpleType()
+      let restriction = XmlSchemaSimpleTypeRestriction()
+      simpleTypeWithFacets.Content <- restriction
+      restriction.BaseTypeName <- qName "string"
+      for value in values do
+        let enum = XmlSchemaEnumerationFacet()
+        enum.Value <- value
+        restriction.Facets.Add(enum) |> ignore
+      SimpleTypeWithFacets <| simpleTypeWithFacets
   | _ -> failwith "unsupported type"
 
 let inline private setSimpleType sType (x:^a) =
@@ -30,6 +41,8 @@ let inline private setSimpleType sType (x:^a) =
       ((^a) : (member set_SchemaTypeName : XmlQualifiedName -> unit) (x, qname))
   | FixedValue value ->
       ((^a) : (member set_FixedValue : string -> unit) (x, value))
+  | SimpleTypeWithFacets typ ->
+      ((^a) : (member set_SchemaType : XmlSchemaSimpleType -> unit) (x, typ))
 
 let private fromOccurrence occurs =
   match occurs with
