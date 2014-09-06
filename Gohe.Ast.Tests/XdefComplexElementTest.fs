@@ -16,20 +16,16 @@ let ``XdefElement(暗黙のSequence)をパースできる`` () =
     parse Ast.pNode "Root"
     |> should equal (Some expected)
 
-let occurrenceTestCases : obj [][] = [|
-  [|""; required|]
-  [|"?"; optional|]
-  [|"*"; many|]
-  [|"+"; requiredMany|]
-  [|"{0..100}"; specific 0 100|]
-  [|"{..100}"; max 100|]
-  [|"{100..}"; min 100|]
+let complexTypeAndOccursTestCases : obj [][] = [|
+  for (complexTypeInput, complexTypeExpected) in [("Sequence", seq); ("Choice", choice); ("All", all)] do
+  for (occursInput, occursExpected) in [("", required); ("?", optional); ("*", many); ("+", requiredMany); ("{0..100}", specific 0 100); ("{..100}", max 100); ("{100..}", min 100)] do
+    yield [| complexTypeInput; complexTypeExpected; occursInput; occursExpected |]
 |]
 
-[<TestCaseSource("occurrenceTestCases")>]
-let ``出現回数が指定されたXdefElement(Sequence)をパースできる`` occurs expected =  
-    let expected = celm "Root" required None <| seq expected []
-    parse Ast.pNode ("Root :: Sequence" + occurs)
+[<TestCaseSource("complexTypeAndOccursTestCases")>]
+let ``複雑型と出現回数が指定されたXdefElementをパースできる`` complexTypeInput complexTypeExpected occursInput occursExpected =
+    let expected = celm "Root" required None <| complexTypeExpected (occursExpected: Ast.XdefOccurrence) ([] : Ast.XdefNode list)
+    parse Ast.pNode (sprintf "Root :: %s%s" complexTypeInput occursInput)
     |> should equal (Some expected)
 
 [<Test>]
@@ -46,12 +42,6 @@ let ``子要素持ちのXdefElement(Sequence)をパースできる`` () =
     |> should equal (Some <| expected)
 
 [<Test>]
-let ``XdefElement(Choice)をパースできる`` () =  
-    let expected = celm "Root" required None <| choice required []
-    parse Ast.pNode "Root :: Choice"
-    |> should equal (Some <| expected)
-
-[<Test>]
 let ``子要素持ちのXdefElement(Choice)をパースできる`` () =  
     let xdef = "AxorB :: Choice\n  A : String\n  B : String"
 
@@ -62,14 +52,6 @@ let ``子要素持ちのXdefElement(Choice)をパースできる`` () =
         ]
 
     parse Ast.pNode xdef
-    |> should equal (Some <| expected)
-
-[<Test>]
-let ``XdefElement(All)をパースできる`` () =  
-    let expected = 
-      celm "Root" required None <| all required []
-
-    parse Ast.pNode "Root :: All"
     |> should equal (Some <| expected)
 
 [<Test>]
