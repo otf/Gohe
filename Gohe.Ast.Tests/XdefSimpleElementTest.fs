@@ -7,8 +7,8 @@ open XdefUtility
 
 [<Test>]
 let ``XdefSimpleElementをパースできる`` () =  
-    parse Xdef.pNode "Name : String" 
-    |> should equal (Some <| elm "Name" required None Xdef.String)
+  parse Xdef.pNode "Name : String" 
+  |> should equal (Some <| elm "Name" required None Xdef.String)
 
 let occursTestFactors = [
   "", required
@@ -27,6 +27,6 @@ let occursTestCases : obj [][] = [|
 
 [<TestCaseSource("occursTestCases")>]
 let ``出現回数が指定されたXdefSimpleElementをパースできる`` occursInput occursExpected =
-    let expected = elm "Root" occursExpected None Xdef.String
-    parse Xdef.pNode (sprintf "Root%s : String" occursInput)
-    |> should equal (Some expected)
+  let expected = elm "Root" occursExpected None Xdef.String
+  parse Xdef.pNode (sprintf "Root%s : String" occursInput)
+  |> should equal (Some expected)

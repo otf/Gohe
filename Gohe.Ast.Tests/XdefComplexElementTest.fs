@@ -7,14 +7,14 @@ open XdefUtility
 
 [<Test>]
 let ``XdefOrder(Sequence)の指定をパースできる`` () =  
-    parse Xdef.pOrder "Sequence"
-    |> should equal (Some Xdef.Order.Sequence)
+  parse Xdef.pOrder "Sequence"
+  |> should equal (Some Xdef.Order.Sequence)
 
 [<Test>]
 let ``XdefElement(暗黙のSequence)をパースできる`` () =  
-    let expected = celm "Root" required None <| seq required []
-    parse Xdef.pNode "Root"
-    |> should equal (Some expected)
+  let expected = celm "Root" required None <| seq required []
+  parse Xdef.pNode "Root"
+  |> should equal (Some expected)
 
 let orderTestFactors = [
   "Sequence", seq
@@ -49,6 +49,6 @@ let complexTypeTestCases : obj [][] = [|
 
 [<TestCaseSource("complexTypeTestCases")>]
 let ``複雑型のXdefElementをパースできる`` complexTypeInput complexTypeExpected occursInput occursExpected childrenInput childrenExpected =
-    let expected = celm "Root" required None <| complexTypeExpected (occursExpected: Xdef.Occurrence) childrenExpected
-    parse Xdef.pNode (sprintf "Root :: %s%s%s" complexTypeInput occursInput childrenInput)
-    |> should equal (Some expected)
+  let expected = celm "Root" required None <| complexTypeExpected (occursExpected: Xdef.Occurrence) childrenExpected
+  parse Xdef.pNode (sprintf "Root :: %s%s%s" complexTypeInput occursInput childrenInput)
+  |> should equal (Some expected)

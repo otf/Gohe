@@ -174,6 +174,6 @@ let pComplexElement =
 do pNodesImpl := (many pNode <* unindent) |> attempt
 
 do pNodeImpl :=
-    (Attribute <!> pXdefAttribute) |> attempt
-    <|> (Element <!> pSimpleElement) |> attempt
-    <|> (Element <!> pComplexElement)
+  (Attribute <!> pXdefAttribute) |> attempt
+  <|> (Element <!> pSimpleElement) |> attempt
+  <|> (Element <!> pComplexElement)
