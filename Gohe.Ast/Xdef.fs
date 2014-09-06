@@ -9,6 +9,7 @@ type SimpleType =
   | DateTime of format : string option | TimeSpan of format : string option
   | EnumeratedString of string list
   | FixedLengthString of int
+  | VariableLengthString of min : int option * max : int option
   | IntRange of int * int
   | Pattern of string
 
@@ -17,6 +18,8 @@ let intRange b e = IntRange(b, e - 1)
 
 // [b, e]
 let intRange2 b e = IntRange(b, e)
+
+let variableLengthString min max = VariableLengthString(min, max)
 
 /// 出現回数を表す型です。
 /// 明示的に指定されなかった場合、Requiredと推論されます。
@@ -109,6 +112,9 @@ let pIntRange2 : Parser<_> =
 let pPattern : Parser<_> = Pattern <!> pStringLiteral '/' '/'
 
 let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "String" *> (pBracket "[" "]" pint32)
+let pVariableLengthString : Parser<_> = 
+  pstring "String" *> 
+  pBracket "[" "]" (variableLengthString <!> (opt pint32) <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
 
 let pSimpleType =
   pEnumeratedString
@@ -119,6 +125,7 @@ let pSimpleType =
   <|> pFixedInt
   <|> pFixedFloat
   <|> pPrimitiveType Bool "Bool"
+  <|> pVariableLengthString |> attempt
   <|> pFixedLengthString |> attempt
   <|> pPrimitiveType String "String"
   <|> pPrimitiveType Int "Int" 

@@ -56,6 +56,18 @@ let ``EnumeratedStringをパースできる`` (input, expected) =
 let ``FixedLengthStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.FixedLengthString(expected))
 
+[<TestCase("String[0, 100]", 0, 100)>]
+let ``VariableLengthStringをパースできる`` (input, minExpected, maxExpected) =  
+  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(Some minExpected, Some maxExpected))
+
+[<TestCase("String[, 100]", 100)>]
+let ``VariableLengthString(maxのみ指定)をパースできる`` (input, maxExpected) =  
+  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(None, Some maxExpected))
+
+[<TestCase("String[100, ]", 100)>]
+let ``VariableLengthString(minのみ指定)をパースできる`` (input, minExpected) =  
+  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(Some minExpected, None))
+
 [<TestCase("[0,100)", 0, 99)>]
 [<TestCase("[0,100]", 0, 100)>]
 [<TestCase("[ 0 , 100 )", 0, 99)>]
