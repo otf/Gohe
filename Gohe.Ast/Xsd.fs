@@ -42,6 +42,10 @@ let fromElement  ({ Name = name; Type = eType } : Element) =
       let c = XmlSchemaComplexType()
       c.Particle <- XmlSchemaChoice()
       result.SchemaType <- c
+  | Complex { Order = All } ->
+      let c = XmlSchemaComplexType()
+      c.Particle <- XmlSchemaAll()
+      result.SchemaType <- c
 
   result
 
