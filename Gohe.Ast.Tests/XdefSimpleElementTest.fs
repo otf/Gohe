@@ -10,8 +10,18 @@ let ``XdefSimpleElementをパースできる`` () =
     parse Ast.pNode "Name : String" 
     |> should equal (Some <| elm "Name" required None Ast.String)
 
+let occursTestFactors = [
+  "", required
+  "?", optional
+  "*", many
+  "+", requiredMany
+  "{0..100}", specific 0 100
+  "{..100}", max 100
+  "{100..}", min 100
+]
+
 let occursTestCases : obj [][] = [|
-  for (occursInput, occursExpected) in [("", required); ("?", optional); ("*", many); ("+", requiredMany); ("{0..100}", specific 0 100); ("{..100}", max 100); ("{100..}", min 100)] do
+  for (occursInput, occursExpected) in occursTestFactors do
     yield [| occursInput; occursExpected |]
 |]
 
