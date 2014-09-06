@@ -5,6 +5,11 @@ open FsUnit
 
 open XdefUtility
 
+[<TestCase("True", true)>]
+[<TestCase("False", false)>]
+let ``FixedBoolをパースできる`` (input, expected) =  
+  parse Xdef.pFixedBool input |> should equal (Some <| Xdef.FixedBool expected)
+
 [<TestCase("\"hello\"", "hello")>]
 [<TestCase("\"\"", "")>]
 [<TestCase("\"\\\"\"", "\"")>]

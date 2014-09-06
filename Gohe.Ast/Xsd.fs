@@ -18,6 +18,7 @@ let private fromSimpleType etype =
   | Int -> qName "integer"
   | Float -> qName "float"
   | Decimal -> qName "decimal"
+  | FixedBool value -> FixedValue ((value.ToString()).ToLower())
   | FixedString value -> FixedValue value
   | FixedInt value -> FixedValue <| value.ToString()
   | FixedFloat value -> FixedValue <| value.ToString()
