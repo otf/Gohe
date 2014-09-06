@@ -37,6 +37,16 @@ let private fromSimpleType etype =
       SimpleTypeWithFacets <| fromFacets (qName "string") (values |> List.map (fun v -> let r = XmlSchemaEnumerationFacet() in r.Value <- v; r))
   | FixedLengthString length -> 
       SimpleTypeWithFacets <| fromFacets (qName "string") [let r = XmlSchemaLengthFacet() in r.Value <- length.ToString(); yield r]
+  | VariableLengthString(min, None) -> 
+      let minFacet = XmlSchemaMinLengthFacet()
+      minFacet.Value <- min.ToString()
+      SimpleTypeWithFacets <| fromFacets (qName "string") [minFacet]
+  | VariableLengthString(min, Some max) -> 
+      let minFacet = XmlSchemaMinLengthFacet()
+      minFacet.Value <- min.ToString()
+      let maxFacet = XmlSchemaMaxLengthFacet()
+      maxFacet.Value <- max.ToString()
+      SimpleTypeWithFacets <| fromFacets (qName "string") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
   | _ -> failwith "unsupported type"
 
 let inline private setSimpleType sType (x:^a) =

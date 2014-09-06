@@ -28,3 +28,12 @@ let fixedLengthString (x: XmlSchemaType) =
   let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
   let facet = facets.[0] :?> XmlSchemaLengthFacet
   facet.Value |> int
+let varLengthString (x: XmlSchemaType) = 
+  let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
+  let minFacet = facets.[0] :?> XmlSchemaMinLengthFacet
+  let maxFacet = facets.[1] :?> XmlSchemaMaxLengthFacet
+  (minFacet.Value |> int, maxFacet.Value |> int)
+let minLengthString (x: XmlSchemaType) = 
+  let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
+  let minFacet = facets.[0] :?> XmlSchemaMinLengthFacet
+  minFacet.Value |> int
