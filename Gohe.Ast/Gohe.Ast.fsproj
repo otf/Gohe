@@ -61,7 +61,7 @@
     <None Include="packages.config" />
     <None Include="app.config" />
     <Compile Include="Applicative.fs" />
-    <Compile Include="Ast.fs" />
+    <Compile Include="Xdef.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FParsec">

@@ -3,12 +3,12 @@
 open NUnit.Framework
 open FsUnit
 
-open AstUtility
+open XdefUtility
 
 [<Test>]
 let ``XdefSimpleElementをパースできる`` () =  
-    parse Ast.pNode "Name : String" 
-    |> should equal (Some <| elm "Name" required None Ast.String)
+    parse Xdef.pNode "Name : String" 
+    |> should equal (Some <| elm "Name" required None Xdef.String)
 
 let occursTestFactors = [
   "", required
@@ -27,6 +27,6 @@ let occursTestCases : obj [][] = [|
 
 [<TestCaseSource("occursTestCases")>]
 let ``出現回数が指定されたXdefSimpleElementをパースできる`` occursInput occursExpected =
-    let expected = elm "Root" occursExpected None Ast.String
-    parse Ast.pNode (sprintf "Root%s : String" occursInput)
+    let expected = elm "Root" occursExpected None Xdef.String
+    parse Xdef.pNode (sprintf "Root%s : String" occursInput)
     |> should equal (Some expected)

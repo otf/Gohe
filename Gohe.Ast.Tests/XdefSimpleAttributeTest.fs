@@ -3,14 +3,14 @@
 open NUnit.Framework
 open FsUnit
 
-open AstUtility
+open XdefUtility
 
 [<Test>]
 let ``XdefAttributeをパースできる`` () =  
-    parse Ast.pNode "@Name : String"
-    |> should equal (Some <| attr "Name" required None Ast.String)
+    parse Xdef.pNode "@Name : String"
+    |> should equal (Some <| attr "Name" required None Xdef.String)
 
 [<Test>]
 let ``出現回数(Optional)付XdefAttributeをパースできる`` () =  
-    parse Ast.pNode "@Name? : String" 
-    |> should equal (Some <| attr "Name" optional None Ast.String)
+    parse Xdef.pNode "@Name? : String" 
+    |> should equal (Some <| attr "Name" optional None Xdef.String)

@@ -3,7 +3,7 @@
 open NUnit.Framework
 open FsUnit
 
-open AstUtility
+open XdefUtility
 
 [<Test>]
 let ``XdefNodeをパースできる`` () =  
@@ -15,13 +15,13 @@ Root
 
     let expected = 
       celm "Root" required None <| seq required [
-          attr "Id" required None Ast.Guid
+          attr "Id" required None Xdef.Guid
           celm "Children" required None <| seq required [
-              elm "Child" many None (Ast.intRange 0 10) 
+              elm "Child" many None (Xdef.intRange 0 10) 
             ] 
         ]
 
-    parse Ast.pNode xdef
+    parse Xdef.pNode xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -34,13 +34,13 @@ Root -- Root Element Comment
 
     let expected = 
       celm "Root" required (Some "Root Element Comment") <| seq required [
-          attr "Id" required (Some "Attribute Comment") Ast.Guid
+          attr "Id" required (Some "Attribute Comment") Xdef.Guid
           celm "Children" required (Some "Complex Element Comment") <| seq required [
-              elm "Child" many (Some "Simple Element Comment") (Ast.intRange 0 10) 
+              elm "Child" many (Some "Simple Element Comment") (Xdef.intRange 0 10) 
             ] 
         ]
 
-    parse Ast.pNode xdef
+    parse Xdef.pNode xdef
     |> should equal (Some <| expected)
 
 [<Test>]
@@ -61,5 +61,5 @@ Root
           celm "MustAll" required None <| all (specific 0 10) [ ] 
         ]
 
-    parse Ast.pNode xdef
+    parse Xdef.pNode xdef
     |> should equal (Some <| expected)

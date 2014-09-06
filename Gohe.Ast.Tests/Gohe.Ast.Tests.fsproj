@@ -60,7 +60,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AstUtility.fs" />
+    <Compile Include="XdefUtility.fs" />
     <Compile Include="XdefSimpleTypeTest.fs" />
     <Compile Include="XdefAcceptanceTest.fs" />
     <None Include="packages.config" />

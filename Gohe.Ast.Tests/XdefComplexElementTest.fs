@@ -3,17 +3,17 @@
 open NUnit.Framework
 open FsUnit
 
-open AstUtility
+open XdefUtility
 
 [<Test>]
 let ``XdefOrder(Sequence)の指定をパースできる`` () =  
-    parse Ast.pOrder "Sequence"
-    |> should equal (Some Ast.XdefOrder.Sequence)
+    parse Xdef.pOrder "Sequence"
+    |> should equal (Some Xdef.Order.Sequence)
 
 [<Test>]
 let ``XdefElement(暗黙のSequence)をパースできる`` () =  
     let expected = celm "Root" required None <| seq required []
-    parse Ast.pNode "Root"
+    parse Xdef.pNode "Root"
     |> should equal (Some expected)
 
 let orderTestFactors = [
@@ -34,10 +34,10 @@ let occursTestFactors = [
 
 let childrenTestFactors = [
   "", []
-  "\n  Child : String", [elm "Child" required None Ast.String]
-  "\n  @Child : String", [attr "Child" required None Ast.String]
-  "\n  @Child1 : String\n  Child2 : String", [attr "Child1" required None Ast.String; elm "Child2" required None Ast.String]
-  "\n  Child1 : String\n  Child2 : String", [elm "Child1" required None Ast.String; elm "Child2" required None Ast.String]
+  "\n  Child : String", [elm "Child" required None Xdef.String]
+  "\n  @Child : String", [attr "Child" required None Xdef.String]
+  "\n  @Child1 : String\n  Child2 : String", [attr "Child1" required None Xdef.String; elm "Child2" required None Xdef.String]
+  "\n  Child1 : String\n  Child2 : String", [elm "Child1" required None Xdef.String; elm "Child2" required None Xdef.String]
 ]
 
 let complexTypeTestCases : obj [][] = [|
@@ -49,6 +49,6 @@ let complexTypeTestCases : obj [][] = [|
 
 [<TestCaseSource("complexTypeTestCases")>]
 let ``複雑型のXdefElementをパースできる`` complexTypeInput complexTypeExpected occursInput occursExpected childrenInput childrenExpected =
-    let expected = celm "Root" required None <| complexTypeExpected (occursExpected: Ast.XdefOccurrence) childrenExpected
-    parse Ast.pNode (sprintf "Root :: %s%s%s" complexTypeInput occursInput childrenInput)
+    let expected = celm "Root" required None <| complexTypeExpected (occursExpected: Xdef.Occurrence) childrenExpected
+    parse Xdef.pNode (sprintf "Root :: %s%s%s" complexTypeInput occursInput childrenInput)
     |> should equal (Some expected)
