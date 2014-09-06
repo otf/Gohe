@@ -23,11 +23,16 @@ let private fromSimpleType etype =
   | FixedFloat value -> FixedValue <| value.ToString()
   | _ -> failwith "unsupported type"
 
-let private fromOrder order = 
+let private fromComplexType order = 
+  let cType particle =
+    let cType = XmlSchemaComplexType()
+    cType.Particle <- particle
+    cType
+
   match order with
-  | Sequence -> XmlSchemaSequence() :> XmlSchemaParticle
-  | Choice -> XmlSchemaChoice() :> XmlSchemaParticle
-  | All -> XmlSchemaAll() :> XmlSchemaParticle
+  | Sequence -> cType (XmlSchemaSequence())
+  | Choice -> cType (XmlSchemaChoice())
+  | All -> cType (XmlSchemaAll())
 
 let fromElement  ({ Name = name; Type = eType } : Element) = 
   let result = XmlSchemaElement()
@@ -41,9 +46,7 @@ let fromElement  ({ Name = name; Type = eType } : Element) =
       | FixedValue value ->
           result.FixedValue <- value
   | Complex { Order = order } ->
-      let c = XmlSchemaComplexType()
-      c.Particle <- fromOrder order
-      result.SchemaType <- c
+      result.SchemaType <- fromComplexType order
 
   result
 
