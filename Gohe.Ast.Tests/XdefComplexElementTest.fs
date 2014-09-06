@@ -16,14 +16,14 @@ let ``XdefElement(暗黙のSequence)をパースできる`` () =
     parse Ast.pNode "Root"
     |> should equal (Some expected)
 
-let complexTypeAndOccursTestCases : obj [][] = [|
-  for (complexTypeInput, complexTypeExpected) in [("Sequence", seq); ("Choice", choice); ("All", all)] do
+let orderAndOccursTestCases : obj [][] = [|
+  for (orderInput, orderExpected) in [("Sequence", seq); ("Choice", choice); ("All", all)] do
   for (occursInput, occursExpected) in [("", required); ("?", optional); ("*", many); ("+", requiredMany); ("{0..100}", specific 0 100); ("{..100}", max 100); ("{100..}", min 100)] do
-    yield [| complexTypeInput; complexTypeExpected; occursInput; occursExpected |]
+    yield [| orderInput; orderExpected; occursInput; occursExpected |]
 |]
 
-[<TestCaseSource("complexTypeAndOccursTestCases")>]
-let ``複雑型と出現回数が指定されたXdefElementをパースできる`` complexTypeInput complexTypeExpected occursInput occursExpected =
+[<TestCaseSource("orderAndOccursTestCases")>]
+let ``順序インジケータと出現回数指定された複雑型XdefElementをパースできる`` complexTypeInput complexTypeExpected occursInput occursExpected =
     let expected = celm "Root" required None <| complexTypeExpected (occursExpected: Ast.XdefOccurrence) ([] : Ast.XdefNode list)
     parse Ast.pNode (sprintf "Root :: %s%s" complexTypeInput occursInput)
     |> should equal (Some expected)
