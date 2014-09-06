@@ -10,12 +10,14 @@ let ``XdefNodeをパースできる`` () =
   let xdef = """
 Root
   @Id : Int
+  @IsEnabled : True
   Children
     Child* : [0,10)""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [
       attr "Id" useRequired None Xdef.Int
+      attr "IsEnabled" useRequired None (Xdef.FixedBool true)
       celm "Children" required None <| seq required [
         elm "Child" many None (Xdef.intRange 0 10) 
       ] 
