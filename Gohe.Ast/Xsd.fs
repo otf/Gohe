@@ -37,7 +37,7 @@ let private setOccurrence occurs (particle:XmlSchemaParticle) =
   particle.MaxOccursString <- maxOccursString
   
 
-let rec private fromComplexType order occurs nodes = 
+let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = nodes } = 
   let cType (particle:XmlSchemaGroupBase) =
     let cType = XmlSchemaComplexType()
     cType.Particle <- particle
@@ -63,8 +63,8 @@ and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
           result.SchemaTypeName <- qname
       | FixedValue value ->
           result.FixedValue <- value
-  | Complex { Order = order; Occurrence = occurs; Nodes = nodes } ->
-      result.SchemaType <- fromComplexType order occurs nodes
+  | Complex cType ->
+      result.SchemaType <- fromComplexType cType
 
   result
 
