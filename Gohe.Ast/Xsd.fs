@@ -31,13 +31,15 @@ let private fromOccurrence occurs =
   | RequiredMany -> "1", "unbounded"
   | Specified(min, max) -> (match min with Some n -> n.ToString() | None -> "0"), (match max with Some n -> n.ToString() | None -> "unbounded")
 
-let private fromComplexType order occurs = 
-  let cType particle =
+let rec private fromComplexType order occurs nodes = 
+  let cType (particle:XmlSchemaGroupBase) =
     let cType = XmlSchemaComplexType()
     cType.Particle <- particle
     let (minOccursString, maxOccursString) = fromOccurrence occurs
     particle.MinOccursString <- minOccursString
     particle.MaxOccursString <- maxOccursString
+    for node in nodes |> List.map fromNode do
+      particle.Items.Add(node) |> ignore
     cType
 
   match order with
@@ -45,7 +47,7 @@ let private fromComplexType order occurs =
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
-let fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
+and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
   let (minOccursString, maxOccursString) = fromOccurrence occurs
@@ -59,12 +61,12 @@ let fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
           result.SchemaTypeName <- qname
       | FixedValue value ->
           result.FixedValue <- value
-  | Complex { Order = order; Occurrence = occurs } ->
-      result.SchemaType <- fromComplexType order occurs
+  | Complex { Order = order; Occurrence = occurs; Nodes = nodes } ->
+      result.SchemaType <- fromComplexType order occurs nodes
 
   result
 
-let fromNode node = 
+and fromNode node = 
   match node with
   | Element element -> fromElement element 
   | _ -> failwith ""

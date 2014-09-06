@@ -52,3 +52,22 @@ let ``ComplexTypeの要素(出現回数指定)をXsd化できる`` occursInput (
   
   Xsd.fromNode input |> typeOfAsComplex |> particle |> minOccurs |> should equal minOccursExpected
   Xsd.fromNode input |> typeOfAsComplex |> particle |> maxOccurs |> should equal maxOccursExpected
+
+let childrenTestFactors = [
+  [], 0
+  [elm "Child" required None Xdef.String], 1
+//  [attr "Child" required None Xdef.String]
+//  [attr "Child1" required None Xdef.String; elm "Child2" required None Xdef.String]
+  [elm "Child1" required None Xdef.String; elm "Child2" required None Xdef.String], 2
+]
+
+let complexTypeTestCases : obj [][] = [|
+  for (childrenInput, countOfChildrenExpected) in childrenTestFactors do
+    yield [| childrenInput; countOfChildrenExpected |]
+|]
+
+[<TestCaseSource("complexTypeTestCases")>]
+let ``ComplexTypeの要素(子要素あり)をXsd化できる`` childrenInput countOfChildrenExpected = 
+  let input = celm "Root" required None <| seq required childrenInput
+  
+  Xsd.fromNode input |> typeOfAsComplex |> particle |> items |> should haveCount countOfChildrenExpected
