@@ -23,15 +23,21 @@ let private fromSimpleType etype =
   | FixedFloat value -> FixedValue <| value.ToString()
   | _ -> failwith "unsupported type"
 
-let fromElement  ({ Name = name; Type = Simple sType } : Element) = 
+let fromElement  ({ Name = name; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
 
-  match fromSimpleType sType with
-  | QName qname -> 
-      result.SchemaTypeName <- qname
-  | FixedValue value ->
-      result.FixedValue <- value
+  match eType with
+  | Simple sType ->
+      match fromSimpleType sType with
+      | QName qname -> 
+          result.SchemaTypeName <- qname
+      | FixedValue value ->
+          result.FixedValue <- value
+  | Complex cType ->
+      let c = XmlSchemaComplexType()
+      c.Particle <- XmlSchemaSequence()
+      result.SchemaType <- c
 
   result
 

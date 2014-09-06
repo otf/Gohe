@@ -7,10 +7,7 @@ open System.Xml
 open System.Xml.Schema
 open XdefUtility
 open Xsd
-
-let inline name (x:^a) = ((^a) : (member Name : string) x)
-let inline typeNameOf (x:^a) = ((^a) : (member SchemaTypeName : XmlQualifiedName) x)
-let inline fixedValue (x:^a) = ((^a) : (member FixedValue : string) x)
+open XsdUtility
 
 let primitiveTypeTestCases : obj [][] = [|
   [|Xdef.Bool; "boolean"|]

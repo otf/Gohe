@@ -69,7 +69,9 @@
     <Compile Include="XdefSimpleElementTest.fs" />
     <Compile Include="XdefComplexElementTest.fs" />
     <Compile Include="XdefAcceptanceTest.fs" />
+    <Compile Include="XsdUtility.fs" />
     <Compile Include="XsdSimpleTypeElementTest.fs" />
+    <Compile Include="XsdComplexTypeElementTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">
