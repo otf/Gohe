@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{393DA6
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "xdef2xsd", "xdef2xsd\xdef2xsd.fsproj", "{BB57D87A-78BA-4FB1-BFB2-C29224A142FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,6 +30,10 @@ Global
 		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04A8A30D-3583-4C79-9831-CBB7F82ECA0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB57D87A-78BA-4FB1-BFB2-C29224A142FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB57D87A-78BA-4FB1-BFB2-C29224A142FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB57D87A-78BA-4FB1-BFB2-C29224A142FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB57D87A-78BA-4FB1-BFB2-C29224A142FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

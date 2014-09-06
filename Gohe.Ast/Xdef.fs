@@ -208,4 +208,8 @@ do pNodeImpl :=
   <|> (Element <!> pSimpleElement) |> attempt
   <|> (Element <!> pComplexElement)
 
-let parse input = runParserOnString pNode 0 "" input
+let pRoot =
+  (pSimpleElement) |> attempt
+  <|> (pComplexElement)
+
+let parse input = runParserOnString pRoot 0 "" input

@@ -123,6 +123,30 @@ let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = no
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
+and fromRootElement  ({ Name = name; Type = eType } : Element) = 
+  let result = XmlSchemaElement()
+  result.Name <- name
+  
+  match eType with
+  | Simple(sType, []) ->
+      setSimpleType sType result
+  | Simple(sType, attrs) ->
+      let typ = XmlSchemaComplexType()
+      result.SchemaType <- typ
+
+      let contentModel = XmlSchemaSimpleContent()
+      typ.ContentModel <- contentModel
+
+      let ext = XmlSchemaSimpleContentExtension()
+      contentModel.Content <- ext
+      for attr in attrs do
+        ext.Attributes.Add(fromAttribute attr) |> ignore
+
+      setSimpleType2 sType ext result 
+  | Complex cType ->
+      result.SchemaType <- fromComplexType cType
+
+  result
 and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
@@ -160,3 +184,6 @@ and fromNode node =
   match node with
   | Element element -> fromElement element :> XmlSchemaObject
   | Attribute attr -> fromAttribute attr :> _
+
+and fromRoot element = 
+  fromRootElement element
