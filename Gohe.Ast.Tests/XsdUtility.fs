@@ -10,6 +10,11 @@ let inline typeOfAsComplex (x:^a) = ((^a) : (member SchemaType : XmlSchemaType) 
 let inline fixedValue (x:^a) = ((^a) : (member FixedValue : string) x)
 let inline particle (x:^a) = ((^a) : (member Particle : XmlSchemaParticle) x) :?> XmlSchemaGroupBase
 let inline items (x:^a) = ((^a) : (member Items : XmlSchemaObjectCollection) x)
+let inline extAttrs (x:XmlSchemaType) = 
+  let contentModel = (x:?>XmlSchemaComplexType).ContentModel :?> XmlSchemaSimpleContent
+  let ext = contentModel.Content :?> XmlSchemaSimpleContentExtension
+  [ for attr in ext.Attributes -> attr :?> XmlSchemaAttribute ]  
+
 let minOccurs (x:XmlSchemaObject) = (x:?> XmlSchemaParticle).MinOccurs
 let maxOccurs (x:XmlSchemaObject) = 
   if (x :?> XmlSchemaParticle).MaxOccursString = "unbounded" then None

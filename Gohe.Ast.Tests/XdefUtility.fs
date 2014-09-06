@@ -9,7 +9,8 @@ let parse p input =
   | Failure (msg, err, s) -> None
 
 let attr nm occurs comm stype = Xdef.Attribute <| Xdef.attribute nm occurs stype comm
-let elm nm occurs comm stype = Xdef.Element <| Xdef.element nm occurs (Xdef.Simple <| stype) comm
+let elm nm occurs comm stype = Xdef.Element <| Xdef.element nm occurs (Xdef.Simple <| (stype, [])) comm
+let elmWithAttrs nm occurs comm stype attrs = Xdef.Element <| Xdef.element nm occurs (Xdef.Simple <| (stype, attrs |> List.map (function Xdef.Attribute attr -> attr))) comm
 let celm nm occurs comm ctype = Xdef.Element <| Xdef.element nm occurs (Xdef.Complex <| ctype) comm
 let seq occurs nodes = Xdef.complexType Xdef.Sequence occurs nodes
 let choice occurs nodes = Xdef.complexType Xdef.Choice occurs nodes

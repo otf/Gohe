@@ -11,6 +11,8 @@ let ``XdefNodeをパースできる`` () =
 Root
   @Id : Int
   @IsEnabled : True
+  ElmWithAttrs : String
+    @Attr : String
   Children
     Child* : [0,10)""".Trim()
 
@@ -18,6 +20,9 @@ Root
     celm "Root" required None <| seq required [
       attr "Id" useRequired None Xdef.Int
       attr "IsEnabled" useRequired None (Xdef.FixedBool true)
+      elmWithAttrs "ElmWithAttrs" required None (Xdef.String) <| [
+        attr "Attr" useRequired None Xdef.String
+      ]
       celm "Children" required None <| seq required [
         elm "Child" many None (Xdef.intRange 0 10) 
       ] 

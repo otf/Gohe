@@ -95,3 +95,11 @@ let ``PrimitiveTypeの要素(出現回数指定)をXsd化できる`` occursInput
   
   Xsd.fromNode input |> asElm |> minOccurs |> should equal minOccursExpected
   Xsd.fromNode input |> asElm |> maxOccurs |> should equal maxOccursExpected
+
+[<Test>]
+let ``PrimitiveTypeの要素(属性あり)をXsd化できる`` () = 
+  let input = elmWithAttrs "Root" required None Xdef.String <| [ 
+                attr "Attr" useRequired None Xdef.String
+              ]
+  
+  Xsd.fromNode input |> asElm |> typeOf |> extAttrs |> should haveLength 1

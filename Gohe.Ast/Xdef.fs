@@ -65,7 +65,7 @@ type ComplexType = {
 /// 要素型を表す型です。
 /// 明示的に指定されなかった場合、Complex(順序インジケータはSequence)と推論されます。
 and ElementType =
-  | Simple of SimpleType
+  | Simple of SimpleType * Attribute list
   | Complex of ComplexType
 
 and Element = {
@@ -82,6 +82,7 @@ and Node =
 
 let complexType order occurs nodes = { Order = order; Occurrence = occurs; Nodes = nodes }
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
+let simple sType attrs = Simple(sType, attrs)
 
 type IndentLevel = int
 type UserState = IndentLevel
@@ -177,11 +178,17 @@ let pComment : Parser<_> =
 let pXdefAttribute = 
   attribute <!> pIndent *> pchar '@' *> pName <*> pAttributeOccurrence <*> pSpaces *> pSimpleTyped <*> pSpaces *> pComment <* (newline |> opt)
 
+let (pAttrs, pAttrsImpl) = createParserForwardedToRef ()
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()
 let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
-let pSimpleElement = 
-  element <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> (Simple <!> pSimpleTyped) <*> pSpaces *> pComment <* (newline |> opt)
+// CommentはElementに対してつけたいため、AttributesだけあとでParseする
+let pSimple = 
+  (simple <!>  pchar ':' *> pSpaces *> pSimpleType) |> attempt
+
+let pSimpleElement =
+  (fun nm occurs fType comm attrs -> element nm occurs (fType attrs) comm)
+  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pSimple <*> pSpaces *> pComment <*> ((newline *> indent *> pAttrs) <|> (preturn []))
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pComplexTyped = 
@@ -191,6 +198,8 @@ let pComplexTyped =
 let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
   <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pComplexTyped <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
+
+do pAttrsImpl := (many pXdefAttribute <* unindent) |> attempt
 
 do pNodesImpl := (many pNode <* unindent) |> attempt
 

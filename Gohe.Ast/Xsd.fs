@@ -81,6 +81,16 @@ let inline private setSimpleType sType (x:^a) =
   | SimpleTypeWithFacets typ ->
       ((^a) : (member set_SchemaType : XmlSchemaSimpleType -> unit) (x, typ))
 
+let inline private setSimpleType2 sType (ext:^a) (elm:^b) =
+  match fromSimpleType sType with
+  | QName qname -> 
+      ((^a) : (member set_BaseTypeName : XmlQualifiedName -> unit) (ext, qname))
+  | FixedValue value ->
+      ((^b) : (member set_FixedValue : string -> unit) (elm, value))
+  | SimpleTypeWithFacets typ ->
+      failwith "not implemented"
+//      ((^c) : (member set_BaseXmlSchemaType : XmlSchemaType -> unit) (cType, typ))
+
 let private fromOccurrence occurs =
   match occurs with
   | Required -> "1", "1"
@@ -119,8 +129,21 @@ and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
   setOccurrence occurs result
   
   match eType with
-  | Simple sType ->
+  | Simple(sType, []) ->
       setSimpleType sType result
+  | Simple(sType, attrs) ->
+      let typ = XmlSchemaComplexType()
+      result.SchemaType <- typ
+
+      let contentModel = XmlSchemaSimpleContent()
+      typ.ContentModel <- contentModel
+
+      let ext = XmlSchemaSimpleContentExtension()
+      contentModel.Content <- ext
+      for attr in attrs do
+        ext.Attributes.Add(fromAttribute attr) |> ignore
+
+      setSimpleType2 sType ext result 
   | Complex cType ->
       result.SchemaType <- fromComplexType cType
 
