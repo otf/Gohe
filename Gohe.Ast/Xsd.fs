@@ -34,9 +34,21 @@ let private fromComplexType order =
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
-let fromElement  ({ Name = name; Type = eType } : Element) = 
+let private fromOccurrence occurs =
+  match occurs with
+  | Required -> "1", "1"
+  | Optional -> "0", "1"
+  | Many -> "0", "unbounded"
+  | RequiredMany -> "1", "unbounded"
+  | Specified(min, max) -> (match min with Some n -> n.ToString() | None -> "0"), (match max with Some n -> n.ToString() | None -> "unbounded")
+
+let fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
+  let (minOccursString, maxOccursString) = fromOccurrence occurs
+  result.MinOccursString <- minOccursString
+  result.MaxOccursString <- maxOccursString
+  
 
   match eType with
   | Simple sType ->
