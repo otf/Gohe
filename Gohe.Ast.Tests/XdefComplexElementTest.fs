@@ -16,34 +16,20 @@ let ``XdefElement(暗黙のSequence)をパースできる`` () =
     parse Ast.pNode "Root"
     |> should equal (Some expected)
 
-[<Test>]
-let ``XdefElement(明示的なSequence)をパースできる`` () =  
-    let expected = celm "Root" required None <| seq required []
-    parse Ast.pNode "Root :: Sequence"
-    |> should equal (Some expected)
+let occurrenceTestCases : obj [][] = [|
+  [|""; required|]
+  [|"?"; optional|]
+  [|"*"; many|]
+  [|"+"; requiredMany|]
+  [|"{0..100}"; specific 0 100|]
+  [|"{..100}"; max 100|]
+  [|"{100..}"; min 100|]
+|]
 
-[<Test>]
-let ``XdefElement(Sequence?)をパースできる`` () =  
-    let expected = celm "Root" required None <| seq optional []
-    parse Ast.pNode "Root :: Sequence?"
-    |> should equal (Some expected)
-
-[<Test>]
-let ``XdefElement(Sequence*)をパースできる`` () =  
-    let expected = celm "Root" required None <| seq many []
-    parse Ast.pNode "Root :: Sequence*"
-    |> should equal (Some expected)
-
-[<Test>]
-let ``XdefElement(Sequence+)をパースできる`` () =  
-    let expected = celm "Root" required None <| seq requiredMany []
-    parse Ast.pNode "Root :: Sequence+"
-    |> should equal (Some expected)
-
-[<Test>]
-let ``XdefElement(Sequence{0..1})をパースできる`` () =  
-    let expected = celm "Root" required None <| seq (specific 0 1) []
-    parse Ast.pNode "Root :: Sequence{0..1}"
+[<TestCaseSource("occurrenceTestCases")>]
+let ``出現回数が指定されたXdefElement(Sequence)をパースできる`` occurs expected =  
+    let expected = celm "Root" required None <| seq expected []
+    parse Ast.pNode ("Root :: Sequence" + occurs)
     |> should equal (Some expected)
 
 [<Test>]
