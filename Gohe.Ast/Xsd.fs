@@ -11,6 +11,16 @@ type private ElementType =
   | FixedValue of string
   | SimpleTypeWithFacets of XmlSchemaSimpleType
 
+let private fromFacets qName facets =
+  let simpleTypeWithFacets = XmlSchemaSimpleType()
+  let restriction = XmlSchemaSimpleTypeRestriction()
+  simpleTypeWithFacets.Content <- restriction
+  restriction.BaseTypeName <- qName
+  for facet in facets do
+    restriction.Facets.Add(facet) |> ignore
+  simpleTypeWithFacets
+
+
 let private fromSimpleType etype = 
   let qName nm =  XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
   match etype with
@@ -24,24 +34,9 @@ let private fromSimpleType etype =
   | FixedInt value -> FixedValue <| value.ToString()
   | FixedFloat value -> FixedValue <| value.ToString()
   | EnumeratedString values -> 
-      let simpleTypeWithFacets = XmlSchemaSimpleType()
-      let restriction = XmlSchemaSimpleTypeRestriction()
-      simpleTypeWithFacets.Content <- restriction
-      restriction.BaseTypeName <- qName "string"
-      for value in values do
-        let enum = XmlSchemaEnumerationFacet()
-        enum.Value <- value
-        restriction.Facets.Add(enum) |> ignore
-      SimpleTypeWithFacets <| simpleTypeWithFacets
+      SimpleTypeWithFacets <| fromFacets (qName "string") (values |> List.map (fun v -> let r = XmlSchemaEnumerationFacet() in r.Value <- v; r))
   | FixedLengthString length -> 
-      let simpleTypeWithFacets = XmlSchemaSimpleType()
-      let restriction = XmlSchemaSimpleTypeRestriction()
-      simpleTypeWithFacets.Content <- restriction
-      restriction.BaseTypeName <- qName "string"
-      let lengthFacet = XmlSchemaLengthFacet()
-      lengthFacet.Value <- length.ToString()
-      restriction.Facets.Add(lengthFacet) |> ignore
-      SimpleTypeWithFacets <| simpleTypeWithFacets
+      SimpleTypeWithFacets <| fromFacets (qName "string") [let r = XmlSchemaLengthFacet() in r.Value <- length.ToString(); yield r]
   | _ -> failwith "unsupported type"
 
 let inline private setSimpleType sType (x:^a) =
