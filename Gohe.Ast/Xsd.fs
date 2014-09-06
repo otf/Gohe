@@ -34,9 +34,13 @@ let fromElement  ({ Name = name; Type = eType } : Element) =
           result.SchemaTypeName <- qname
       | FixedValue value ->
           result.FixedValue <- value
-  | Complex cType ->
+  | Complex { Order = Sequence } ->
       let c = XmlSchemaComplexType()
       c.Particle <- XmlSchemaSequence()
+      result.SchemaType <- c
+  | Complex { Order = Choice } ->
+      let c = XmlSchemaComplexType()
+      c.Particle <- XmlSchemaChoice()
       result.SchemaType <- c
 
   result

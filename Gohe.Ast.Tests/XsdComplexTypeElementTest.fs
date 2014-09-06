@@ -16,3 +16,11 @@ let ``ComplexType(Sequence)の要素をXsd化できる`` () =
   Xsd.fromNode input |> name |> should equal "Root"
 
   Xsd.fromNode input |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaSequence>
+
+[<Test>]
+let ``ComplexType(Choice)の要素をXsd化できる`` () = 
+  let input = celm "Root" required None <| choice required []
+  
+  Xsd.fromNode input |> name |> should equal "Root"
+
+  Xsd.fromNode input |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaChoice>
