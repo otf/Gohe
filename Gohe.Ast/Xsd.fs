@@ -64,6 +64,10 @@ let private fromSimpleType etype =
       let maxFacet = XmlSchemaMaxInclusiveFacet()
       maxFacet.Value <- max.ToString()
       SimpleTypeWithFacets <| fromFacets (qName "integer") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
+  | Pattern(pattern) -> 
+      let facet = XmlSchemaPatternFacet()
+      facet.Value <- pattern
+      SimpleTypeWithFacets <| fromFacets (qName "string") [facet]
   | _ -> failwith "unsupported type"
 
 let inline private setSimpleType sType (x:^a) =

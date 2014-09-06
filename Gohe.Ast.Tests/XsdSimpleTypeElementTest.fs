@@ -68,6 +68,12 @@ let ``PrimitiveType(IntRange)の要素をXsd化できる`` () =
   
   Xsd.fromNode input |> asElm |> typeOf |> intRange |> should equal (0, 100)
 
+[<Test>]
+let ``PrimitiveType(Pattern)の要素をXsd化できる`` () = 
+  let input = elm "Root" required None (Xdef.Pattern(@"\w+"))
+  
+  Xsd.fromNode input |> asElm |> typeOf |> pattern |> should equal @"\w+"
+
 let occursTestFactors = [
   required, 1, Some 1
   optional, 0, Some 1

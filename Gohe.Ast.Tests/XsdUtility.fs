@@ -42,3 +42,7 @@ let intRange (x: XmlSchemaType) =
   let minFacet = facets.[0] :?> XmlSchemaMinInclusiveFacet
   let maxFacet = facets.[1] :?> XmlSchemaMaxInclusiveFacet
   (minFacet.Value |> int, maxFacet.Value |> int)
+let pattern (x: XmlSchemaType) = 
+  let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets
+  let facet = facets.[0] :?> XmlSchemaPatternFacet
+  facet.Value
