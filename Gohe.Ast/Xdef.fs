@@ -7,7 +7,7 @@ type SimpleType =
   | FixedString of string | FixedInt of int | FixedFloat of float
   | Bool | String | Int  | Float | Decimal | Guid 
   | DateTime of format : string option | TimeSpan of format : string option
-  | RestrictedString of string list
+  | EnumeratedString of string list
   | IntRange of int * int
   | Pattern of string
 
@@ -93,9 +93,9 @@ let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
 let pPrimitiveType f typeName = f <! pstring typeName
 let pFormat = pStringLiteral '<' '>'
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
-let pRestrictedString = 
+let pEnumeratedString = 
   pBracket "(" ")" <|
-  ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> RestrictedString) <!> (sepBy1 (pSpaces *> pFixedString <* pSpaces) (pchar '|')))
+  ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> EnumeratedString) <!> (sepBy1 (pSpaces *> pFixedString <* pSpaces) (pchar '|')))
 
 let pIntRange : Parser<_> = 
   pBracket "[" ")" <|
@@ -108,7 +108,7 @@ let pIntRange2 : Parser<_> =
 let pPattern : Parser<_> = Pattern <!> pStringLiteral '/' '/'
 
 let pSimpleType =
-  pRestrictedString
+  pEnumeratedString
   <|> pIntRange |> attempt
   <|> pIntRange2
   <|> pPattern

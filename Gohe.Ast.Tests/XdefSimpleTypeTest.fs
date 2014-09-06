@@ -49,8 +49,8 @@ let ``TimeSpanをパースできる`` (input, expected) =
 [<TestCase("(\"aaa\"|\"bbb\")", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" )", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" | \"ccc\" )", [| "aaa"; "bbb"; "ccc" |])>]
-let ``RestrictedStringをパースできる`` (input, expected) =  
-  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.RestrictedString (expected |> Array.toList))
+let ``EnumeratedStringをパースできる`` (input, expected) =  
+  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.EnumeratedString (expected |> Array.toList))
 
 [<TestCase("[0,100)", 0, 99)>]
 [<TestCase("[0,100]", 0, 100)>]
