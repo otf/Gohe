@@ -21,7 +21,13 @@ let intRange2 b e = IntRange(b, e)
 
 let variableLengthString min max = VariableLengthString(min, max)
 
-/// 出現回数を表す型です。
+/// 属性の出現回数を表す型です。
+/// 明示的に指定されなかった場合、Requiredと推論されます。
+type AttributeOccurrence =
+  | Required
+  | Optional
+
+/// 要素と順序インジケータの出現回数を表す型です。
 /// 明示的に指定されなかった場合、Requiredと推論されます。
 type Occurrence =
   | Required
@@ -36,7 +42,7 @@ let specific min max = Specified (min, max)
 /// OccurrenceはRequiredもしくはOptionalを指定することができます。
 type Attribute = {
   Name : string
-  Occurrence : Occurrence
+  Occurrence : AttributeOccurrence
   Type : SimpleType
   Comment : string option
 }
@@ -144,8 +150,8 @@ let pOrder =
   <|> (All <! pstring "All")
 
 let pAttributeOccurrence : Parser<_> =
-  (Optional <! pstring "?")
-  <|> (preturn Required)
+  (AttributeOccurrence.Optional <! pstring "?")
+  <|> (preturn AttributeOccurrence.Required)
 
 let pOccurrence : Parser<_> =
   (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt))) |> attempt

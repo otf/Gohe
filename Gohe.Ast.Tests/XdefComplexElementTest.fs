@@ -34,8 +34,8 @@ let occursTestFactors = [
 let childrenTestFactors = [
   "", []
   "\n  Child : String", [elm "Child" required None Xdef.String]
-  "\n  @Child : String", [attr "Child" required None Xdef.String]
-  "\n  @Child1 : String\n  Child2 : String", [attr "Child1" required None Xdef.String; elm "Child2" required None Xdef.String]
+  "\n  @Child : String", [attr "Child" useRequired None Xdef.String]
+  "\n  @Child1 : String\n  Child2 : String", [attr "Child1" useRequired None Xdef.String; elm "Child2" required None Xdef.String]
   "\n  Child1 : String\n  Child2 : String", [elm "Child1" required None Xdef.String; elm "Child2" required None Xdef.String]
 ]
 

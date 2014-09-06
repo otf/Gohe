@@ -15,7 +15,7 @@ Root
 
   let expected = 
     celm "Root" required None <| seq required [
-      attr "Id" required None Xdef.Int
+      attr "Id" useRequired None Xdef.Int
       celm "Children" required None <| seq required [
         elm "Child" many None (Xdef.intRange 0 10) 
       ] 
@@ -34,7 +34,7 @@ Root -- Root Element Comment
 
   let expected = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
-      attr "Id" required (Some "Attribute Comment") Xdef.Int
+      attr "Id" useRequired (Some "Attribute Comment") Xdef.Int
       celm "Children" required (Some "Complex Element Comment") <| seq required [
         elm "Child" many (Some "Simple Element Comment") (Xdef.intRange 0 10) 
       ] 

@@ -46,11 +46,9 @@ let private setOccurrence occurs (particle:XmlSchemaParticle) =
 
 let private setOccurrenceForAttr occurs (attr:XmlSchemaAttribute) =
   match occurs with
-  | Required -> attr.Use <- XmlSchemaUse.Required
-  | Optional -> attr.Use <- XmlSchemaUse.Optional
-  | _ -> failwith "この出現回数は属性には使用できません"
+  | AttributeOccurrence.Required -> attr.Use <- XmlSchemaUse.Required
+  | AttributeOccurrence.Optional -> attr.Use <- XmlSchemaUse.Optional
   
-
 let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = nodes } = 
   let cType (particle:XmlSchemaGroupBase) =
     let cType = XmlSchemaComplexType()

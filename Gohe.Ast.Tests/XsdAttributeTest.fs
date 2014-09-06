@@ -26,21 +26,21 @@ let fixedTypeTestCases : obj [][] = [|
 
 [<TestCaseSource("primitiveTypeTestCases")>]
 let ``PrimitiveTypeの属性をXsd化できる`` inputType expected = 
-  let input = attr "Attr" required None inputType
+  let input = attr "Attr" useRequired None inputType
   
   Xsd.fromNode input |> asAttr |> name |> should equal "Attr"
   Xsd.fromNode input |> asAttr |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
 
 [<TestCaseSource("fixedTypeTestCases")>]
 let ``PrimitiveType(Fixed)の属性をXsd化できる`` inputType expected = 
-  let input = attr "Attr" required None inputType
+  let input = attr "Attr" useRequired None inputType
   
   Xsd.fromNode input |> asAttr  |> name |> should equal "Attr"
   Xsd.fromNode input |> asAttr  |> fixedValue |> should equal expected
 
 let occursTestFactors = [
-  required, XmlSchemaUse.Required
-  optional, XmlSchemaUse.Optional
+  useRequired, XmlSchemaUse.Required
+  useOptional, XmlSchemaUse.Optional
 ]
 
 let occursTestCases : obj [][] = [|

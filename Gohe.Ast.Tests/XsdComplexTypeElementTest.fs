@@ -56,8 +56,8 @@ let ``ComplexTypeの要素(出現回数指定)をXsd化できる`` occursInput (
 let childrenTestFactors = [
   [], 0
   [elm "Child" required None Xdef.String], 1
-  [attr "Child" required None Xdef.String], 1
-  [attr "Child1" required None Xdef.String; elm "Child2" required None Xdef.String], 2
+  [attr "Child" useRequired None Xdef.String], 1
+  [attr "Child1" useRequired None Xdef.String; elm "Child2" required None Xdef.String], 2
   [elm "Child1" required None Xdef.String; elm "Child2" required None Xdef.String], 2
 ]
 
