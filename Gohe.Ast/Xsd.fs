@@ -25,6 +25,7 @@ let private fromSimpleType etype =
   let qName nm =  XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
   match etype with
   | Bool -> QName <| qName "boolean"
+  | Byte -> QName <| qName "byte"
   | String -> QName <| qName "string"
   | Int -> QName <| qName "integer"
   | Float -> QName <| qName "float"

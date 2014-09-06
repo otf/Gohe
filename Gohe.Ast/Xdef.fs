@@ -5,7 +5,7 @@ open FParsec.Applicative
 
 type SimpleType = 
   | FixedBool of bool | FixedString of string | FixedInt of int | FixedFloat of float
-  | Bool | String | Int  | Float | Decimal
+  | Bool | Byte | String | Int  | Float | Decimal
   | DateTime of format : string option | TimeSpan of format : string option
   | EnumeratedString of string list
   | FixedLengthString of int
@@ -136,6 +136,7 @@ let pSimpleType =
   <|> pVariableLengthString |> attempt
   <|> pFixedLengthString |> attempt
   <|> pPrimitiveType String "String"
+  <|> pPrimitiveType Byte "Byte" 
   <|> pPrimitiveType Int "Int" 
   <|> pPrimitiveType Float "Float" 
   <|> pPrimitiveType Decimal "Decimal" 

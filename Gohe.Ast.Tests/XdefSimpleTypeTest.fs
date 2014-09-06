@@ -28,6 +28,7 @@ let ``FixedFloatをパースできる`` (input, expected) =
 
 let primitiveTypeTestCases : obj [][] = [|
   [|"Bool"; Xdef.Bool|]
+  [|"Byte"; Xdef.Byte|]
   [|"String"; Xdef.String|]
   [|"Int"; Xdef.Int|]
   [|"Float"; Xdef.Float|]
