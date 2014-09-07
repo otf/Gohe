@@ -176,7 +176,11 @@ let pComment : Parser<_> =
   <|> (preturn None)
 
 let pAttribute = 
-  attribute <!> pIndent *> pchar '@' *> pName <*> pAttributeOccurrence <*> pSpaces *> pSimpleTyped <*> pSpaces *> pComment <* (newline |> opt)
+  attribute 
+  <!> pIndent *> pchar '@' *> pName 
+  <*> pAttributeOccurrence 
+  <*> pSpaces *> (pSimpleTyped <?> "属性には型指定が必要です。")
+  <*> pSpaces *> pComment <* (newline |> opt)
 
 let (pAttrs, pAttrsImpl) = createParserForwardedToRef ()
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()

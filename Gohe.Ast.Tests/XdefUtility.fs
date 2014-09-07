@@ -8,6 +8,13 @@ let parse p input =
   | Success (r, s, p) -> Some  r
   | Failure (msg, err, s) -> None
 
+let parseGetError p input = 
+  match runParserOnString p 0 "" input with
+  | Failure (msg, err, s) -> msg
+  | _ -> failwith "has no error"
+
+let substr expected = NUnit.Framework.Constraints.SubstringConstraint(expected)
+
 let attr nm occurs comm stype = Xdef.Attribute <| Xdef.attribute nm occurs stype comm
 let elm nm occurs comm stype = Xdef.Element <| Xdef.element nm occurs (Xdef.Simple <| (stype, [])) comm
 let elmWithAttrs nm occurs comm stype attrs = Xdef.Element <| Xdef.element nm occurs (Xdef.Simple <| (stype, attrs |> List.map (function Xdef.Attribute attr -> attr))) comm
