@@ -185,5 +185,8 @@ and fromNode node =
   | Element element -> fromElement element :> XmlSchemaObject
   | Attribute attr -> fromAttribute attr :> _
 
-and fromRoot element = 
-  fromRootElement element
+let fromRoot element = 
+  let xsd = XmlSchema()
+  let root = fromRootElement element
+  xsd.Items.Add(root) |> ignore
+  xsd
