@@ -103,7 +103,6 @@ let pFixedByte : Parser<_> = FixedByte <!> (pint8 <* pchar 'y')
 let pFixedString : Parser<_> = FixedString <!> pStringLiteral '"' '"'
 let pFixedInt : Parser<_> = FixedInt <!> pint32
 let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
-let pPrimitiveType f typeName = f <! pstring typeName
 let pFormat = pStringLiteral '<' '>'
 let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
 let pEnumeratedString = 
@@ -125,26 +124,33 @@ let pVariableLengthString : Parser<_> =
   pstring "String" *> 
   pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
 
+let pPrimitiveType : Parser<_> = parse {
+  let! nm = pName
+  match nm with
+  | "Bool" -> return! preturn Bool
+  | "String" -> return! preturn String
+  | "Byte" -> return! preturn Byte
+  | "Int" -> return! preturn Int
+  | "Float" -> return! preturn Float
+  | "Decimal" -> return! preturn Decimal
+  | _ -> return! fail ("is not primitive type") 
+}
+
 let pSimpleType =
   pEnumeratedString
   <|> pIntRange |> attempt
-  <|> pIntRange2
-  <|> pPattern
-  <|> pFixedBool
+  <|> pIntRange2 |> attempt
+  <|> pPattern |> attempt
+  <|> pFixedBool |> attempt
   <|> pFixedByte |> attempt
-  <|> pFixedString
-  <|> pFixedInt
-  <|> pFixedFloat
-  <|> pPrimitiveType Bool "Bool"
+  <|> pFixedString |> attempt
+  <|> pFixedInt |> attempt
+  <|> pFixedFloat |> attempt
   <|> pVariableLengthString |> attempt
   <|> pFixedLengthString |> attempt
-  <|> pPrimitiveType String "String"
-  <|> pPrimitiveType Byte "Byte" 
-  <|> pPrimitiveType Int "Int" 
-  <|> pPrimitiveType Float "Float" 
-  <|> pPrimitiveType Decimal "Decimal" 
-  <|> pPrimitiveTypeWithFormat DateTime "DateTime"
-  <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan"
+  <|> pPrimitiveTypeWithFormat DateTime "DateTime" |> attempt
+  <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan" |> attempt
+  <|> pPrimitiveType |> attempt
   <?> "指定された型が未定義です。"
 
 let pSimpleTyped = pchar ':' *> pSpaces *> pSimpleType

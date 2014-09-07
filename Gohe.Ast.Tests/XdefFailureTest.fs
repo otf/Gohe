@@ -14,3 +14,8 @@ let ``型指定のないXdefAttributeはエラーがでる`` () =
 let ``解決できない型指定のXdefAttributeはエラーがでる`` () =  
   parseGetError Xdef.pNode "@Name : UnknownType"
   |> should be (substr "指定された型が未定義")
+
+[<Test>]
+let ``解決できない型指定(前方一致)のXdefAttributeはエラーがでる`` () =  
+  parseGetError Xdef.pNode "@Name : Stringtic"
+  |> should be (substr "指定された型が未定義")
