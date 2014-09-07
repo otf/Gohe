@@ -220,9 +220,9 @@ let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
   <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pComplexTyped <*> pSpaces *> pComment <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
-do pAttrsImpl := many pAttribute <* unindent
+do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) |> attempt <|> (Some <!> pAttribute)) <* unindent)
 
-do pNodesImpl := many pNode <* unindent
+do pNodesImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) |> attempt <|> (Some <!> pNode)) <* unindent)
 
 do pNodeImpl :=
   (Attribute <!> pAttribute) |> attempt

@@ -49,6 +49,26 @@ Root -- Root Element Comment
 
   parse Xdef.pNode xdef
   |> should equal (Some <| expected)
+[<Test>]
+let ``空行のあるXdefNodeをパースできる`` () =  
+  let xdef = """
+Root -- Root Element Comment
+  @Id : Int -- Attribute Comment
+
+  Children -- Complex Element Comment
+
+    Child* : [0,10) -- Simple Element Comment""".Trim()
+
+  let expected = 
+    celm "Root" required (Some "Root Element Comment") <| seq required [
+      attr "Id" useRequired (Some "Attribute Comment") Xdef.Int
+      celm "Children" required (Some "Complex Element Comment") <| seq required [
+        elm "Child" many (Some "Simple Element Comment") (Xdef.intRange 0 10) 
+      ] 
+    ]
+
+  parse Xdef.pNode xdef
+  |> should equal (Some <| expected)
 
 [<Test>]
 let ``順序インジケータが指定されたXdefNodeをパースできる`` () =  
