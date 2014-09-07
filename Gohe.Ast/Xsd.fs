@@ -94,17 +94,23 @@ let inline private setBaseSimpleType sType (ext:^a) (elm:^b) =
 //      ((^c) : (member set_BaseXmlSchemaType : XmlSchemaType -> unit) (cType, typ))
 
 let private fromOccurrence occurs =
+  // occurs=1の場合は、属性自体つけたくないためNoneにする
   match occurs with
-  | Required -> "1", "1"
-  | Optional -> "0", "1"
-  | Many -> "0", "unbounded"
-  | RequiredMany -> "1", "unbounded"
-  | Specified(min, max) -> min.ToString(), (match max with Some n -> n.ToString() | None -> "unbounded")
+  | Required -> None, None
+  | Optional -> Some "0", None
+  | Many -> Some "0", Some "unbounded"
+  | RequiredMany -> None, Some "unbounded"
+  | Specified(1, Some 1) -> None, None
+  | Specified(1, Some max) -> None, Some (max.ToString())
+  | Specified(1, None) -> None, Some "unbounded"
+  | Specified(min, None) -> Some (min.ToString()), Some "unbounded"
+  | Specified(min, Some max) -> Some (min.ToString()), Some (max.ToString())
 
 let private setOccurrence occurs (particle:XmlSchemaParticle) =
   let (minOccursString, maxOccursString) = fromOccurrence occurs
-  if minOccursString <> "1" then particle.MinOccursString <- minOccursString
-  if maxOccursString <> "1" then particle.MaxOccursString <- maxOccursString
+
+  minOccursString |> Option.iter (fun n -> particle.MinOccursString <- n)
+  maxOccursString |> Option.iter (fun n -> particle.MaxOccursString <- n)
 
 let private setOccurrenceForAttr occurs (attr:XmlSchemaAttribute) =
   match occurs with
