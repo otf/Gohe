@@ -166,10 +166,13 @@ let pOccurrence : Parser<_> =
   <|> (Optional <! pstring "?")
   <|> (preturn Required)
 
+let pIndentCheck = (pSpaces *> fail "インデントが不正です。") <|> (preturn ()) 
+
 let pIndent = parse { 
   let! indentLevel = getUserState
   let indentLevel = (indentLevel) * 2
   do! skipManyMinMaxSatisfy indentLevel indentLevel ((=) ' ')
+  do! pIndentCheck
 }
 
 let pCommentChar : Parser<_> = noneOf ['\n'; '\r']
