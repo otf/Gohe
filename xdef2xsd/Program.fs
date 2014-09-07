@@ -4,16 +4,9 @@ open System.Xml.Schema
 open FParsec
 
 let outputXsd (schema:XmlSchema) =
-  let schemaSet = XmlSchemaSet()
-  schemaSet.Add(schema) |> ignore
-  schemaSet.Compile()
-
-  for (s:obj) in schemaSet.Schemas() do
-    let s = s :?> XmlSchema
-    
-    let nsmgr = XmlNamespaceManager(NameTable())
-    nsmgr.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema")
-    s.Write(Console.Out, nsmgr)
+  let nsmgr = XmlNamespaceManager(NameTable())
+  nsmgr.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema")
+  schema.Write(Console.Out, nsmgr)
 
 [<EntryPoint>]
 let main argv = 

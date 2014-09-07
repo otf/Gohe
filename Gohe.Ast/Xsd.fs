@@ -186,7 +186,10 @@ and fromNode node =
   | Attribute attr -> fromAttribute attr :> _
 
 let fromRoot element = 
-  let xsd = XmlSchema()
+  let schema = XmlSchema()
   let root = fromRootElement element
-  xsd.Items.Add(root) |> ignore
-  xsd
+  schema.Items.Add(root) |> ignore
+  let schemaSet = XmlSchemaSet()
+  schemaSet.Add(schema) |> ignore
+  schemaSet.Compile()
+  schema
