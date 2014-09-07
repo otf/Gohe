@@ -145,6 +145,7 @@ let pSimpleType =
   <|> pPrimitiveType Decimal "Decimal" 
   <|> pPrimitiveTypeWithFormat DateTime "DateTime"
   <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan"
+  <?> "指定された型が未定義です。"
 
 let pSimpleTyped = pchar ':' *> pSpaces *> pSimpleType
 
