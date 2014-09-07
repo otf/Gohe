@@ -82,7 +82,7 @@ let inline private setSimpleType sType (x:^a) =
   | SimpleTypeWithFacets typ ->
       ((^a) : (member set_SchemaType : XmlSchemaSimpleType -> unit) (x, typ))
 
-let inline private setSimpleType2 sType (ext:^a) (elm:^b) =
+let inline private setBaseSimpleType sType (ext:^a) (elm:^b) =
   match fromSimpleType sType with
   | QName qname -> 
       ((^a) : (member set_BaseTypeName : XmlQualifiedName -> unit) (ext, qname))
@@ -147,7 +147,7 @@ and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
       for attr in attrs do
         ext.Attributes.Add(fromAttribute attr) |> ignore
 
-      setSimpleType2 sType ext result 
+      setBaseSimpleType sType ext result 
   | Complex cType ->
       result.SchemaType <- fromComplexType cType
 
