@@ -127,12 +127,12 @@ let pVariableLengthString : Parser<_> =
 let pPrimitiveType : Parser<_> = parse {
   let! nm = pName
   match nm with
-  | "Bool" -> return! preturn Bool
-  | "String" -> return! preturn String
-  | "Byte" -> return! preturn Byte
-  | "Int" -> return! preturn Int
-  | "Float" -> return! preturn Float
-  | "Decimal" -> return! preturn Decimal
+  | "Bool" -> return Bool
+  | "String" -> return String
+  | "Byte" -> return Byte
+  | "Int" -> return Int
+  | "Float" -> return Float
+  | "Decimal" -> return Decimal
   | _ -> return! fail ("is not primitive type") 
 }
 
@@ -202,9 +202,9 @@ let pSimpleElement =
 let pOrder : Parser<_> = parse {
   let! nm = pName
   match nm with
-  | "Sequence" -> return! preturn Sequence
-  | "Choice" -> return! preturn Choice
-  | "All" -> return! preturn All
+  | "Sequence" -> return Sequence
+  | "Choice" -> return Choice
+  | "All" -> return All
   | _ -> return! failFatally ("指定された順序インジケータが未定義です。") 
 }
 
