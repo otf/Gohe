@@ -8,7 +8,7 @@ open Xdef
 
 type private ElementType = 
   | QName of XmlQualifiedName
-  | FixedValue of string
+  | FixedValue of XmlQualifiedName * string
   | SimpleTypeWithFacets of XmlSchemaSimpleType
 
 let private fromFacets qName facets =
@@ -30,11 +30,11 @@ let private fromSimpleType etype =
   | Int -> QName <| qName "integer"
   | Float -> QName <| qName "float"
   | Decimal -> QName <| qName "decimal"
-  | FixedBool value -> FixedValue ((value.ToString()).ToLower())
-  | FixedByte value -> FixedValue (value.ToString())
-  | FixedString value -> FixedValue value
-  | FixedInt value -> FixedValue <| value.ToString()
-  | FixedFloat value -> FixedValue <| value.ToString()
+  | FixedBool value -> FixedValue (qName "boolean", (value.ToString()).ToLower())
+  | FixedByte value -> FixedValue (qName "byte", value.ToString())
+  | FixedString value -> FixedValue (qName "string", value)
+  | FixedInt value -> FixedValue <| (qName "integer", value.ToString())
+  | FixedFloat value -> FixedValue <| (qName "float", value.ToString())
   | EnumeratedString values -> 
       let facets = [ 
         for value in values do
@@ -76,7 +76,8 @@ let inline private setSimpleType sType (x:^a) =
   match fromSimpleType sType with
   | QName qname -> 
       ((^a) : (member set_SchemaTypeName : XmlQualifiedName -> unit) (x, qname))
-  | FixedValue value ->
+  | FixedValue (qname, value) ->
+      ((^a) : (member set_SchemaTypeName : XmlQualifiedName -> unit) (x, qname))
       ((^a) : (member set_FixedValue : string -> unit) (x, value))
   | SimpleTypeWithFacets typ ->
       ((^a) : (member set_SchemaType : XmlSchemaSimpleType -> unit) (x, typ))
@@ -85,7 +86,8 @@ let inline private setSimpleType2 sType (ext:^a) (elm:^b) =
   match fromSimpleType sType with
   | QName qname -> 
       ((^a) : (member set_BaseTypeName : XmlQualifiedName -> unit) (ext, qname))
-  | FixedValue value ->
+  | FixedValue (qname, value) ->
+      ((^a) : (member set_BaseTypeName : XmlQualifiedName -> unit) (ext, qname))
       ((^b) : (member set_FixedValue : string -> unit) (elm, value))
   | SimpleTypeWithFacets typ ->
       failwith "not implemented"

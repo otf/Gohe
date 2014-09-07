@@ -20,6 +20,8 @@ let maxOccurs (x:XmlSchemaObject) =
   if (x :?> XmlSchemaParticle).MaxOccursString = "unbounded" then None
   else (x :?>XmlSchemaParticle).MaxOccurs |> int |> Some
 let inline useOfAttr (x:XmlSchemaAttribute) = x.Use
+let getElm (x : XmlSchema) = 
+  [ for (:? XmlSchemaElement as elm) in x.Elements.Values do yield elm ] |> List.head
 let asElm (x : XmlSchemaObject) = x :?> XmlSchemaElement
 let asAttr (x : XmlSchemaObject) = x :?> XmlSchemaAttribute
 let enumString (x: XmlSchemaType) = 

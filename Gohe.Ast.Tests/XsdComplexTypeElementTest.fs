@@ -71,3 +71,14 @@ let ``ComplexTypeの要素(子要素あり)をXsd化できる`` childrenInput co
   let input = celm "Root" required None <| seq required childrenInput
   
   Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> items |> should haveCount countOfChildrenExpected
+
+[<Test>]
+let ``PrimitiveTypeの要素(固定値の属性あり)をXsd化できる`` () = 
+  let (Xdef.Element input) =
+    celm "Root" required None <| seq required [ 
+      elmWithAttrs "Elm" required None (Xdef.FixedBool true) [
+        attr "Attr" useRequired None Xdef.String
+      ]
+    ]
+
+  Xsd.fromRoot input |> getElm |> typeOfAsComplex |> particle |> items |> should haveCount 1
