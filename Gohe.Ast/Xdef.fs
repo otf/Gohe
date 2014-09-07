@@ -193,11 +193,11 @@ let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 // CommentはElementに対してつけたいため、AttributesだけあとでParseする
 let pSimple = 
-  (simple <!>  pchar ':' *> pSpaces *> pSimpleType) |> attempt
+  simple <!>  pSimpleTyped
 
 let pSimpleElement =
   (fun nm occurs fType comm attrs -> element nm occurs (fType attrs) comm)
-  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pSimple <*> pSpaces *> pComment <*> ((newline *> indent *> pAttrs) <|> (preturn []))
+  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pSimple <*> pSpaces *> pComment <*> ((eof *> (preturn [])) <|> (newline *> indent *> pAttrs))
 
 let pOrder : Parser<_> = parse {
   let! nm = pName
@@ -205,7 +205,7 @@ let pOrder : Parser<_> = parse {
   | "Sequence" -> return! preturn Sequence
   | "Choice" -> return! preturn Choice
   | "All" -> return! preturn All
-  | _ -> return! fail ("指定された順序インジケータが未定義です。") 
+  | _ -> return! failFatally ("指定された順序インジケータが未定義です。") 
 }
 
 let pOrdered =
@@ -218,7 +218,7 @@ let pComplexTyped =
 
 let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
-  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pComplexTyped <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
+  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pComplexTyped <*> pSpaces *> pComment <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
 do pAttrsImpl := many pAttribute <* unindent
 
