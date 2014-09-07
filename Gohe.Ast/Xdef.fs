@@ -175,7 +175,7 @@ let pComment : Parser<_> =
   (pstring "--" *> pSpaces *> manyChars pCommentChar |> opt) |> attempt
   <|> (preturn None)
 
-let pXdefAttribute = 
+let pAttribute = 
   attribute <!> pIndent *> pchar '@' *> pName <*> pAttributeOccurrence <*> pSpaces *> pSimpleTyped <*> pSpaces *> pComment <* (newline |> opt)
 
 let (pAttrs, pAttrsImpl) = createParserForwardedToRef ()
@@ -199,12 +199,12 @@ let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
   <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pComplexTyped <*> pSpaces *> pComment <*> ((newline *> indent *> pNodes) <|> (preturn []))
 
-do pAttrsImpl := (many pXdefAttribute <* unindent) |> attempt
+do pAttrsImpl := (many pAttribute <* unindent) |> attempt
 
 do pNodesImpl := (many pNode <* unindent) |> attempt
 
 do pNodeImpl :=
-  (Attribute <!> pXdefAttribute) |> attempt
+  (Attribute <!> pAttribute) |> attempt
   <|> (Element <!> pSimpleElement) |> attempt
   <|> (Element <!> pComplexElement)
 
