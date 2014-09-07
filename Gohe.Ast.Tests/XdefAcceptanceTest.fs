@@ -75,9 +75,9 @@ let ``順序インジケータが指定されたXdefNodeをパースできる`` 
   let xdef = """
 Root
   MustSeqImplicitly
-  MustSeq :: Sequence{0..10}
-  MustChoice :: Choice{0..10}
-  MustAll :: All{0..10}""".Trim()
+  MustSeq :: Sequence{0,10}
+  MustChoice :: Choice{0,10}
+  MustAll :: All{0,10}""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [

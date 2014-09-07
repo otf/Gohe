@@ -15,8 +15,8 @@ let occursTestFactors = [
   "?", optional
   "*", many
   "+", requiredMany
-  "{0..100}", specific 0 100
-  "{100..}", min 100
+  "{0,100}", specific 0 100
+  "{100,}", min 100
 ]
 
 let occursTestCases : obj [][] = [|

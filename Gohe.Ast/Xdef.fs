@@ -160,7 +160,7 @@ let pAttributeOccurrence : Parser<_> =
   <|> (preturn AttributeOccurrence.Required)
 
 let pOccurrence : Parser<_> =
-  (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> (pint32 |> opt))) |> attempt
+  (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring "," <* pSpaces <*> (pint32 |> opt))) |> attempt
   <|> (Many <! pstring "*")
   <|> (RequiredMany <! pstring "+")
   <|> (Optional <! pstring "?")
