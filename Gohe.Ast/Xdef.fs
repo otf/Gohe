@@ -197,7 +197,11 @@ let pSimple =
 
 let pSimpleElement =
   (fun nm occurs fType comm attrs -> element nm occurs (fType attrs) comm)
-  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pSimple <*> pSpaces *> pComment <*> ((eof *> (preturn [])) <|> (newline *> indent *> pAttrs))
+  <!> pIndent *> pName 
+  <*> pOccurrence <* pSpaces 
+  <*> pSimple 
+  <*> pSpaces *> pComment 
+  <*> ((eof *> (preturn [])) <|> (newline *> indent *> pAttrs))
 
 let pOrder : Parser<_> = parse {
   let! nm = pName
@@ -214,11 +218,17 @@ let pOrdered =
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pComplexTyped = 
-  complexType <!> pOrdered <*> pOccurrence
+  complexType 
+  <!> pOrdered 
+  <*> pOccurrence
 
 let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
-  <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pComplexTyped <*> pSpaces *> pComment <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
+  <!> pIndent *> pName
+  <*> pOccurrence <* pSpaces 
+  <*> pComplexTyped 
+  <*> pSpaces *> pComment 
+  <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
 do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) |> attempt <|> (Some <!> pAttribute)) <* unindent)
 
