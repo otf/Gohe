@@ -155,11 +155,6 @@ let pSimpleType =
 
 let pSimpleTyped = pchar ':' *> pSpaces *> pSimpleType
 
-let pOrder =
-  (Sequence <! pstring "Sequence")
-  <|> (Choice <! pstring "Choice")
-  <|> (All <! pstring "All")
-
 let pAttributeOccurrence : Parser<_> =
   (AttributeOccurrence.Optional <! pstring "?")
   <|> (preturn AttributeOccurrence.Required)
@@ -201,10 +196,22 @@ let pSimpleElement =
   (fun nm occurs fType comm attrs -> element nm occurs (fType attrs) comm)
   <!> pIndent *> pName <*> pOccurrence <* pSpaces <*> pSimple <*> pSpaces *> pComment <*> ((newline *> indent *> pAttrs) <|> (preturn []))
 
+let pOrder : Parser<_> = parse {
+  let! nm = pName
+  match nm with
+  | "Sequence" -> return! preturn Sequence
+  | "Choice" -> return! preturn Choice
+  | "All" -> return! preturn All
+  | _ -> return! fail ("指定された順序インジケータが未定義です。") 
+}
+
+let pOrdered =
+  (pstring "::" *> pSpaces *> pOrder)
+  <|> (preturn Sequence)
+
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pComplexTyped = 
-  (complexType <!> pstring "::" *> pSpaces *> pOrder <*> pOccurrence) |> attempt
-  <|> (preturn <| complexType Sequence Required)
+  complexType <!> pOrdered <*> pOccurrence
 
 let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)

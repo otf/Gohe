@@ -19,3 +19,8 @@ let ``解決できない型指定のXdefAttributeはエラーがでる`` () =
 let ``解決できない型指定(前方一致)のXdefAttributeはエラーがでる`` () =  
   parseGetError Xdef.pNode "@Name : Stringtic"
   |> should be (substr "指定された型が未定義")
+
+[<Test>]
+let ``解決できない順序インジケータ指定のXdefElementはエラーがでる`` () =  
+  parseGetError Xdef.pNode "Elm :: Hoge"
+  |> should be (substr "指定された順序インジケータが未定義")
