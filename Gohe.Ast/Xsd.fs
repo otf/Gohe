@@ -103,8 +103,8 @@ let private fromOccurrence occurs =
 
 let private setOccurrence occurs (particle:XmlSchemaParticle) =
   let (minOccursString, maxOccursString) = fromOccurrence occurs
-  particle.MinOccursString <- minOccursString
-  particle.MaxOccursString <- maxOccursString
+  if minOccursString <> "1" then particle.MinOccursString <- minOccursString
+  if maxOccursString <> "1" then particle.MaxOccursString <- maxOccursString
 
 let private setOccurrenceForAttr occurs (attr:XmlSchemaAttribute) =
   match occurs with
@@ -127,30 +127,6 @@ let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = no
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
-and fromRootElement  ({ Name = name; Type = eType } : Element) = 
-  let result = XmlSchemaElement()
-  result.Name <- name
-  
-  match eType with
-  | Simple(sType, []) ->
-      setSimpleType sType result
-  | Simple(sType, attrs) ->
-      let typ = XmlSchemaComplexType()
-      result.SchemaType <- typ
-
-      let contentModel = XmlSchemaSimpleContent()
-      typ.ContentModel <- contentModel
-
-      let ext = XmlSchemaSimpleContentExtension()
-      contentModel.Content <- ext
-      for attr in attrs do
-        ext.Attributes.Add(fromAttribute attr) |> ignore
-
-      setSimpleType2 sType ext result 
-  | Complex cType ->
-      result.SchemaType <- fromComplexType cType
-
-  result
 and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
@@ -191,7 +167,7 @@ and fromNode node =
 
 let fromRoot element = 
   let schema = XmlSchema()
-  let root = fromRootElement element
+  let root = fromElement element
   schema.Items.Add(root) |> ignore
   let schemaSet = XmlSchemaSet()
   schemaSet.Add(schema) |> ignore
