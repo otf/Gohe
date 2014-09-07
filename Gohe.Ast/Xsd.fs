@@ -116,8 +116,10 @@ let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = no
     let cType = XmlSchemaComplexType()
     cType.Particle <- particle
     setOccurrence occurs particle
-    for node in nodes |> List.map fromNode do
-      particle.Items.Add(node) |> ignore
+    for node in nodes do
+      match node with
+      | Element _ -> particle.Items.Add(fromNode node) |> ignore
+      | Attribute _ -> cType.Attributes.Add(fromNode node) |> ignore
     cType
 
   match order with

@@ -56,8 +56,8 @@ let ``ComplexTypeの要素(出現回数指定)をXsd化できる`` occursInput (
 let childrenTestFactors = [
   [], 0
   [elm "Child" required None Xdef.String], 1
-  [attr "Child" useRequired None Xdef.String], 1
-  [attr "Child1" useRequired None Xdef.String; elm "Child2" required None Xdef.String], 2
+  [attr "Child" useRequired None Xdef.String], 0
+  [attr "Child1" useRequired None Xdef.String; elm "Child2" required None Xdef.String], 1
   [elm "Child1" required None Xdef.String; elm "Child2" required None Xdef.String], 2
 ]
 
@@ -68,9 +68,10 @@ let complexTypeTestCases : obj [][] = [|
 
 [<TestCaseSource("complexTypeTestCases")>]
 let ``ComplexTypeの要素(子要素あり)をXsd化できる`` childrenInput countOfChildrenExpected = 
-  let input = celm "Root" required None <| seq required childrenInput
+  let (Xdef.Element input) =
+    celm "Root" required None <| seq required childrenInput
   
-  Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> items |> should haveCount countOfChildrenExpected
+  Xsd.fromRoot input |> getElm |> typeOfAsComplex |> particle |> items |> should haveCount countOfChildrenExpected
 
 [<Test>]
 let ``PrimitiveTypeの要素(固定値の属性あり)をXsd化できる`` () = 
