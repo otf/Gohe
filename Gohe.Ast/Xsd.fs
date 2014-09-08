@@ -27,13 +27,13 @@ let private fromSimpleType etype =
   | Bool -> QName <| qName "boolean"
   | Byte -> QName <| qName "byte"
   | String -> QName <| qName "string"
-  | Int -> QName <| qName "integer"
+  | Int -> QName <| qName "int"
   | Float -> QName <| qName "float"
   | Decimal -> QName <| qName "decimal"
   | FixedBool value -> FixedValue (qName "boolean", (value.ToString()).ToLower())
   | FixedByte value -> FixedValue (qName "byte", value.ToString())
   | FixedString value -> FixedValue (qName "string", value)
-  | FixedInt value -> FixedValue <| (qName "integer", value.ToString())
+  | FixedInt value -> FixedValue <| (qName "int", value.ToString())
   | FixedFloat value -> FixedValue <| (qName "float", value.ToString())
   | EnumeratedString values -> 
       let facets = [ 
@@ -65,7 +65,7 @@ let private fromSimpleType etype =
       minFacet.Value <- min.ToString()
       let maxFacet = XmlSchemaMaxInclusiveFacet()
       maxFacet.Value <- max.ToString()
-      SimpleTypeWithFacets <| fromFacets (qName "integer") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
+      SimpleTypeWithFacets <| fromFacets (qName "int") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
   | Pattern(pattern) -> 
       let facet = XmlSchemaPatternFacet()
       facet.Value <- pattern

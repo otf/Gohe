@@ -13,7 +13,7 @@ let primitiveTypeTestCases : obj [][] = [|
   [|Xdef.Bool; "boolean"|]
   [|Xdef.Byte; "byte"|]
   [|Xdef.String; "string"|]
-  [|Xdef.Int; "integer"|]
+  [|Xdef.Int; "int"|]
   [|Xdef.Float; "float"|]
   [|Xdef.Decimal; "decimal"|]
 |]
