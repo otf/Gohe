@@ -91,7 +91,8 @@ let unindent = updateUserState (fun x -> x - 1)
 
 let pSpaces : Parser<_> = many (pchar ' ')
 let pBracket openString closeString p = between (pstring openString) (pstring closeString) (pSpaces *> p <* pSpaces)
-let pName : Parser<_> = regex "\w+"
+let symbol : Parser<_> = anyOf "_"
+let pToken : Parser<_> = many1Chars (letter <|> digit <|> symbol)
 let pStringLiteral openChar closeChar : Parser<_> = 
   let pEscapedStringChar : Parser<_> =
     (closeChar <! pstring ("\\" + (closeChar.ToString()))) |> attempt
@@ -122,7 +123,7 @@ let pVariableLengthString : Parser<_> =
   pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
 
 let pPrimitiveType : Parser<_> = parse {
-  let! nm = pName
+  let! nm = pToken
   match nm with
   | "Bool" -> return Bool
   | "String" -> return String
@@ -181,7 +182,7 @@ let pComment : Parser<_> =
 
 let pAttribute = 
   attribute 
-  <!> pIndent *> pchar '@' *> pName 
+  <!> pIndent *> pchar '@' *> pToken 
   <*> pAttributeOccurrence 
   <*> pSpaces *> (pSimpleTyped <?> "属性には型指定が必要です。")
   <*> pSpaces *> pComment <* (newline |> opt)
@@ -196,14 +197,14 @@ let pSimple =
 
 let pSimpleElement =
   (fun nm occurs fType comm attrs -> element nm occurs (fType attrs) comm)
-  <!> pIndent *> pName 
+  <!> pIndent *> pToken 
   <*> pOccurrence <* pSpaces 
   <*> pSimple 
   <*> pSpaces *> pComment 
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pAttrs))
 
 let pOrder : Parser<_> = parse {
-  let! nm = pName
+  let! nm = pToken
   match nm with
   | "Sequence" -> return Sequence
   | "Choice" -> return Choice
@@ -223,7 +224,7 @@ let pComplexTyped =
 
 let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
-  <!> pIndent *> pName
+  <!> pIndent *> pToken
   <*> pOccurrence <* pSpaces 
   <*> pComplexTyped 
   <*> pSpaces *> pComment 
