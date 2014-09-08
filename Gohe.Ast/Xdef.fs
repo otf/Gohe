@@ -176,7 +176,8 @@ let pIndent = parse {
 
 let pCommentChar : Parser<_> = noneOf ['\n'; '\r']
 let pComment : Parser<_> = 
-  (pstring "--" *> pSpaces *> manyChars pCommentChar |> opt) |> attempt
+  Some 
+  <!> pstring "--" *> pSpaces *> manyChars pCommentChar
   <|> (preturn None)
 
 let pAttribute = 
