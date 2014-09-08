@@ -30,6 +30,10 @@ let private fromSimpleType etype =
   | Int -> QName <| qName "int"
   | Float -> QName <| qName "float"
   | Decimal -> QName <| qName "decimal"
+  | Date -> QName <| qName "date"
+  | Time -> QName <| qName "time"
+  | DateTime -> QName <| qName "dateTime"
+  | Duration -> QName <| qName "duration"
   | FixedBool value -> FixedValue (qName "boolean", (value.ToString()).ToLower())
   | FixedByte value -> FixedValue (qName "byte", value.ToString())
   | FixedString value -> FixedValue (qName "string", value)

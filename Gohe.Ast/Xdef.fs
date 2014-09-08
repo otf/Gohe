@@ -5,7 +5,7 @@ open FParsec.Applicative
 
 type SimpleType = 
   | FixedBool of bool | FixedByte of sbyte | FixedString of string | FixedInt of int | FixedFloat of float
-  | Bool | Byte | String | Int  | Float | Decimal
+  | Bool | Byte | String | Int  | Float | Decimal | Date | Time | DateTime | Duration
   | EnumeratedString of string list
   | FixedLengthString of int
   | VariableLengthString of min : int * max : int option
@@ -130,6 +130,10 @@ let pPrimitiveType : Parser<_> = parse {
   | "Int" -> return Int
   | "Float" -> return Float
   | "Decimal" -> return Decimal
+  | "Date" -> return Date
+  | "Time" -> return Time
+  | "DateTime" -> return DateTime
+  | "Duration" -> return Duration
   | _ -> return! fail ("is not primitive type") 
 }
 

@@ -16,6 +16,10 @@ let primitiveTypeTestCases : obj [][] = [|
   [|Xdef.Int; "int"|]
   [|Xdef.Float; "float"|]
   [|Xdef.Decimal; "decimal"|]
+  [|Xdef.Date; "date"|]
+  [|Xdef.Time; "time"|]
+  [|Xdef.DateTime; "dateTime"|]
+  [|Xdef.Duration; "duration"|]
 |]
 
 let fixedTypeTestCases : obj [][] = [|

@@ -38,6 +38,10 @@ let primitiveTypeTestCases : obj [][] = [|
   [|"Int"; Xdef.Int|]
   [|"Float"; Xdef.Float|]
   [|"Decimal"; Xdef.Decimal|]
+  [|"Date"; Xdef.Date|]
+  [|"Time"; Xdef.Time|]
+  [|"DateTime"; Xdef.DateTime|]
+  [|"Duration"; Xdef.Duration|]
 |]
 
 [<TestCaseSource("primitiveTypeTestCases")>]
