@@ -174,10 +174,9 @@ let pIndent = parse {
   do! pIndentCheck
 }
 
-let pCommentChar : Parser<_> = noneOf ['\n'; '\r']
 let pComment : Parser<_> = 
   Some 
-  <!> pstring "--" *> pSpaces *> manyChars pCommentChar
+  <!> pstring "--" *> pSpaces *> manyChars (noneOf ['\n'; '\r'])
   <|> (preturn None)
 
 let pAttribute = 
