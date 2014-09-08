@@ -213,8 +213,8 @@ let pOrder : Parser<_> = parse {
 }
 
 let pOrdered =
-  (pstring "::" *> pSpaces *> pOrder)
-  <|> (preturn Sequence)
+  (Sequence <! notFollowedBy (pstring "::"))
+  <|> (pstring "::" *> pSpaces *> pOrder)
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pComplexTyped = 
