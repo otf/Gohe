@@ -185,7 +185,7 @@ let pAttribute =
   <!> pIndent *> pchar '@' *> pToken 
   <*> pAttributeOccurrence 
   <*> pSpaces *> (pSimpleTyped <?> "属性には型指定が必要です。")
-  <*> pSpaces *> pComment <* (newline |> opt)
+  <*> pSpaces *> pComment <* (newline |> optional)
 
 let (pAttrs, pAttrsImpl) = createParserForwardedToRef ()
 let (pNodes, pNodesImpl) = createParserForwardedToRef ()
