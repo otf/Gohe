@@ -6,7 +6,6 @@ open FParsec.Applicative
 type SimpleType = 
   | FixedBool of bool | FixedByte of sbyte | FixedString of string | FixedInt of int | FixedFloat of float
   | Bool | Byte | String | Int  | Float | Decimal
-  | DateTime of format : string option | TimeSpan of format : string option
   | EnumeratedString of string list
   | FixedLengthString of int
   | VariableLengthString of min : int * max : int option
@@ -103,8 +102,6 @@ let pFixedByte : Parser<_> = FixedByte <!> (pint8 <* pchar 'y')
 let pFixedString : Parser<_> = FixedString <!> pStringLiteral '"' '"'
 let pFixedInt : Parser<_> = FixedInt <!> pint32
 let pFixedFloat : Parser<_> = FixedFloat <!> pfloat
-let pFormat = pStringLiteral '<' '>'
-let pPrimitiveTypeWithFormat f typeName = f <!> pstring typeName *> (opt pFormat)
 let pEnumeratedString = 
   pBracket "(" ")" <|
   ((List.map (function FixedString v -> v | _ -> failwith "internal error") >> EnumeratedString) <!> (sepBy1 (pSpaces *> pFixedString <* pSpaces) (pchar '|')))
@@ -148,8 +145,6 @@ let pSimpleType =
   <|> pFixedFloat |> attempt
   <|> pVariableLengthString |> attempt
   <|> pFixedLengthString |> attempt
-  <|> pPrimitiveTypeWithFormat DateTime "DateTime" |> attempt
-  <|> pPrimitiveTypeWithFormat TimeSpan "TimeSpan" |> attempt
   <|> pPrimitiveType |> attempt
   <?> "指定された型が未定義です。"
 

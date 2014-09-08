@@ -44,18 +44,6 @@ let primitiveTypeTestCases : obj [][] = [|
 let ``PrimitiveTypeをパースできる`` input expected =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| expected)
 
-[<TestCase("DateTime", null)>]
-[<TestCase("DateTime<yyyy/MM/dd>", "yyyy/MM/dd")>]
-[<TestCase("DateTime<\>>", ">")>]
-let ``DateTimeをパースできる`` (input, expected) =  
-  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.DateTime (if expected <> null then Some expected else None))
-
-[<TestCase("TimeSpan", null)>]
-[<TestCase("TimeSpan<hh:mm:ss>", "hh:mm:ss")>]
-[<TestCase("TimeSpan<\>>", ">")>]
-let ``TimeSpanをパースできる`` (input, expected) =  
-  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.TimeSpan (if expected <> null then Some expected else None))
-
 [<TestCase("(\"aaa\"|\"bbb\")", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" )", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" | \"ccc\" )", [| "aaa"; "bbb"; "ccc" |])>]
