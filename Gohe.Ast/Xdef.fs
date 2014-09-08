@@ -79,6 +79,8 @@ and Node =
   | Attribute of Attribute
 // TODO:  | Module of string
 
+let (<||>) p1 p2 = attempt p1 <|> p2
+
 let complexType order occurs nodes = { Order = order; Occurrence = occurs; Nodes = nodes }
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 let simple sType attrs = Simple(sType, attrs)
@@ -140,18 +142,18 @@ let pPrimitiveType : Parser<_> = parse {
 
 let pSimpleType =
   pEnumeratedString
-  <|> pIntRange |> attempt
-  <|> pIntRange2 |> attempt
-  <|> pPattern |> attempt
-  <|> pFixedBool |> attempt
-  <|> pFixedByte |> attempt
-  <|> pFixedString |> attempt
-  <|> pFixedInt |> attempt
-  <|> pFixedFloat |> attempt
-  <|> pVariableLengthString |> attempt
-  <|> pFixedLengthString |> attempt
-  <|> pPrimitiveType |> attempt
-  <?> "指定された型が未定義です。"
+  <||> pIntRange
+  <||> pIntRange2
+  <||> pPattern 
+  <||> pFixedBool
+  <||> pFixedByte 
+  <||> pFixedString
+  <||> pFixedInt 
+  <||> pFixedFloat 
+  <||> pVariableLengthString 
+  <||> pFixedLengthString
+  <||> pPrimitiveType
+  <??> "指定された型が未定義です。"
 
 let pSimpleTyped = pchar ':' *> pSpaces *> pSimpleType
 
@@ -160,11 +162,11 @@ let pAttributeOccurrence : Parser<_> =
   <|> (preturn AttributeOccurrence.Required)
 
 let pOccurrence : Parser<_> =
-  (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring "," <* pSpaces <*> (pint32 |> opt))) |> attempt
-  <|> (Many <! pstring "*")
-  <|> (RequiredMany <! pstring "+")
-  <|> (Optional <! pstring "?")
-  <|> (preturn Required)
+  (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring "," <* pSpaces <*> (pint32 |> opt)))
+  <||> (Many <! pstring "*")
+  <||> (RequiredMany <! pstring "+")
+  <||> (Optional <! pstring "?")
+  <||> (preturn Required)
 
 let pIndentCheck = (pSpaces *> fail "インデントが不正です。") <|> (preturn ()) 
 
@@ -230,17 +232,15 @@ let pComplexElement =
   <*> pSpaces *> pComment 
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
-do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) |> attempt <|> (Some <!> pAttribute)) <* unindent)
+do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pAttribute)) <* unindent)
 
-do pNodesImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) |> attempt <|> (Some <!> pNode)) <* unindent)
+do pNodesImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pNode)) <* unindent)
 
 do pNodeImpl :=
-  (Attribute <!> pAttribute) |> attempt
-  <|> (Element <!> pSimpleElement) |> attempt
-  <|> (Element <!> pComplexElement)
+  (Attribute <!> pAttribute)
+  <||> (Element <!> pSimpleElement)
+  <||> (Element <!> pComplexElement)
 
-let pRoot =
-  (pSimpleElement) |> attempt
-  <|> (pComplexElement)
+let pRoot = pSimpleElement <||> pComplexElement
 
 let parse input = runParserOnString pRoot 0 "" input
