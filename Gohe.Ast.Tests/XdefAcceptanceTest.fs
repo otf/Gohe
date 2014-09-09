@@ -34,10 +34,10 @@ Root
 [<Test>]
 let ``コメントが指定されたXdefNodeをパースできる`` () =  
   let xdef = """
-Root -- Root Element Comment
-  @Id : Int -- Attribute Comment
-  Children -- Complex Element Comment
-    Child* : [0,10) -- Simple Element Comment""".Trim()
+Root # Root Element Comment
+  @Id : Int # Attribute Comment
+  Children # Complex Element Comment
+    Child* : [0,10) # Simple Element Comment""".Trim()
 
   let expected = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
@@ -52,12 +52,12 @@ Root -- Root Element Comment
 [<Test>]
 let ``空行のあるXdefNodeをパースできる`` () =  
   let xdef = """
-Root -- Root Element Comment
-  @Id : Int -- Attribute Comment
+Root # Root Element Comment
+  @Id : Int # Attribute Comment
 
-  Children -- Complex Element Comment
+  Children # Complex Element Comment
 
-    Child* : [0,10) -- Simple Element Comment""".Trim()
+    Child* : [0,10) # Simple Element Comment""".Trim()
 
   let expected = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
