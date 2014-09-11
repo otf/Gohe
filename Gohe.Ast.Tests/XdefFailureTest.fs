@@ -21,9 +21,9 @@ let ``解決できない型指定(前方一致)のXdefAttributeはエラーが�
   |> should be (substr "指定された型が未定義")
 
 [<Test>]
-let ``解決できない順序インジケータ指定のXdefElementはエラーがでる`` () =  
+let ``解決できないパーティクル指定のXdefElementはエラーがでる`` () =  
   parseGetError Xdef.pNode "Elm :: Hoge"
-  |> should be (substr "指定された順序インジケータが未定義")
+  |> should be (substr "指定されたパーティクルが未定義")
 
 [<Test>]
 let ``過度にインデントされた子要素のXdefElementはエラーがでる`` () =  

@@ -26,7 +26,7 @@ type AttributeOccurrence =
   | Required
   | Optional
 
-/// 要素と順序インジケータの出現回数を表す型です。
+/// 要素または、パーティクルの出現回数を表す型です。
 /// 明示的に指定されなかった場合、Requiredと推論されます。
 type Occurrence =
   | Required
@@ -48,21 +48,21 @@ type Attribute = {
 
 let attribute nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 
-/// 順序インジケータを表す型です。
+/// パーティクルを表す型です。
 /// 明示的に指定されなかった場合、Sequenceと推論されます。
-type Order =
+type Particle =
   | Sequence
   | Choice
   | All
 
 type ComplexType = {
-  Order : Order
+  Particle : Particle
   Occurrence : Occurrence
   Nodes : Node list
 }
 
 /// 要素型を表す型です。
-/// 明示的に指定されなかった場合、Complex(順序インジケータはSequence)と推論されます。
+/// 明示的に指定されなかった場合、Complex(パーティクルはSequence)と推論されます。
 and ElementType =
   | Simple of SimpleType * Attribute list
   | Complex of ComplexType
@@ -81,7 +81,7 @@ and Node =
 
 let (<||>) p1 p2 = attempt p1 <|> p2
 
-let complexType order occurs nodes = { Order = order; Occurrence = occurs; Nodes = nodes }
+let complexType particle occurs nodes = { Particle = particle; Occurrence = occurs; Nodes = nodes }
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 let simple sType attrs = Simple(sType, attrs)
 
@@ -205,23 +205,23 @@ let pSimpleElement =
   <*> pSpaces *> pComment 
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pAttrs))
 
-let pOrder : Parser<_> = parse {
+let pParticle : Parser<_> = parse {
   let! nm = pToken
   match nm with
   | "Sequence" -> return Sequence
   | "Choice" -> return Choice
   | "All" -> return All
-  | _ -> return! failFatally ("指定された順序インジケータが未定義です。") 
+  | _ -> return! failFatally ("指定されたパーティクルが未定義です。") 
 }
 
-let pOrdered =
+let pResolveParticle =
   (Sequence <! notFollowedBy (pstring "::"))
-  <|> (pstring "::" *> pSpaces *> pOrder)
+  <|> (pstring "::" *> pSpaces *> pParticle)
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pComplexTyped = 
   complexType 
-  <!> pOrdered 
+  <!> pResolveParticle 
   <*> pOccurrence
 
 let pComplexElement =

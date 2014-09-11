@@ -121,7 +121,7 @@ let private setOccurrenceForAttr occurs (attr:XmlSchemaAttribute) =
   | AttributeOccurrence.Required -> attr.Use <- XmlSchemaUse.Required
   | AttributeOccurrence.Optional -> attr.Use <- XmlSchemaUse.Optional
   
-let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = nodes } = 
+let rec private fromComplexType { Particle = particle; Occurrence = occurs; Nodes = nodes } = 
   let cType (particle:XmlSchemaGroupBase) =
     let cType = XmlSchemaComplexType()
     cType.Particle <- particle
@@ -132,7 +132,7 @@ let rec private fromComplexType { Order = order; Occurrence = occurs; Nodes = no
       | Attribute _ -> cType.Attributes.Add(fromNode node) |> ignore
     cType
 
-  match order with
+  match particle with
   | Sequence -> cType (XmlSchemaSequence())
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
