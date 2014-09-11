@@ -155,7 +155,7 @@ let pSimpleType =
   <||> pPrimitiveType
   <??> "指定された型が未定義です。"
 
-let pSimpleTyped = pchar ':' *> pSpaces *> pSimpleType
+let pResolveSimpleType = pchar ':' *> pSpaces *> pSimpleType
 
 let pAttributeOccurrence : Parser<_> =
   (AttributeOccurrence.Optional <! pstring "?")
@@ -186,7 +186,7 @@ let pAttribute =
   attribute 
   <!> pIndent *> pchar '@' *> pToken 
   <*> pAttributeOccurrence 
-  <*> pSpaces *> (pSimpleTyped <?> "属性には型指定が必要です。")
+  <*> pSpaces *> (pResolveSimpleType <?> "属性には型指定が必要です。")
   <*> pSpaces *> pComment <* (newline |> optional)
 
 let (pAttrs, pAttrsImpl) = createParserForwardedToRef ()
@@ -195,7 +195,7 @@ let (pNode, pNodeImpl) = createParserForwardedToRef ()
 
 // CommentはElementに対してつけたいため、AttributesだけあとでParseする
 let pSimple = 
-  simple <!>  pSimpleTyped
+  simple <!>  pResolveSimpleType
 
 let pSimpleElement =
   (fun nm occurs fType comm attrs -> element nm occurs (fType attrs) comm)
@@ -219,7 +219,7 @@ let pResolveParticle =
   <|> (pstring "::" *> pSpaces *> pParticle)
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
-let pComplexTyped = 
+let pResolveComplexType = 
   complexType 
   <!> pResolveParticle 
   <*> pOccurrence
@@ -228,7 +228,7 @@ let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
   <!> pIndent *> pToken
   <*> pOccurrence <* pSpaces 
-  <*> pComplexTyped 
+  <*> pResolveComplexType 
   <*> pSpaces *> pComment 
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
