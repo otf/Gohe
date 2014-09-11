@@ -162,11 +162,11 @@ let pAttributeOccurrence : Parser<_> =
   <|> (preturn AttributeOccurrence.Required)
 
 let pOccurrence : Parser<_> =
-  (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring "," <* pSpaces <*> (pint32 |> opt)))
+  (Required <! ((skipNoneOf "{*+?" <|> eof) |> lookAhead)) // 指定がなかった場合はRequired 
+  <||> (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring "," <* pSpaces <*> (pint32 |> opt)))
   <||> (Many <! pstring "*")
   <||> (RequiredMany <! pstring "+")
   <||> (Optional <! pstring "?")
-  <||> (preturn Required)
 
 let pIndentCheck = (pSpaces *> fail "インデントが不正です。") <|> (preturn ()) 
 
