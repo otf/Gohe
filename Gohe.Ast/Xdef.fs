@@ -89,9 +89,10 @@ type NodeGeneratorInvoke = {
   Name : string
   Occurrence : Occurrence
   Parameters : SimpleType list
+  Nodes : Node list
 }
 
-let nodeGeneratorInvoke nm occurs parameters = { Name = nm; Occurrence = occurs; Parameters = parameters } : NodeGeneratorInvoke
+let nodeGeneratorInvoke nm occurs parameters nodes = { Name = nm; Occurrence = occurs; Parameters = parameters; Nodes = nodes } : NodeGeneratorInvoke
 
 type Definition =
 | Root of Element
@@ -255,7 +256,7 @@ let pNodeGeneratorInvoke =
   <!> pIndent *> pchar '!' *> pToken
   <*> pOccurrence <* pSpaces 
   <*> many (pSpaces *> pSimpleType)
-  <* (eof <|> skipNewline)
+  <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
 do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pAttribute)) <* unindent)
 
