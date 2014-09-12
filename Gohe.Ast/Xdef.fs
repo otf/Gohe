@@ -77,21 +77,21 @@ and Element = {
 and Node = 
   | Element of Element
   | Attribute of Attribute
+  | NodeGeneratorInvoke of NodeGeneratorInvoke
 // TODO:  | Module of string
 
-let (<||>) p1 p2 = attempt p1 <|> p2
-
-let complexType particle occurs nodes = { Particle = particle; Occurrence = occurs; Nodes = nodes }
-let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
-let simple sType attrs = Simple(sType, attrs)
-
-type NodeGeneratorInvoke = {
+and NodeGeneratorInvoke = {
   Name : string
   Occurrence : Occurrence
   Parameters : SimpleType list
   Nodes : Node list
 }
 
+let (<||>) p1 p2 = attempt p1 <|> p2
+
+let complexType particle occurs nodes = { Particle = particle; Occurrence = occurs; Nodes = nodes }
+let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm } : Element
+let simple sType attrs = Simple(sType, attrs)
 let nodeGeneratorInvoke nm occurs parameters nodes = { Name = nm; Occurrence = occurs; Parameters = parameters; Nodes = nodes } : NodeGeneratorInvoke
 
 type Definition =
@@ -264,6 +264,7 @@ do pNodesImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (
 
 do pNodeImpl :=
   (Attribute <!> pAttribute)
+  <||> (NodeGeneratorInvoke <!> pNodeGeneratorInvoke)
   <||> (Element <!> pSimpleElement)
   <||> (Element <!> pComplexElement)
 

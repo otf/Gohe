@@ -90,3 +90,22 @@ Root
 
   parse Xdef.pNode xdef
   |> should equal (Some <| expected)
+
+[<Test>]
+let ``NodeGeneratorCallを含むXdefNodeをパースできる`` () =  
+  let xdef = """
+Root
+  !HogeGenerator{0,10} "param1" "param2"
+    @Id : Int
+    Elm : String""".Trim()
+
+  let expected = 
+    celm "Root" required None <| seq required [
+      nodeGeneratorInvokeNode "HogeGenerator" (specific 0 10) [Xdef.FixedString "param1"; Xdef.FixedString "param2"] [
+        attr "Id" useRequired None Xdef.Int
+        elm "Elm" required None Xdef.String
+      ]
+    ]
+
+  parse Xdef.pNode xdef
+  |> should equal (Some <| expected)
