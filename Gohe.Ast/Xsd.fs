@@ -20,6 +20,36 @@ let private fromFacets qName facets =
     restriction.Facets.Add(facet) |> ignore
   simpleTypeWithFacets
 
+type NodeGeneratorSignature = {
+  Name : string
+  ParameterCount : int
+  HasOccurrence : bool
+  HasChildren : bool
+}
+
+let choiceElementGeneratorSignature = { 
+  Name = "Choice"
+  ParameterCount = 0
+  HasOccurrence = true
+  HasChildren = true
+}
+
+let anyElementGeneratorSignature = { 
+  Name = "Any"
+  ParameterCount = 0
+  HasOccurrence = true
+  HasChildren = false
+}
+
+type NodeGeneratorInvoker = NodeGeneratorInvoke -> XmlSchemaObject
+
+let lookupElementGenerator (table : (NodeGeneratorSignature * NodeGeneratorInvoker) list) (invoke : NodeGeneratorInvoke) =
+  let pred { Name = nm; ParameterCount = paramCount; HasOccurrence = hasOccurrence; HasChildren = hasChildren} =
+    invoke.Name = nm
+    && invoke.Parameters.Length = paramCount
+    && (hasChildren || (invoke.Nodes |> List.isEmpty))
+
+  table |> List.tryFind (fun (signature, _) -> pred signature) |> Option.map (snd)
 
 let private fromSimpleType etype = 
   let qName nm =  XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
@@ -128,7 +158,8 @@ let rec private fromComplexType { Particle = particle; Occurrence = occurs; Node
     setOccurrence occurs particle
     for node in nodes do
       match node with
-      | Element _ -> particle.Items.Add(fromNode node) |> ignore
+      | Element _
+      | NodeGeneratorInvoke _ -> particle.Items.Add(fromNode node) |> ignore
       | Attribute _ -> cType.Attributes.Add(fromNode node) |> ignore
     cType
 
@@ -170,10 +201,36 @@ and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType } : Attribut
   setSimpleType sType result
   result
 
+and choiceElementGeneratorInvoker ({ Occurrence = occurs; Nodes = nodes } : NodeGeneratorInvoke) =
+  let choice = XmlSchemaChoice()
+  setOccurrence occurs choice
+  for node in nodes do
+    match node with
+    | Element _
+    | NodeGeneratorInvoke _ -> choice.Items.Add(fromNode node) |> ignore
+    | Attribute _ -> failwith "Choiceに属性を含めることはできません。"
+  choice :> XmlSchemaObject
+
+and anyElementGeneratorInvoker ({ Occurrence = occurs } : NodeGeneratorInvoke) =
+  let any = XmlSchemaAny()
+  setOccurrence occurs any
+  any :> XmlSchemaObject
+
+and fromNodeGeneratorInvoke invoke = 
+  let builtinNodeGenerators = [ 
+    choiceElementGeneratorSignature, choiceElementGeneratorInvoker
+    anyElementGeneratorSignature, anyElementGeneratorInvoker
+  ]
+
+  match lookupElementGenerator builtinNodeGenerators invoke with
+  | Some invoker -> invoker invoke
+  | _ -> failwith "未定義のNodeGeneratorが指定されました。"
+
 and fromNode node = 
   match node with
   | Element element -> fromElement element :> XmlSchemaObject
   | Attribute attr -> fromAttribute attr :> _
+  | NodeGeneratorInvoke nodeGeneratorInvoke -> fromNodeGeneratorInvoke nodeGeneratorInvoke
 
 let fromRoot element = 
   let schema = XmlSchema()

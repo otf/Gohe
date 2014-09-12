@@ -76,6 +76,7 @@
     <Compile Include="XsdAttributeTest.fs" />
     <Compile Include="XsdComplexTypeElementTest.fs" />
     <Compile Include="XsdSimpleTypeElementTest.fs" />
+    <Compile Include="XsdBuiltinNodeGeneratorInvokeTest.fs" />
     <Compile Include="XsdSchemaTest.fs" />
   </ItemGroup>
   <ItemGroup>
