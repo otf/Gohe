@@ -87,10 +87,11 @@ let simple sType attrs = Simple(sType, attrs)
 
 type NodeGeneratorInvoke = {
   Name : string
+  Occurrence : Occurrence
   Parameters : SimpleType list
 }
 
-let nodeGeneratorInvoke nm parameters = { Name = nm; Parameters = parameters } : NodeGeneratorInvoke
+let nodeGeneratorInvoke nm occurs parameters = { Name = nm; Occurrence = occurs; Parameters = parameters } : NodeGeneratorInvoke
 
 type Definition =
 | Root of Element
@@ -251,7 +252,8 @@ let pComplexElement =
 
 let pNodeGeneratorInvoke = 
   nodeGeneratorInvoke
-  <!> pIndent *> pchar '!' *> pToken <* pSpaces
+  <!> pIndent *> pchar '!' *> pToken
+  <*> pOccurrence <* pSpaces 
   <*> many (pSpaces *> pSimpleType)
   <* (eof <|> skipNewline)
 
