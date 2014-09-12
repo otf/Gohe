@@ -30,3 +30,4 @@ let many = Xdef.Occurrence.Many
 let requiredMany = Xdef.Occurrence.RequiredMany
 let specific min max = Xdef.Occurrence.Specified (min, Some max)
 let min n = Xdef.Occurrence.Specified (n, None)
+let nodeGeneratorInvoke nm parameters = Xdef.nodeGeneratorInvoke nm parameters

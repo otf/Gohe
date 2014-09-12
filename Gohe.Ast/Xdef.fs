@@ -85,6 +85,13 @@ let complexType particle occurs nodes = { Particle = particle; Occurrence = occu
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 let simple sType attrs = Simple(sType, attrs)
 
+type NodeGeneratorInvoke = {
+  Name : string
+  Parameters : SimpleType list
+}
+
+let nodeGeneratorInvoke nm parameters = { Name = nm; Parameters = parameters } : NodeGeneratorInvoke
+
 type Definition =
 | Root of Element
 
@@ -241,6 +248,12 @@ let pComplexElement =
   <*> pResolveComplexType 
   <*> pSpaces *> pComment 
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
+
+let pNodeGeneratorInvoke = 
+  nodeGeneratorInvoke
+  <!> pIndent *> pchar '!' *> pToken <* pSpaces
+  <*> many (pSpaces *> pSimpleType)
+  <* (eof <|> skipNewline)
 
 do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pAttribute)) <* unindent)
 

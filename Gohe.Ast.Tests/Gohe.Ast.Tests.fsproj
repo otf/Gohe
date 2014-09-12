@@ -69,6 +69,7 @@
     <Compile Include="XdefSimpleElementTest.fs" />
     <Compile Include="XdefComplexElementTest.fs" />
     <Compile Include="XdefSchemaTest.fs" />
+    <Compile Include="XdefCallNodeGeneratorTest.fs" />
     <Compile Include="XdefAcceptanceTest.fs" />
     <Compile Include="XdefFailureTest.fs" />
     <Compile Include="XsdUtility.fs" />
