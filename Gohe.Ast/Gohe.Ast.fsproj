@@ -62,6 +62,8 @@
     <None Include="app.config" />
     <Compile Include="Applicative.fs" />
     <Compile Include="Xdef.fs" />
+    <Compile Include="XsdInternal.fs" />
+    <Compile Include="XsdBuiltinNodeGenerators.fs" />
     <Compile Include="Xsd.fs" />
   </ItemGroup>
   <ItemGroup>
