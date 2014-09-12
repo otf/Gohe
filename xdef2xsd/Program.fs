@@ -12,7 +12,7 @@ let outputXsd (schema:XmlSchema) =
 let main argv = 
   match Console.In.ReadToEnd() |> Xdef.parse with
   | Success (r, s, p) -> 
-      Xsd.fromRoot r |> outputXsd
+      Xsd.fromSchema r |> outputXsd
       0
   | Failure (msg, err, s) -> 
       eprintfn "%s" msg

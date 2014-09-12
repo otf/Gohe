@@ -85,6 +85,16 @@ let complexType particle occurs nodes = { Particle = particle; Occurrence = occu
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm }
 let simple sType attrs = Simple(sType, attrs)
 
+type Definition =
+| Root of Element
+
+type Schema = {
+  TargetNamespace : string option
+  Definitions : Definition list
+}
+
+let schema targetNs defs = { TargetNamespace = targetNs; Definitions = defs }
+
 type IndentLevel = int
 type UserState = IndentLevel
 type Parser<'t> = Parser<'t, UserState>
@@ -243,4 +253,18 @@ do pNodeImpl :=
 
 let pRoot = pSimpleElement <||> pComplexElement
 
-let parse input = runParserOnString pRoot 0 "" input
+let pDefinition = Root <!> pRoot
+
+let pDefinitions = (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pDefinition)))
+
+let pTargetNamespaceAttribute = 
+  pchar '@' *> pstring "TargetNamespace" 
+  *> pSpaces *> pchar ':' *> pSpaces *> (pStringLiteral '\"' '\"')
+  <* newline
+
+let pSchema = 
+  schema
+  <!> (pTargetNamespaceAttribute |> attempt |> opt)
+  <*> pDefinitions
+
+let parse input = runParserOnString pSchema 0 "" input

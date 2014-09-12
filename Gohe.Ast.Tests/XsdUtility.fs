@@ -15,6 +15,8 @@ let inline extAttrs (x:XmlSchemaType) =
   let ext = contentModel.Content :?> XmlSchemaSimpleContentExtension
   [ for attr in ext.Attributes -> attr :?> XmlSchemaAttribute ]  
 
+let targetNamespace (x:XmlSchema) = x.TargetNamespace
+
 let minOccurs (x:XmlSchemaObject) = (x:?> XmlSchemaParticle).MinOccurs
 let maxOccurs (x:XmlSchemaObject) = 
   if (x :?> XmlSchemaParticle).MaxOccursString = "unbounded" then None

@@ -183,3 +183,19 @@ let fromRoot element =
   schemaSet.Add(schema) |> ignore
   schemaSet.Compile()
   schema
+
+let fromSchema { TargetNamespace = targetNs; Definitions = defs } = 
+  let schema = XmlSchema()
+  targetNs |> Option.iter (fun ns -> schema.TargetNamespace <- ns)
+
+  let defToItem = function
+  | Root elm ->
+      let root = fromElement elm
+      schema.Items.Add(root) |> ignore
+
+  defs |> List.iter defToItem
+
+  let schemaSet = XmlSchemaSet()
+  schemaSet.Add(schema) |> ignore
+  schemaSet.Compile()
+  schema
