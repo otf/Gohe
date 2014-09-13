@@ -4,8 +4,8 @@ open FParsec
 open FParsec.Applicative
 
 type SimpleType = 
-  | FixedBool of bool | FixedByte of sbyte | FixedString of string | FixedInt of int | FixedFloat of float
-  | Bool | Byte | String | Int  | Float | Decimal | Date | Time | DateTime | Duration
+  | FixedBoolean of bool | FixedByte of sbyte | FixedString of string | FixedInt of int | FixedFloat of float
+  | Boolean | Byte | String | Int  | Float | Decimal | Date | Time | DateTime | Duration
   | EnumeratedString of string list
   | FixedLengthString of int
   | VariableLengthString of min : int * max : int option
@@ -116,7 +116,7 @@ let pStringLiteral openChar closeChar : Parser<_> =
     (closeChar <! pstring ("\\" + (closeChar.ToString()))) |> attempt
     <|> noneOf [closeChar]
   pchar openChar *> manyChars pEscapedStringChar <* pchar closeChar 
-let pFixedBool : Parser<_> = FixedBool <!> ((true <! pstring "True") <|> (false <! pstring "False"))
+let pFixedBoolean : Parser<_> = FixedBoolean <!> ((true <! pstring "true") <|> (false <! pstring "false"))
 let pFixedByte : Parser<_> = FixedByte <!> (pint8 <* pchar 'y')
 let pFixedString : Parser<_> = FixedString <!> pStringLiteral '"' '"'
 let pFixedInt : Parser<_> = FixedInt <!> pint32
@@ -135,24 +135,24 @@ let pIntRange2 : Parser<_> =
 
 let pPattern : Parser<_> = Pattern <!> pStringLiteral '/' '/'
 
-let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "String" *> (pBracket "[" "]" pint32)
+let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "string" *> (pBracket "[" "]" pint32)
 let pVariableLengthString : Parser<_> = 
-  pstring "String" *> 
+  pstring "string" *> 
   pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
 
 let pPrimitiveType : Parser<_> = parse {
   let! nm = pToken
   match nm with
-  | "Bool" -> return Bool
-  | "String" -> return String
-  | "Byte" -> return Byte
-  | "Int" -> return Int
-  | "Float" -> return Float
-  | "Decimal" -> return Decimal
-  | "Date" -> return Date
-  | "Time" -> return Time
-  | "DateTime" -> return DateTime
-  | "Duration" -> return Duration
+  | "boolean" -> return Boolean
+  | "string" -> return String
+  | "byte" -> return Byte
+  | "int" -> return Int
+  | "float" -> return Float
+  | "decimal" -> return Decimal
+  | "date" -> return Date
+  | "time" -> return Time
+  | "dateTime" -> return DateTime
+  | "duration" -> return Duration
   | _ -> return! fail ("is not primitive type") 
 }
 
@@ -161,7 +161,7 @@ let pSimpleType =
   <||> pIntRange
   <||> pIntRange2
   <||> pPattern 
-  <||> pFixedBool
+  <||> pFixedBoolean
   <||> pFixedByte 
   <||> pFixedString
   <||> pFixedInt 

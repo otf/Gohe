@@ -9,17 +9,17 @@ open XdefUtility
 let ``XdefNodeをパースできる`` () =  
   let xdef = """
 Root
-  @Id : Int
-  @IsEnabled : True
-  ElmWithAttrs : String
-    @Attr : String
+  @Id : int
+  @IsEnabled : true
+  ElmWithAttrs : string
+    @Attr : string
   Children
     Child* : [0,10)""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [
       attr "Id" useRequired None Xdef.Int
-      attr "IsEnabled" useRequired None (Xdef.FixedBool true)
+      attr "IsEnabled" useRequired None (Xdef.FixedBoolean true)
       elmWithAttrs "ElmWithAttrs" required None (Xdef.String) <| [
         attr "Attr" useRequired None Xdef.String
       ]
@@ -35,7 +35,7 @@ Root
 let ``コメントが指定されたXdefNodeをパースできる`` () =  
   let xdef = """
 Root # Root Element Comment
-  @Id : Int # Attribute Comment
+  @Id : int # Attribute Comment
   Children # Complex Element Comment
     Child* : [0,10) # Simple Element Comment""".Trim()
 
@@ -53,7 +53,7 @@ Root # Root Element Comment
 let ``空行のあるXdefNodeをパースできる`` () =  
   let xdef = """
 Root # Root Element Comment
-  @Id : Int # Attribute Comment
+  @Id : int # Attribute Comment
 
   Children # Complex Element Comment
 
@@ -96,8 +96,8 @@ let ``NodeGeneratorCallを含むXdefNodeをパースできる`` () =
   let xdef = """
 Root
   !HogeGenerator[0..10] "param1" "param2"
-    @Id : Int
-    Elm : String""".Trim()
+    @Id : int
+    Elm : string""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [

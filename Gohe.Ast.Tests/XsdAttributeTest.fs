@@ -10,7 +10,7 @@ open Xsd
 open XsdUtility
 
 let primitiveTypeTestCases : obj [][] = [|
-  [|Xdef.Bool; "boolean"|]
+  [|Xdef.Boolean; "boolean"|]
   [|Xdef.Byte; "byte"|]
   [|Xdef.String; "string"|]
   [|Xdef.Int; "int"|]
@@ -23,7 +23,7 @@ let primitiveTypeTestCases : obj [][] = [|
 |]
 
 let fixedTypeTestCases : obj [][] = [|
-  [|Xdef.FixedBool(true); "true"|]
+  [|Xdef.FixedBoolean(true); "true"|]
   [|Xdef.FixedByte(100y); "100"|]
   [|Xdef.FixedString("hello"); "hello"|]
   [|Xdef.FixedInt(100); "100"|]

@@ -13,7 +13,7 @@ open XsdUtility
 let ``Xmlnsを指定してXdefをXsd化できる`` () = 
   let inputRoot =
     celm "Root" required None <| seq required [ 
-      elmWithAttrs "Elm" required None (Xdef.FixedBool true) [
+      elmWithAttrs "Elm" required None (Xdef.FixedBoolean true) [
         attr "Attr" useRequired None Xdef.String
       ]
     ]

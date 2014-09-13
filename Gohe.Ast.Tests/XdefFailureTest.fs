@@ -12,12 +12,12 @@ let ``型指定のないXdefAttributeはエラーがでる`` () =
 
 [<Test>]
 let ``解決できない型指定のXdefAttributeはエラーがでる`` () =  
-  parseGetError Xdef.pNode "@Name : UnknownType"
+  parseGetError Xdef.pNode "@Name : unknownType"
   |> should be (substr "指定された型が未定義")
 
 [<Test>]
 let ``解決できない型指定(前方一致)のXdefAttributeはエラーがでる`` () =  
-  parseGetError Xdef.pNode "@Name : Stringtic"
+  parseGetError Xdef.pNode "@Name : stringtic"
   |> should be (substr "指定された型が未定義")
 
 [<Test>]
@@ -27,5 +27,5 @@ let ``解決できないパーティクル指定のXdefElementはエラーがで
 
 [<Test>]
 let ``過度にインデントされた子要素のXdefElementはエラーがでる`` () =  
-  parseGetError Xdef.pNode "Elm\n    Child1 : String"
+  parseGetError Xdef.pNode "Elm\n    Child1 : string"
   |> should be (substr "インデントが不正")

@@ -5,10 +5,10 @@ open FsUnit
 
 open XdefUtility
 
-[<TestCase("True", true)>]
-[<TestCase("False", false)>]
-let ``FixedBoolをパースできる`` (input, expected) =  
-  parse Xdef.pFixedBool input |> should equal (Some <| Xdef.FixedBool expected)
+[<TestCase("true", true)>]
+[<TestCase("false", false)>]
+let ``FixedBooleanをパースできる`` (input, expected) =  
+  parse Xdef.pFixedBoolean input |> should equal (Some <| Xdef.FixedBoolean expected)
 
 [<TestCase("127y", 127y)>]
 [<TestCase("-128y", -128y)>]
@@ -32,16 +32,16 @@ let ``FixedFloatをパースできる`` (input, expected) =
   parse Xdef.pFixedFloat input |> should equal (Some <| Xdef.FixedFloat expected)
 
 let primitiveTypeTestCases : obj [][] = [|
-  [|"Bool"; Xdef.Bool|]
-  [|"Byte"; Xdef.Byte|]
-  [|"String"; Xdef.String|]
-  [|"Int"; Xdef.Int|]
-  [|"Float"; Xdef.Float|]
-  [|"Decimal"; Xdef.Decimal|]
-  [|"Date"; Xdef.Date|]
-  [|"Time"; Xdef.Time|]
-  [|"DateTime"; Xdef.DateTime|]
-  [|"Duration"; Xdef.Duration|]
+  [|"boolean"; Xdef.Boolean|]
+  [|"byte"; Xdef.Byte|]
+  [|"string"; Xdef.String|]
+  [|"int"; Xdef.Int|]
+  [|"float"; Xdef.Float|]
+  [|"decimal"; Xdef.Decimal|]
+  [|"date"; Xdef.Date|]
+  [|"time"; Xdef.Time|]
+  [|"dateTime"; Xdef.DateTime|]
+  [|"duration"; Xdef.Duration|]
 |]
 
 [<TestCaseSource("primitiveTypeTestCases")>]
@@ -54,15 +54,15 @@ let ``PrimitiveTypeをパースできる`` input expected =
 let ``EnumeratedStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.EnumeratedString (expected |> Array.toList))
 
-[<TestCase("String[100]", 100)>]
+[<TestCase("string[100]", 100)>]
 let ``FixedLengthStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.FixedLengthString(expected))
 
-[<TestCase("String[0, 100]", 0, 100)>]
+[<TestCase("string[0, 100]", 0, 100)>]
 let ``VariableLengthStringをパースできる`` (input, minExpected, maxExpected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(minExpected, Some maxExpected))
 
-[<TestCase("String[100, ]", 100)>]
+[<TestCase("string[100, ]", 100)>]
 let ``VariableLengthString(minのみ指定)をパースできる`` (input, minExpected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(minExpected, None))
 

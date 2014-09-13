@@ -24,7 +24,7 @@ let fromFacets qName facets =
 
 let fromSimpleType etype = 
   match etype with
-  | Bool -> QName <| schemaQName "boolean"
+  | Boolean -> QName <| schemaQName "boolean"
   | Byte -> QName <| schemaQName "byte"
   | String -> QName <| schemaQName "string"
   | Int -> QName <| schemaQName "int"
@@ -34,7 +34,7 @@ let fromSimpleType etype =
   | Time -> QName <| schemaQName "time"
   | DateTime -> QName <| schemaQName "dateTime"
   | Duration -> QName <| schemaQName "duration"
-  | FixedBool value -> FixedValue (schemaQName "boolean", (value.ToString()).ToLower())
+  | FixedBoolean value -> FixedValue (schemaQName "boolean", (value.ToString()).ToLower())
   | FixedByte value -> FixedValue (schemaQName "byte", value.ToString())
   | FixedString value -> FixedValue (schemaQName "string", value)
   | FixedInt value -> FixedValue <| (schemaQName "int", value.ToString())
