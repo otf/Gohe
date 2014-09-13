@@ -11,6 +11,8 @@ type ElementType =
   | FixedValue of XmlQualifiedName * string
   | SimpleTypeWithFacets of XmlSchemaSimpleType
 
+let schemaQName nm =  XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
+
 let fromFacets qName facets =
   let simpleTypeWithFacets = XmlSchemaSimpleType()
   let restriction = XmlSchemaSimpleTypeRestriction()
@@ -21,23 +23,22 @@ let fromFacets qName facets =
   simpleTypeWithFacets
 
 let fromSimpleType etype = 
-  let qName nm =  XmlQualifiedName(nm, "http://www.w3.org/2001/XMLSchema")
   match etype with
-  | Bool -> QName <| qName "boolean"
-  | Byte -> QName <| qName "byte"
-  | String -> QName <| qName "string"
-  | Int -> QName <| qName "int"
-  | Float -> QName <| qName "float"
-  | Decimal -> QName <| qName "decimal"
-  | Date -> QName <| qName "date"
-  | Time -> QName <| qName "time"
-  | DateTime -> QName <| qName "dateTime"
-  | Duration -> QName <| qName "duration"
-  | FixedBool value -> FixedValue (qName "boolean", (value.ToString()).ToLower())
-  | FixedByte value -> FixedValue (qName "byte", value.ToString())
-  | FixedString value -> FixedValue (qName "string", value)
-  | FixedInt value -> FixedValue <| (qName "int", value.ToString())
-  | FixedFloat value -> FixedValue <| (qName "float", value.ToString())
+  | Bool -> QName <| schemaQName "boolean"
+  | Byte -> QName <| schemaQName "byte"
+  | String -> QName <| schemaQName "string"
+  | Int -> QName <| schemaQName "int"
+  | Float -> QName <| schemaQName "float"
+  | Decimal -> QName <| schemaQName "decimal"
+  | Date -> QName <| schemaQName "date"
+  | Time -> QName <| schemaQName "time"
+  | DateTime -> QName <| schemaQName "dateTime"
+  | Duration -> QName <| schemaQName "duration"
+  | FixedBool value -> FixedValue (schemaQName "boolean", (value.ToString()).ToLower())
+  | FixedByte value -> FixedValue (schemaQName "byte", value.ToString())
+  | FixedString value -> FixedValue (schemaQName "string", value)
+  | FixedInt value -> FixedValue <| (schemaQName "int", value.ToString())
+  | FixedFloat value -> FixedValue <| (schemaQName "float", value.ToString())
   | EnumeratedString values -> 
       let facets = [ 
         for value in values do
@@ -45,34 +46,34 @@ let fromSimpleType etype =
           r.Value <- value
           yield r
       ]
-      SimpleTypeWithFacets <| fromFacets (qName "string") facets
+      SimpleTypeWithFacets <| fromFacets (schemaQName "string") facets
   | FixedLengthString length -> 
       let facets =[
         let r = XmlSchemaLengthFacet()
         r.Value <- length.ToString()
         yield r
       ]
-      SimpleTypeWithFacets <| fromFacets (qName "string") facets
+      SimpleTypeWithFacets <| fromFacets (schemaQName "string") facets
   | VariableLengthString(min, None) -> 
       let minFacet = XmlSchemaMinLengthFacet()
       minFacet.Value <- min.ToString()
-      SimpleTypeWithFacets <| fromFacets (qName "string") [minFacet]
+      SimpleTypeWithFacets <| fromFacets (schemaQName "string") [minFacet]
   | VariableLengthString(min, Some max) -> 
       let minFacet = XmlSchemaMinLengthFacet()
       minFacet.Value <- min.ToString()
       let maxFacet = XmlSchemaMaxLengthFacet()
       maxFacet.Value <- max.ToString()
-      SimpleTypeWithFacets <| fromFacets (qName "string") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
+      SimpleTypeWithFacets <| fromFacets (schemaQName "string") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
   | IntRange(min, max) -> 
       let minFacet = XmlSchemaMinInclusiveFacet()
       minFacet.Value <- min.ToString()
       let maxFacet = XmlSchemaMaxInclusiveFacet()
       maxFacet.Value <- max.ToString()
-      SimpleTypeWithFacets <| fromFacets (qName "int") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
+      SimpleTypeWithFacets <| fromFacets (schemaQName "int") [(minFacet :> XmlSchemaFacet); (maxFacet :> _)]
   | Pattern(pattern) -> 
       let facet = XmlSchemaPatternFacet()
       facet.Value <- pattern
-      SimpleTypeWithFacets <| fromFacets (qName "string") [facet]
+      SimpleTypeWithFacets <| fromFacets (schemaQName "string") [facet]
   | _ -> failwith "unsupported type"
   
 let inline setSimpleType sType (x:^a) =

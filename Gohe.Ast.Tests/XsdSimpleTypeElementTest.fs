@@ -34,51 +34,51 @@ let fixedTypeTestCases : obj [][] = [|
 let ``PrimitiveTypeの要素をXsd化できる`` inputType expected = 
   let input = elm "Root" required None inputType
   
-  Xsd.fromNode input |> asElm |> name |> should equal "Root"
-  Xsd.fromNode input |> asElm |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
+  Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode "" input |> asElm |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
 
 [<TestCaseSource("fixedTypeTestCases")>]
 let ``PrimitiveType(Fixed)の要素をXsd化できる`` inputType expected = 
   let input = elm "Root" required None inputType
   
-  Xsd.fromNode input |> asElm |> name |> should equal "Root"
-  Xsd.fromNode input |> asElm |> fixedValue |> should equal expected
+  Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode "" input |> asElm |> fixedValue |> should equal expected
 
 [<Test>]
 let ``PrimitiveType(EnumeratedString)の要素をXsd化できる`` () = 
   let input = elm "Root" required None (Xdef.EnumeratedString ["A"; "B"])
   
-  Xsd.fromNode input |> asElm |> typeOf |> enumString  |> should equal ["A"; "B"]
+  Xsd.fromNode "" input |> asElm |> typeOf |> enumString  |> should equal ["A"; "B"]
 
 [<Test>]
 let ``PrimitiveType(FixedLengthString)の要素をXsd化できる`` () = 
   let input = elm "Root" required None (Xdef.FixedLengthString 100)
   
-  Xsd.fromNode input |> asElm |> typeOf |> fixedLengthString  |> should equal 100
+  Xsd.fromNode "" input |> asElm |> typeOf |> fixedLengthString  |> should equal 100
 
 [<Test>]
 let ``PrimitiveType(VariableLengthString)の要素をXsd化できる`` () = 
   let input = elm "Root" required None (Xdef.VariableLengthString(0 , Some 100))
   
-  Xsd.fromNode input |> asElm |> typeOf |> varLengthString |> should equal (0, 100)
+  Xsd.fromNode "" input |> asElm |> typeOf |> varLengthString |> should equal (0, 100)
 
 [<Test>]
 let ``PrimitiveType(VariableLengthString(minのみ指定))の要素をXsd化できる`` () = 
   let input = elm "Root" required None (Xdef.VariableLengthString(100 , None))
   
-  Xsd.fromNode input |> asElm |> typeOf |> minLengthString |> should equal (100)
+  Xsd.fromNode "" input |> asElm |> typeOf |> minLengthString |> should equal (100)
 
 [<Test>]
 let ``PrimitiveType(IntRange)の要素をXsd化できる`` () = 
   let input = elm "Root" required None (Xdef.IntRange(0, 100))
   
-  Xsd.fromNode input |> asElm |> typeOf |> intRange |> should equal (0, 100)
+  Xsd.fromNode "" input |> asElm |> typeOf |> intRange |> should equal (0, 100)
 
 [<Test>]
 let ``PrimitiveType(Pattern)の要素をXsd化できる`` () = 
   let input = elm "Root" required None (Xdef.Pattern(@"\w+"))
   
-  Xsd.fromNode input |> asElm |> typeOf |> pattern |> should equal @"\w+"
+  Xsd.fromNode "" input |> asElm |> typeOf |> pattern |> should equal @"\w+"
 
 let occursTestFactors = [
   required, 1, Some 1
@@ -97,8 +97,8 @@ let occursTestCases : obj [][] = [|
 let ``PrimitiveTypeの要素(出現回数指定)をXsd化できる`` occursInput (minOccursExpected : int) (maxOccursExpected : int option) = 
   let input = elm "Root" occursInput None Xdef.String
   
-  Xsd.fromNode input |> asElm |> minOccurs |> should equal minOccursExpected
-  Xsd.fromNode input |> asElm |> maxOccurs |> should equal maxOccursExpected
+  Xsd.fromNode "" input |> asElm |> minOccurs |> should equal minOccursExpected
+  Xsd.fromNode "" input |> asElm |> maxOccurs |> should equal maxOccursExpected
 
 [<Test>]
 let ``PrimitiveTypeの要素(属性あり)をXsd化できる`` () = 
@@ -106,4 +106,4 @@ let ``PrimitiveTypeの要素(属性あり)をXsd化できる`` () =
                 attr "Attr" useRequired None Xdef.String
               ]
   
-  Xsd.fromNode input |> asElm |> typeOf |> extAttrs |> should haveLength 1
+  Xsd.fromNode "" input |> asElm |> typeOf |> extAttrs |> should haveLength 1

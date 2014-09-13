@@ -13,25 +13,25 @@ open XsdUtility
 let ``ComplexType(Sequence)の要素をXsd化できる`` () = 
   let input = celm "Root" required None <| seq required []
   
-  Xsd.fromNode input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
 
-  Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaSequence>
+  Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaSequence>
 
 [<Test>]
 let ``ComplexType(Choice)の要素をXsd化できる`` () = 
   let input = celm "Root" required None <| choice required []
   
-  Xsd.fromNode input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
 
-  Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaChoice>
+  Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaChoice>
 
 [<Test>]
 let ``ComplexType(All)の要素をXsd化できる`` () = 
   let input = celm "Root" required None <| all required []
   
-  Xsd.fromNode input |> asElm |> name |> should equal "Root"
+  Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
 
-  Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaAll>
+  Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> should be ofExactType<XmlSchemaAll>
 
 let occursTestFactors = [
   required, 1, Some 1
@@ -50,8 +50,8 @@ let occursTestCases : obj [][] = [|
 let ``ComplexTypeの要素(出現回数指定)をXsd化できる`` occursInput (minOccursExpected : int) (maxOccursExpected : int option) = 
   let input = celm "Root" required None <| all occursInput []
   
-  Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> minOccurs |> should equal minOccursExpected
-  Xsd.fromNode input |> asElm |> typeOfAsComplex |> particle |> maxOccurs |> should equal maxOccursExpected
+  Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> minOccurs |> should equal minOccursExpected
+  Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> maxOccurs |> should equal maxOccursExpected
 
 let childrenTestFactors = [
   [], 0
@@ -71,7 +71,7 @@ let ``ComplexTypeの要素(子要素あり)をXsd化できる`` childrenInput co
   let (Xdef.Element input) =
     celm "Root" required None <| seq required childrenInput
   
-  Xsd.fromRoot input |> getElm |> typeOfAsComplex |> particle |> items |> should haveCount countOfChildrenExpected
+  Xsd.fromRoot "" input |> getElm |> typeOfAsComplex |> particle |> items |> should haveCount countOfChildrenExpected
 
 [<Test>]
 let ``PrimitiveTypeの要素(固定値の属性あり)をXsd化できる`` () = 
@@ -82,4 +82,4 @@ let ``PrimitiveTypeの要素(固定値の属性あり)をXsd化できる`` () =
       ]
     ]
 
-  Xsd.fromRoot input |> getElm |> typeOfAsComplex |> particle |> items |> should haveCount 1
+  Xsd.fromRoot "" input |> getElm |> typeOfAsComplex |> particle |> items |> should haveCount 1

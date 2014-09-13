@@ -8,7 +8,7 @@ open Xdef
 open XsdInternal
 open XsdBuildinNodeGenerators
 
-let rec private fromComplexType { Particle = particle; Occurrence = occurs; Nodes = nodes } = 
+let rec private fromComplexType ns { Particle = particle; Occurrence = occurs; Nodes = nodes } = 
   let cType (particle:XmlSchemaGroupBase) =
     let cType = XmlSchemaComplexType()
     cType.Particle <- particle
@@ -16,8 +16,8 @@ let rec private fromComplexType { Particle = particle; Occurrence = occurs; Node
     for node in nodes do
       match node with
       | Element _
-      | NodeGeneratorInvoke _ -> particle.Items.Add(fromNode node) |> ignore
-      | Attribute _ -> cType.Attributes.Add(fromNode node) |> ignore
+      | NodeGeneratorInvoke _ -> particle.Items.Add(fromNode ns node) |> ignore
+      | Attribute _ -> cType.Attributes.Add(fromNode ns node) |> ignore
     cType
 
   match particle with
@@ -25,7 +25,7 @@ let rec private fromComplexType { Particle = particle; Occurrence = occurs; Node
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
-and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
+and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
   setOccurrence occurs result
@@ -47,7 +47,7 @@ and fromElement  ({ Name = name; Occurrence = occurs; Type = eType } : Element) 
 
       setBaseSimpleType sType ext result 
   | Complex cType ->
-      result.SchemaType <- fromComplexType cType
+      result.SchemaType <- fromComplexType ns cType
 
   result
 
@@ -58,22 +58,26 @@ and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType } : Attribut
   setSimpleType sType result
   result
 
-and fromNodeGeneratorInvoke invoke = 
-  let builtinNodeGenerators = builtinNodeGenerators fromNode
+and fromNodeGeneratorInvoke ns invoke = 
+  let builtinNodeGenerators = builtinNodeGenerators (fromNode ns)
 
   match lookupElementGenerator builtinNodeGenerators invoke with
-  | Some invoker -> invoker invoke
-  | _ -> failwith "未定義のNodeGeneratorが指定されました。"
+  | Some invoker -> 
+      invoker invoke
+  | _ -> 
+      let refElm = XmlSchemaElement()
+      refElm.RefName <- XmlQualifiedName(invoke.Name, ns)
+      refElm :> _
 
-and fromNode node = 
+and fromNode ns node = 
   match node with
-  | Element element -> fromElement element :> XmlSchemaObject
+  | Element element -> fromElement ns element :> XmlSchemaObject
   | Attribute attr -> fromAttribute attr :> _
-  | NodeGeneratorInvoke nodeGeneratorInvoke -> fromNodeGeneratorInvoke nodeGeneratorInvoke
+  | NodeGeneratorInvoke nodeGeneratorInvoke -> fromNodeGeneratorInvoke ns nodeGeneratorInvoke
 
-let fromRoot element = 
+let fromRoot ns element = 
   let schema = XmlSchema()
-  let root = fromElement element
+  let root = fromElement ns element
   schema.Items.Add(root) |> ignore
   let schemaSet = XmlSchemaSet()
   schemaSet.Add(schema) |> ignore
@@ -82,17 +86,17 @@ let fromRoot element =
 
 let fromSchema { Nodes = nodes } = 
   let schema = XmlSchema()
-
   let nodeF = 
     function
     | Element elm ->
-        let root = fromElement elm
+        let root = fromElement schema.TargetNamespace elm
         schema.Items.Add(root) |> ignore
     | Attribute { Name = "xmlns"; Type = (FixedString ns)} -> 
         schema.TargetNamespace <- ns
+        schema.Namespaces.Add("", schema.TargetNamespace)
         schema.ElementFormDefault <- XmlSchemaForm.Qualified
     | NodeGeneratorInvoke ({Name = "Include"} as invoke) ->
-        let invoke = fromNodeGeneratorInvoke invoke
+        let invoke = fromNodeGeneratorInvoke schema.TargetNamespace invoke
         schema.Includes.Add(invoke) |> ignore
     | unsupported -> failwithf "このノードは、このスキーマ階層ではサポートされません。:%A" unsupported
 

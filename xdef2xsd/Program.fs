@@ -5,6 +5,7 @@ open FParsec
 
 let outputXsd (schema:XmlSchema) =
   let nsmgr = XmlNamespaceManager(NameTable())
+  nsmgr.AddNamespace("", schema.TargetNamespace)
   nsmgr.AddNamespace("xs", "http://www.w3.org/2001/XMLSchema")
   schema.Write(Console.Out, nsmgr)
 

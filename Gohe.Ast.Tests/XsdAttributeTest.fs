@@ -34,15 +34,15 @@ let fixedTypeTestCases : obj [][] = [|
 let ``PrimitiveTypeの属性をXsd化できる`` inputType expected = 
   let input = attr "Attr" useRequired None inputType
   
-  Xsd.fromNode input |> asAttr |> name |> should equal "Attr"
-  Xsd.fromNode input |> asAttr |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
+  Xsd.fromNode "" input |> asAttr |> name |> should equal "Attr"
+  Xsd.fromNode "" input |> asAttr |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
 
 [<TestCaseSource("fixedTypeTestCases")>]
 let ``PrimitiveType(Fixed)の属性をXsd化できる`` inputType expected = 
   let input = attr "Attr" useRequired None inputType
   
-  Xsd.fromNode input |> asAttr  |> name |> should equal "Attr"
-  Xsd.fromNode input |> asAttr  |> fixedValue |> should equal expected
+  Xsd.fromNode "" input |> asAttr  |> name |> should equal "Attr"
+  Xsd.fromNode "" input |> asAttr  |> fixedValue |> should equal expected
 
 let occursTestFactors = [
   useRequired, XmlSchemaUse.Required
@@ -58,4 +58,4 @@ let occursTestCases : obj [][] = [|
 let ``PrimitiveTypeの属性(出現回数指定)をXsd化できる`` occursInput occursExpected = 
   let input = attr "Attr" occursInput None Xdef.String
   
-  Xsd.fromNode input |> asAttr |> useOfAttr |> should equal occursExpected
+  Xsd.fromNode "" input |> asAttr |> useOfAttr |> should equal occursExpected
