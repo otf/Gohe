@@ -6,9 +6,9 @@ open FsUnit
 open XdefUtility
 
 [<Test>]
-let ``TargetNamespaceを指定してSchemaをパースできる`` () =  
+let ``Xmlnsを指定してSchemaをパースできる`` () =  
   let xdef = """
-@TargetNamespace : "http://example.com/myschema"
+@xmlns : "http://example.com/myschema"
 
 Root"""       .Trim()
 

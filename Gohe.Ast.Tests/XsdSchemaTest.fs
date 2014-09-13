@@ -10,7 +10,7 @@ open Xsd
 open XsdUtility
 
 [<Test>]
-let ``TargetNamespaceを指定してXdefをXsd化できる`` () = 
+let ``Xmlnsを指定してXdefをXsd化できる`` () = 
   let (Xdef.Element inputRoot) =
     celm "Root" required None <| seq required [ 
       elmWithAttrs "Elm" required None (Xdef.FixedBool true) [

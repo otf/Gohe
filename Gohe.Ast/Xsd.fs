@@ -80,9 +80,9 @@ let fromRoot element =
   schemaSet.Compile()
   schema
 
-let fromSchema { TargetNamespace = targetNs; Definitions = defs } = 
+let fromSchema { Xmlns = xmlns; Definitions = defs } = 
   let schema = XmlSchema()
-  targetNs |> Option.iter (fun ns -> schema.TargetNamespace <- ns)
+  xmlns |> Option.iter (fun ns -> schema.TargetNamespace <- ns; schema.ElementFormDefault <- XmlSchemaForm.Qualified)
 
   let defToItem = function
   | Root elm ->

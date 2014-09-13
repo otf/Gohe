@@ -98,11 +98,11 @@ type Definition =
 | Root of Element
 
 type Schema = {
-  TargetNamespace : string option
+  Xmlns : string option
   Definitions : Definition list
 }
 
-let schema targetNs defs = { TargetNamespace = targetNs; Definitions = defs }
+let schema xmlns defs = { Xmlns = xmlns; Definitions = defs }
 
 type IndentLevel = int
 type UserState = IndentLevel
@@ -274,14 +274,14 @@ let pDefinition = Root <!> pRoot
 
 let pDefinitions = (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pDefinition)))
 
-let pTargetNamespaceAttribute = 
-  pchar '@' *> pstring "TargetNamespace" 
+let pXmlnsAttribute = 
+  pchar '@' *> pstring "xmlns" 
   *> pSpaces *> pchar ':' *> pSpaces *> (pStringLiteral '\"' '\"')
   <* newline
 
 let pSchema = 
   schema
-  <!> (pTargetNamespaceAttribute |> attempt |> opt)
+  <!> (pXmlnsAttribute |> attempt |> opt)
   <*> pDefinitions
 
 let parse input = runParserOnString pSchema 0 "" input
