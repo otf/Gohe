@@ -12,8 +12,9 @@ let ``Xmlnsを指定してSchemaをパースできる`` () =
 
 Root"""       .Trim()
 
-  let (Xdef.Element expectedRoot) = celm "Root" required None <| seq required [ ]
-  let expected = Xdef.schema (Some "http://example.com/myschema") [Xdef.Root expectedRoot]
+  let expectedRoot = celm "Root" required None <| seq required [ ]
+  let expectedNs = attr "xmlns" useRequired None (Xdef.FixedString "http://example.com/myschema")
+  let expected = Xdef.schema [expectedNs; expectedRoot]
 
   parse Xdef.pSchema xdef
   |> should equal (Some <| expected)

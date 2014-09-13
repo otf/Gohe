@@ -80,19 +80,23 @@ let fromRoot element =
   schemaSet.Compile()
   schema
 
-let fromSchema { Xmlns = xmlns; Definitions = defs } = 
+let fromSchema { Nodes = nodes } = 
   let schema = XmlSchema()
-  xmlns |> Option.iter (fun ns -> schema.TargetNamespace <- ns; schema.ElementFormDefault <- XmlSchemaForm.Qualified)
 
-  let defToItem = function
-  | Root elm ->
-      let root = fromElement elm
-      schema.Items.Add(root) |> ignore
-  | RootNodeGeneratorInvoke ({Name = "Include"} as invoke)  ->
-      let invoke = fromNodeGeneratorInvoke invoke
-      schema.Includes.Add(invoke) |> ignore
+  let nodeF = 
+    function
+    | Element elm ->
+        let root = fromElement elm
+        schema.Items.Add(root) |> ignore
+    | Attribute { Name = "xmlns"; Type = (FixedString ns)} -> 
+        schema.TargetNamespace <- ns
+        schema.ElementFormDefault <- XmlSchemaForm.Qualified
+    | NodeGeneratorInvoke ({Name = "Include"} as invoke) ->
+        let invoke = fromNodeGeneratorInvoke invoke
+        schema.Includes.Add(invoke) |> ignore
+    | unsupported -> failwithf "このノードは、このスキーマ階層ではサポートされません。:%A" unsupported
 
-  defs |> List.iter defToItem
+  nodes |> List.iter nodeF
 
   let schemaSet = XmlSchemaSet()
   schemaSet.Add(schema) |> ignore

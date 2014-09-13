@@ -11,12 +11,13 @@ open XsdUtility
 
 [<Test>]
 let ``Xmlnsを指定してXdefをXsd化できる`` () = 
-  let (Xdef.Element inputRoot) =
+  let inputRoot =
     celm "Root" required None <| seq required [ 
       elmWithAttrs "Elm" required None (Xdef.FixedBool true) [
         attr "Attr" useRequired None Xdef.String
       ]
     ]
-  let input = Xdef.schema (Some "http://example.com/myschema") [Xdef.Root inputRoot]
+  let inputNs = attr "xmlns" useRequired None (Xdef.FixedString "http://example.com/myschema")
+  let input = Xdef.schema [inputNs; inputRoot]
 
   Xsd.fromSchema input |> targetNamespace |> should equal "http://example.com/myschema"

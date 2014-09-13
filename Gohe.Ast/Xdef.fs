@@ -94,16 +94,11 @@ let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; C
 let simple sType attrs = Simple(sType, attrs)
 let nodeGeneratorInvoke nm occurs parameters nodes = { Name = nm; Occurrence = occurs; Parameters = parameters; Nodes = nodes } : NodeGeneratorInvoke
 
-type Definition =
-| Root of Element
-| RootNodeGeneratorInvoke of NodeGeneratorInvoke
-
 type Schema = {
-  Xmlns : string option
-  Definitions : Definition list
+  Nodes : Node list
 }
 
-let schema xmlns defs = { Xmlns = xmlns; Definitions = defs }
+let schema nodes = { Nodes = nodes }
 
 type IndentLevel = int
 type UserState = IndentLevel
@@ -271,20 +266,8 @@ do pNodeImpl :=
 
 let pRoot = pSimpleElement <||> pComplexElement
 
-let pDefinition = 
-  (RootNodeGeneratorInvoke <!> pNodeGeneratorInvoke)
-  <||> (Root <!> pRoot)
-
-let pDefinitions = (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pDefinition)))
-
-let pXmlnsAttribute = 
-  pchar '@' *> pstring "xmlns" 
-  *> pSpaces *> pchar ':' *> pSpaces *> (pStringLiteral '\"' '\"')
-  <* newline
-
 let pSchema = 
   schema
-  <!> (pXmlnsAttribute |> attempt |> opt)
-  <*> pDefinitions
+  <!> pNodes
 
 let parse input = runParserOnString pSchema 0 "" input
