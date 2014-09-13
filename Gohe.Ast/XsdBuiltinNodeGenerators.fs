@@ -49,6 +49,7 @@ let lookupElementGenerator (table : (NodeGeneratorSignature * NodeGeneratorInvok
   let pred { Name = nm; ParameterCount = paramCount; HasOccurrence = hasOccurrence; HasChildren = hasChildren} =
     invoke.Name = nm
     && invoke.Parameters.Length = paramCount
+    && (hasOccurrence || (invoke.Occurrence = Required))
     && (hasChildren || (invoke.Nodes |> List.isEmpty))
 
   table |> List.tryFind (fun (signature, _) -> pred signature) |> Option.map (snd)
