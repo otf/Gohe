@@ -224,9 +224,9 @@ let pSimpleElement =
 let pParticle : Parser<_> = parse {
   let! nm = pToken
   match nm with
-  | "Sequence" -> return Sequence
-  | "Choice" -> return Choice
-  | "All" -> return All
+  | "sequence" -> return Sequence
+  | "choice" -> return Choice
+  | "all" -> return All
   | _ -> return! failFatally ("指定されたパーティクルが未定義です。") 
 }
 

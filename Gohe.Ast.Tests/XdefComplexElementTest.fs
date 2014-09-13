@@ -7,7 +7,7 @@ open XdefUtility
 
 [<Test>]
 let ``XdefParticle(Sequence)の指定をパースできる`` () =  
-  parse Xdef.pParticle "Sequence"
+  parse Xdef.pParticle "sequence"
   |> should equal (Some Xdef.Particle.Sequence)
 
 [<Test>]
@@ -17,9 +17,9 @@ let ``XdefElement(暗黙のSequence)をパースできる`` () =
   |> should equal (Some expected)
 
 let particleTestFactors = [
-  "Sequence", seq
-  "Choice", choice
-  "All", all
+  "sequence", seq
+  "choice", choice
+  "all", all
 ]
 
 let occursTestFactors = [

@@ -60,7 +60,7 @@ let choiceElementGeneratorInvoker  (nodeTrans : Node -> XmlSchemaObject) ({ Occu
     match node with
     | Element _
     | NodeGeneratorInvoke _ -> choice.Items.Add(nodeTrans node) |> ignore
-    | Attribute _ -> failwith "Choiceに属性を含めることはできません。"
+    | Attribute _ -> failwith "choiceに属性を含めることはできません。"
   choice :> XmlSchemaObject
 
 let anyElementGeneratorInvoker ({ Occurrence = occurs } : NodeGeneratorInvoke) =
