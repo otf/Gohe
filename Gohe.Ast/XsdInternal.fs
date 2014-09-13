@@ -120,3 +120,12 @@ let setOccurrenceForAttr occurs (attr:XmlSchemaAttribute) =
   match occurs with
   | AttributeOccurrence.Required -> attr.Use <- XmlSchemaUse.Required
   | AttributeOccurrence.Optional -> attr.Use <- XmlSchemaUse.Optional
+
+let setDoc comm (x:#XmlSchemaAnnotated) =
+  let anno = XmlSchemaAnnotation()
+  let doc = XmlSchemaDocumentation()
+  anno.Items.Add(doc) |> ignore
+  let xDoc = XmlDocument()
+  let textNode = xDoc.CreateTextNode(comm)
+  doc.Markup <- [|textNode|]
+  x.Annotation <- anno

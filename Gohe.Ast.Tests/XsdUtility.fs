@@ -11,8 +11,11 @@ let inline fixedValue (x:^a) = ((^a) : (member FixedValue : string) x)
 let inline particle (x:^a) = ((^a) : (member Particle : XmlSchemaParticle) x) :?> XmlSchemaGroupBase
 let inline items (x:^a) = ((^a) : (member Items : XmlSchemaObjectCollection) (x :?> XmlSchemaGroupBase))
 let inline at (index:int) (x:XmlSchemaObject) = (((^a) : (member Items : XmlSchemaObjectCollection) (x :?> XmlSchemaGroupBase))).Item(index)
+let doc (x:XmlSchemaObject) = ((x :?> XmlSchemaAnnotated).Annotation.Items.[0] :?> XmlSchemaDocumentation).Markup.[0].Value
 let atOfSchema (index:int) (x:XmlSchema) = (((^a) : (member Items : XmlSchemaObjectCollection) x)).Item(index)
 let atOfSchemaInclude (index:int) (x:XmlSchema) = (((^a) : (member Includes : XmlSchemaObjectCollection) x)).Item(index)
+let inline attrs (x:XmlSchemaType) = 
+  [ for attr in (x:?>XmlSchemaComplexType).Attributes -> attr :?> XmlSchemaAttribute ]  
 let inline extAttrs (x:XmlSchemaType) = 
   let contentModel = (x:?>XmlSchemaComplexType).ContentModel :?> XmlSchemaSimpleContent
   let ext = contentModel.Content :?> XmlSchemaSimpleContentExtension

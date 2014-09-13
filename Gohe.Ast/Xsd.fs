@@ -25,10 +25,11 @@ let rec private fromComplexType ns { Particle = particle; Occurrence = occurs; N
   | Choice -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
-and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType } : Element) = 
+and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType; Comment = comm } : Element) = 
   let result = XmlSchemaElement()
   result.Name <- name
   setOccurrence occurs result
+  comm |> Option.iter(fun comm -> setDoc comm result) 
   
   match eType with
   | Simple(sType, []) ->
@@ -51,11 +52,12 @@ and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType } : Element
 
   result
 
-and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType } : Attribute) =
+and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType; Comment = comm } : Attribute) =
   let result = XmlSchemaAttribute()
   result.Name <- name
   setOccurrenceForAttr occurs result 
   setSimpleType sType result
+  comm |> Option.iter(fun comm -> setDoc comm result) 
   result
 
 and fromNodeGeneratorInvoke ns invoke = 
@@ -63,7 +65,9 @@ and fromNodeGeneratorInvoke ns invoke =
 
   match lookupElementGenerator builtinNodeGenerators invoke with
   | Some invoker -> 
-      invoker invoke
+      let result = invoker invoke
+      invoke.Comment |> Option.iter(fun comm -> setDoc comm (result :?> XmlSchemaAnnotated)) 
+      result
   | _ -> 
       failwith "未定義のNodeGeneratorが指定されました。"
 
