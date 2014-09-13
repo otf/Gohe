@@ -96,6 +96,7 @@ let nodeGeneratorInvoke nm occurs parameters nodes = { Name = nm; Occurrence = o
 
 type Definition =
 | Root of Element
+| RootNodeGeneratorInvoke of NodeGeneratorInvoke
 
 type Schema = {
   Xmlns : string option

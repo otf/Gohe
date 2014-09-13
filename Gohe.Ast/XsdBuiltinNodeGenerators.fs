@@ -28,6 +28,13 @@ let anyElementGeneratorSignature = {
   HasChildren = false
 }
 
+let includeGeneratorSignature = { 
+  Name = "Include"
+  ParameterCount = 1
+  HasOccurrence = false
+  HasChildren = false
+}
+
 type NodeGeneratorInvoker = NodeGeneratorInvoke -> XmlSchemaObject
 
 let lookupElementGenerator (table : (NodeGeneratorSignature * NodeGeneratorInvoker) list) (invoke : NodeGeneratorInvoke) =
@@ -53,7 +60,13 @@ let anyElementGeneratorInvoker ({ Occurrence = occurs } : NodeGeneratorInvoke) =
   setOccurrence occurs any
   any :> XmlSchemaObject
 
+let includeGeneratorInvoker ({ Parameters = [ FixedString schemaLocation ] } : NodeGeneratorInvoke) =
+  let schemaInclude = XmlSchemaInclude()
+  schemaInclude.SchemaLocation <- schemaLocation
+  schemaInclude :> XmlSchemaObject
+
 let builtinNodeGenerators (nodeTrans : Node -> XmlSchemaObject) = [ 
   choiceElementGeneratorSignature, (choiceElementGeneratorInvoker nodeTrans)
   anyElementGeneratorSignature, anyElementGeneratorInvoker
+  includeGeneratorSignature, includeGeneratorInvoker
 ]

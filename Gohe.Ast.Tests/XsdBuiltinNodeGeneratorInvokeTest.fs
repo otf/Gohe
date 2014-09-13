@@ -35,3 +35,13 @@ let ``NodeGeneratorInvoke(Any)をXsd化できる`` () =
   let xdefSchema = Xdef.schema None [Xdef.Root root]
   let result = Xsd.fromSchema xdefSchema
   result |> atOfSchema 0 |> asElm |> typeOfAsComplex |> particle |> at 0 |> should be ofExactType<XmlSchemaAny>
+
+[<Test>]
+[<Explicit("外部のスキーマを参照するので実行が遅い")>]
+let ``NodeGeneratorInvoke(Include)をXsd化できる`` () = 
+  let includeInvoke =
+    nodeGeneratorInvoke "Include" required [Xdef.FixedString "http://www.w3.org/2001/xml.xsd"] []
+
+  let xdefSchema = Xdef.schema (Some "http://www.w3.org/XML/1998/namespace") [Xdef.RootNodeGeneratorInvoke includeInvoke]
+  let result = Xsd.fromSchema xdefSchema
+  result |> atOfSchemaInclude 0 |> should be ofExactType<XmlSchemaInclude>

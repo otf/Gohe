@@ -88,6 +88,9 @@ let fromSchema { Xmlns = xmlns; Definitions = defs } =
   | Root elm ->
       let root = fromElement elm
       schema.Items.Add(root) |> ignore
+  | RootNodeGeneratorInvoke ({Name = "Include"} as invoke)  ->
+      let invoke = fromNodeGeneratorInvoke invoke
+      schema.Includes.Add(invoke) |> ignore
 
   defs |> List.iter defToItem
 

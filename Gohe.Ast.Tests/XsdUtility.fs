@@ -12,6 +12,7 @@ let inline particle (x:^a) = ((^a) : (member Particle : XmlSchemaParticle) x) :?
 let inline items (x:^a) = ((^a) : (member Items : XmlSchemaObjectCollection) (x :?> XmlSchemaGroupBase))
 let inline at (index:int) (x:XmlSchemaObject) = (((^a) : (member Items : XmlSchemaObjectCollection) (x :?> XmlSchemaGroupBase))).Item(index)
 let atOfSchema (index:int) (x:XmlSchema) = (((^a) : (member Items : XmlSchemaObjectCollection) x)).Item(index)
+let atOfSchemaInclude (index:int) (x:XmlSchema) = (((^a) : (member Includes : XmlSchemaObjectCollection) x)).Item(index)
 let inline extAttrs (x:XmlSchemaType) = 
   let contentModel = (x:?>XmlSchemaComplexType).ContentModel :?> XmlSchemaSimpleContent
   let ext = contentModel.Content :?> XmlSchemaSimpleContentExtension
