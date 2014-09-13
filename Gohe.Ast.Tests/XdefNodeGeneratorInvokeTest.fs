@@ -9,7 +9,7 @@ open XdefUtility
 let ``NodeGeneratorInvokeをパースできる`` () =  
   let input = "!HogeGenerator".Trim()
 
-  let expected = nodeGeneratorInvoke "HogeGenerator" required [] []
+  let expected = nodeGeneratorInvoke "HogeGenerator" required None [] []
 
   parse Xdef.pNodeGeneratorInvoke input
   |> should equal (Some <| expected)
@@ -18,7 +18,7 @@ let ``NodeGeneratorInvokeをパースできる`` () =
 let ``パラメータを指定したNodeGeneratorInvokeをパースできる`` () =  
   let input = sprintf "!HogeGenerator %s" "\"text\" 10"
 
-  let expected = nodeGeneratorInvoke "HogeGenerator" required [Xdef.FixedString "text"; Xdef.FixedInt 10] []
+  let expected = nodeGeneratorInvoke "HogeGenerator" required None [Xdef.FixedString "text"; Xdef.FixedInt 10] []
 
   parse Xdef.pNodeGeneratorInvoke input
   |> should equal (Some <| expected)
@@ -27,7 +27,7 @@ let ``パラメータを指定したNodeGeneratorInvokeをパースできる`` (
 let ``出現回数指定を指定したNodeGeneratorInvokeをパースできる`` () =  
   let input = "!HogeGenerator*"
 
-  let expected = nodeGeneratorInvoke "HogeGenerator" many [] []
+  let expected = nodeGeneratorInvoke "HogeGenerator" many None [] []
 
   parse Xdef.pNodeGeneratorInvoke input
   |> should equal (Some <| expected)
@@ -36,7 +36,16 @@ let ``出現回数指定を指定したNodeGeneratorInvokeをパースできる`
 let ``子要素を指定したNodeGeneratorInvokeをパースできる`` () =  
   let input = "!HogeGenerator\n  Child : String"
 
-  let expected = nodeGeneratorInvoke "HogeGenerator" required [] [elm "Child" required None Xdef.String]
+  let expected = nodeGeneratorInvoke "HogeGenerator" required None [] [elm "Child" required None Xdef.String]
+
+  parse Xdef.pNodeGeneratorInvoke input
+  |> should equal (Some <| expected)
+
+[<Test>]
+let ``コメント付きNodeGeneratorInvokeをパースできる`` () =  
+  let input = "!HogeGenerator # Hoge\n  Child : String"
+
+  let expected = nodeGeneratorInvoke "HogeGenerator" required (Some "Hoge") [] [elm "Child" required None Xdef.String]
 
   parse Xdef.pNodeGeneratorInvoke input
   |> should equal (Some <| expected)

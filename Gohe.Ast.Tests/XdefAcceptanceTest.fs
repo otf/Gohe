@@ -101,7 +101,7 @@ Root
 
   let expected = 
     celm "Root" required None <| seq required [
-      nodeGeneratorInvokeNode "HogeGenerator" (specific 0 10) [Xdef.FixedString "param1"; Xdef.FixedString "param2"] [
+      nodeGeneratorInvokeNode "HogeGenerator" (specific 0 10) None [Xdef.FixedString "param1"; Xdef.FixedString "param2"] [
         attr "Id" useRequired None Xdef.Int
         elm "Elm" required None Xdef.String
       ]

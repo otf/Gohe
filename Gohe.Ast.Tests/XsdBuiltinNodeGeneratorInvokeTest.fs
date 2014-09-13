@@ -13,7 +13,7 @@ open XsdUtility
 let ``NodeGeneratorInvoke(Choice)をXsd化できる`` () = 
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "Choice" required [] [
+      nodeGeneratorInvokeNode "Choice" required None [] [
           elm "Elm1" required None Xdef.String
           elm "Elm2" required None Xdef.String
         ]
@@ -29,7 +29,7 @@ let ``NodeGeneratorInvoke(Choice)をXsd化できる`` () =
 let ``NodeGeneratorInvoke(Any)をXsd化できる`` () = 
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "Any" required [] []
+      nodeGeneratorInvokeNode "Any" required None [] []
     ]
   
   let xdefSchema = Xdef.schema [root]
@@ -42,7 +42,7 @@ let ``NodeGeneratorInvoke(Ref)をXsd化できる`` () =
   let elmA = elm "ElmA" required None Xdef.String
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "Ref" required [Xdef.FixedString "ElmA"] []
+      nodeGeneratorInvokeNode "Ref" required None [Xdef.FixedString "ElmA"] []
     ]
   
   let xdefSchema = Xdef.schema [elmA; root]
@@ -53,7 +53,7 @@ let ``NodeGeneratorInvoke(Ref)をXsd化できる`` () =
 [<Explicit("外部のスキーマを参照するので実行が遅い")>]
 let ``NodeGeneratorInvoke(Include)をXsd化できる`` () = 
   let includeInvoke =
-    nodeGeneratorInvokeNode "Include" required [Xdef.FixedString "http://www.w3.org/2001/xml.xsd"] []
+    nodeGeneratorInvokeNode "Include" required None [Xdef.FixedString "http://www.w3.org/2001/xml.xsd"] []
   let ns = attr "xmlns" useRequired None (Xdef.FixedString "http://www.w3.org/XML/1998/namespace")
   let xdefSchema = Xdef.schema [ns; includeInvoke]
   let result = Xsd.fromSchema xdefSchema

@@ -85,6 +85,7 @@ and NodeGeneratorInvoke = {
   Occurrence : Occurrence
   Parameters : SimpleType list
   Nodes : Node list
+  Comment : string option
 }
 
 let (<||>) p1 p2 = attempt p1 <|> p2
@@ -92,7 +93,7 @@ let (<||>) p1 p2 = attempt p1 <|> p2
 let complexType particle occurs nodes = { Particle = particle; Occurrence = occurs; Nodes = nodes }
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm } : Element
 let simple sType attrs = Simple(sType, attrs)
-let nodeGeneratorInvoke nm occurs parameters nodes = { Name = nm; Occurrence = occurs; Parameters = parameters; Nodes = nodes } : NodeGeneratorInvoke
+let nodeGeneratorInvoke nm occurs comm parameters nodes = { Name = nm; Occurrence = occurs; Parameters = parameters; Nodes = nodes; Comment = comm } : NodeGeneratorInvoke
 
 type Schema = {
   Nodes : Node list
@@ -250,7 +251,8 @@ let pComplexElement =
 let pNodeGeneratorInvoke = 
   nodeGeneratorInvoke
   <!> pIndent *> pchar '!' *> pToken
-  <*> pOccurrence <* pSpaces 
+  <*> pOccurrence
+  <*> pSpaces *> pComment 
   <*> many (pSpaces *> pSimpleType)
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
