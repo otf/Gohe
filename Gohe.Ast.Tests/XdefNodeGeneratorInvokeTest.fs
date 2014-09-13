@@ -1,4 +1,4 @@
-﻿module Test.``Xdef Node Generator Test``
+﻿module Test.``Xdef Node Generator Invoke Test``
 
 open NUnit.Framework
 open FsUnit
@@ -6,7 +6,7 @@ open FsUnit
 open XdefUtility
 
 [<Test>]
-let ``NodeGeneratorCallをパースできる`` () =  
+let ``NodeGeneratorInvokeをパースできる`` () =  
   let input = "!HogeGenerator".Trim()
 
   let expected = nodeGeneratorInvoke "HogeGenerator" required [] []
@@ -15,7 +15,7 @@ let ``NodeGeneratorCallをパースできる`` () =
   |> should equal (Some <| expected)
 
 [<Test>]
-let ``パラメータを指定したNodeGeneratorCallをパースできる`` () =  
+let ``パラメータを指定したNodeGeneratorInvokeをパースできる`` () =  
   let input = sprintf "!HogeGenerator %s" "\"text\" 10"
 
   let expected = nodeGeneratorInvoke "HogeGenerator" required [Xdef.FixedString "text"; Xdef.FixedInt 10] []
@@ -24,7 +24,7 @@ let ``パラメータを指定したNodeGeneratorCallをパースできる`` () 
   |> should equal (Some <| expected)
 
 [<Test>]
-let ``出現回数指定を指定したNodeGeneratorCallをパースできる`` () =  
+let ``出現回数指定を指定したNodeGeneratorInvokeをパースできる`` () =  
   let input = "!HogeGenerator*"
 
   let expected = nodeGeneratorInvoke "HogeGenerator" many [] []
@@ -33,7 +33,7 @@ let ``出現回数指定を指定したNodeGeneratorCallをパースできる`` 
   |> should equal (Some <| expected)
 
 [<Test>]
-let ``子要素を指定したNodeGeneratorCallをパースできる`` () =  
+let ``子要素を指定したNodeGeneratorInvokeをパースできる`` () =  
   let input = "!HogeGenerator\n  Child : String"
 
   let expected = nodeGeneratorInvoke "HogeGenerator" required [] [elm "Child" required None Xdef.String]
