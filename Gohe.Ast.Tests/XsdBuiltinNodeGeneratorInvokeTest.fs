@@ -38,11 +38,11 @@ let ``NodeGeneratorInvoke(any)をXsd化できる`` () =
 
 
 [<Test>]
-let ``NodeGeneratorInvoke(elementRef)をXsd化できる`` () = 
+let ``NodeGeneratorInvoke(element)をXsd化できる`` () = 
   let elmA = elm "ElmA" required None Xdef.String
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "elementRef" required None [Xdef.FixedString "ElmA"] []
+      nodeGeneratorInvokeNode "element" required None [Xdef.FixedString "ElmA"] []
     ]
   
   let xdefSchema = Xdef.schema [elmA; root]
