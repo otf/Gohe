@@ -36,6 +36,19 @@ let ``NodeGeneratorInvoke(Any)をXsd化できる`` () =
   let result = Xsd.fromSchema xdefSchema
   result |> atOfSchema 0 |> asElm |> typeOfAsComplex |> particle |> at 0 |> should be ofExactType<XmlSchemaAny>
 
+
+[<Test>]
+let ``NodeGeneratorInvoke(Ref)をXsd化できる`` () = 
+  let elmA = elm "ElmA" required None Xdef.String
+  let root = 
+    celm "Root" required None <| seq required [ 
+      nodeGeneratorInvokeNode "Ref" required [Xdef.FixedString "ElmA"] []
+    ]
+  
+  let xdefSchema = Xdef.schema [elmA; root]
+  let result = Xsd.fromSchema xdefSchema
+  result |> atOfSchema 1 |> asElm |> typeOfAsComplex |> particle |> at 0 |> should be ofExactType<XmlSchemaElement>
+
 [<Test>]
 [<Explicit("外部のスキーマを参照するので実行が遅い")>]
 let ``NodeGeneratorInvoke(Include)をXsd化できる`` () = 

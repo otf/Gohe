@@ -35,6 +35,14 @@ let includeGeneratorSignature = {
   HasChildren = false
 }
 
+
+let refGeneratorSignature = { 
+  Name = "Ref"
+  ParameterCount = 1
+  HasOccurrence = true
+  HasChildren = false
+}
+
 type NodeGeneratorInvoker = NodeGeneratorInvoke -> XmlSchemaObject
 
 let lookupElementGenerator (table : (NodeGeneratorSignature * NodeGeneratorInvoker) list) (invoke : NodeGeneratorInvoke) =
@@ -65,8 +73,15 @@ let includeGeneratorInvoker ({ Parameters = [ FixedString schemaLocation ] } : N
   schemaInclude.SchemaLocation <- schemaLocation
   schemaInclude :> XmlSchemaObject
 
-let builtinNodeGenerators (nodeTrans : Node -> XmlSchemaObject) = [ 
+let refGeneratorInvoker ns ({ Occurrence = occurs; Parameters = [ FixedString name ] } : NodeGeneratorInvoke) =
+  let refElement = XmlSchemaElement()
+  refElement.RefName <- XmlQualifiedName(name, ns)
+  setOccurrence occurs refElement
+  refElement :> XmlSchemaObject
+
+let builtinNodeGenerators (ns : string) (nodeTrans : Node -> XmlSchemaObject) = [ 
   choiceElementGeneratorSignature, (choiceElementGeneratorInvoker nodeTrans)
   anyElementGeneratorSignature, anyElementGeneratorInvoker
   includeGeneratorSignature, includeGeneratorInvoker
+  refGeneratorSignature, refGeneratorInvoker ns
 ]

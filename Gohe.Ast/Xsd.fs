@@ -59,15 +59,13 @@ and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType } : Attribut
   result
 
 and fromNodeGeneratorInvoke ns invoke = 
-  let builtinNodeGenerators = builtinNodeGenerators (fromNode ns)
+  let builtinNodeGenerators = builtinNodeGenerators ns (fromNode ns)
 
   match lookupElementGenerator builtinNodeGenerators invoke with
   | Some invoker -> 
       invoker invoke
   | _ -> 
-      let refElm = XmlSchemaElement()
-      refElm.RefName <- XmlQualifiedName(invoke.Name, ns)
-      refElm :> _
+      failwith "未定義のNodeGeneratorが指定されました。"
 
 and fromNode ns node = 
   match node with
