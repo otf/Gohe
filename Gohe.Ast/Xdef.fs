@@ -271,7 +271,9 @@ do pNodeImpl :=
 
 let pRoot = pSimpleElement <||> pComplexElement
 
-let pDefinition = Root <!> pRoot
+let pDefinition = 
+  (RootNodeGeneratorInvoke <!> pNodeGeneratorInvoke)
+  <||> (Root <!> pRoot)
 
 let pDefinitions = (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pDefinition)))
 
