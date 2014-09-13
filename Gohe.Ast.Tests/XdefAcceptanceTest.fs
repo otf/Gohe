@@ -18,10 +18,10 @@ Root
 
   let expected = 
     celm "Root" required None <| seq required [
-      attr "Id" useRequired None Xdef.Int
+      attr "Id" useRequired None (Xdef.TypeRef "int")
       attr "IsEnabled" useRequired None (Xdef.FixedBoolean true)
-      elmWithAttrs "ElmWithAttrs" required None (Xdef.String) <| [
-        attr "Attr" useRequired None Xdef.String
+      elmWithAttrs "ElmWithAttrs" required None ((Xdef.TypeRef "string")) <| [
+        attr "Attr" useRequired None (Xdef.TypeRef "string")
       ]
       celm "Children" required None <| seq required [
         elm "Child" many None (Xdef.intRange 0 10) 
@@ -41,7 +41,7 @@ Root # Root Element Comment
 
   let expected = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
-      attr "Id" useRequired (Some "Attribute Comment") Xdef.Int
+      attr "Id" useRequired (Some "Attribute Comment") (Xdef.TypeRef "int")
       celm "Children" required (Some "Complex Element Comment") <| seq required [
         elm "Child" many (Some "Simple Element Comment") (Xdef.intRange 0 10) 
       ] 
@@ -61,7 +61,7 @@ Root # Root Element Comment
 
   let expected = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
-      attr "Id" useRequired (Some "Attribute Comment") Xdef.Int
+      attr "Id" useRequired (Some "Attribute Comment") (Xdef.TypeRef "int")
       celm "Children" required (Some "Complex Element Comment") <| seq required [
         elm "Child" many (Some "Simple Element Comment") (Xdef.intRange 0 10) 
       ] 
@@ -102,8 +102,8 @@ Root
   let expected = 
     celm "Root" required None <| seq required [
       nodeGeneratorInvokeNode "HogeGenerator" (specific 0 10) None [Xdef.FixedString "param1"; Xdef.FixedString "param2"] [
-        attr "Id" useRequired None Xdef.Int
-        elm "Elm" required None Xdef.String
+        attr "Id" useRequired None (Xdef.TypeRef "int")
+        elm "Elm" required None (Xdef.TypeRef "string")
       ]
     ]
 

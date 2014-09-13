@@ -14,7 +14,7 @@ let ``Xmlnsを指定してXdefをXsd化できる`` () =
   let inputRoot =
     celm "Root" required None <| seq required [ 
       elmWithAttrs "Elm" required None (Xdef.FixedBoolean true) [
-        attr "Attr" useRequired None Xdef.String
+        attr "Attr" useRequired None (Xdef.TypeRef "string")
       ]
     ]
   let inputNs = attr "xmlns" useRequired None (Xdef.FixedString "http://example.com/myschema")

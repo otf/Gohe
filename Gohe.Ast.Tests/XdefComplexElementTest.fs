@@ -33,10 +33,10 @@ let occursTestFactors = [
 
 let childrenTestFactors = [
   "", []
-  "\n  Child : string", [elm "Child" required None Xdef.String]
-  "\n  @Child : string", [attr "Child" useRequired None Xdef.String]
-  "\n  @Child1 : string\n  Child2 : string", [attr "Child1" useRequired None Xdef.String; elm "Child2" required None Xdef.String]
-  "\n  Child1 : string\n  Child2 : string", [elm "Child1" required None Xdef.String; elm "Child2" required None Xdef.String]
+  "\n  Child : string", [elm "Child" required None (Xdef.TypeRef "string")]
+  "\n  @Child : string", [attr "Child" useRequired None (Xdef.TypeRef "string")]
+  "\n  @Child1 : string\n  Child2 : string", [attr "Child1" useRequired None (Xdef.TypeRef "string"); elm "Child2" required None (Xdef.TypeRef "string")]
+  "\n  Child1 : string\n  Child2 : string", [elm "Child1" required None (Xdef.TypeRef "string"); elm "Child2" required None (Xdef.TypeRef "string")]
 ]
 
 let complexTypeTestCases : obj [][] = [|

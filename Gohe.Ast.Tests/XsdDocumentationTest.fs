@@ -13,7 +13,7 @@ open XsdUtility
 let ``コメント指定のあるXdefをXsd化できる`` () = 
   let inputRoot = 
     celm "Root" required (Some "Root Element Comment") <| seq required [
-      attr "Id" useRequired (Some "Attribute Comment") Xdef.Int
+      attr "Id" useRequired (Some "Attribute Comment") (Xdef.TypeRef "int")
       celm "Children" required (Some "Complex Element Comment") <| seq required [ ] 
       nodeGeneratorInvokeNode "any" required (Some "Any Comment") [] []
     ]

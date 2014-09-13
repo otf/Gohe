@@ -11,16 +11,6 @@ let ``型指定のないXdefAttributeはエラーがでる`` () =
   |> should be (substr "型指定が必要")
 
 [<Test>]
-let ``解決できない型指定のXdefAttributeはエラーがでる`` () =  
-  parseGetError Xdef.pNode "@Name : unknownType"
-  |> should be (substr "指定された型が未定義")
-
-[<Test>]
-let ``解決できない型指定(前方一致)のXdefAttributeはエラーがでる`` () =  
-  parseGetError Xdef.pNode "@Name : stringtic"
-  |> should be (substr "指定された型が未定義")
-
-[<Test>]
 let ``解決できないパーティクル指定のXdefElementはエラーがでる`` () =  
   parseGetError Xdef.pNode "Elm :: Hoge"
   |> should be (substr "指定されたパーティクルが未定義")

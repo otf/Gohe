@@ -31,23 +31,6 @@ let ``FixedIntをパースできる`` (input, expected) =
 let ``FixedFloatをパースできる`` (input, expected) =  
   parse Xdef.pFixedFloat input |> should equal (Some <| Xdef.FixedFloat expected)
 
-let primitiveTypeTestCases : obj [][] = [|
-  [|"boolean"; Xdef.Boolean|]
-  [|"byte"; Xdef.Byte|]
-  [|"string"; Xdef.String|]
-  [|"int"; Xdef.Int|]
-  [|"float"; Xdef.Float|]
-  [|"decimal"; Xdef.Decimal|]
-  [|"date"; Xdef.Date|]
-  [|"time"; Xdef.Time|]
-  [|"dateTime"; Xdef.DateTime|]
-  [|"duration"; Xdef.Duration|]
-|]
-
-[<TestCaseSource("primitiveTypeTestCases")>]
-let ``PrimitiveTypeをパースできる`` input expected =  
-  (parse Xdef.pSimpleType input) |> should equal (Some <| expected)
-
 [<TestCase("(\"aaa\"|\"bbb\")", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" )", [| "aaa"; "bbb" |])>]
 [<TestCase("( \"aaa\" | \"bbb\" | \"ccc\" )", [| "aaa"; "bbb"; "ccc" |])>]

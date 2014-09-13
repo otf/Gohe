@@ -33,7 +33,7 @@ and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType; Comment = 
   
   match eType with
   | Simple(sType, []) ->
-      setSimpleType sType result
+      setSimpleType ns sType result
   | Simple(sType, attrs) ->
       let typ = XmlSchemaComplexType()
       result.SchemaType <- typ
@@ -44,19 +44,19 @@ and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType; Comment = 
       let ext = XmlSchemaSimpleContentExtension()
       contentModel.Content <- ext
       for attr in attrs do
-        ext.Attributes.Add(fromAttribute attr) |> ignore
+        ext.Attributes.Add(fromAttribute ns attr) |> ignore
 
-      setBaseSimpleType sType ext result 
+      setBaseSimpleType ns sType ext result 
   | Complex cType ->
       result.SchemaType <- fromComplexType ns cType
 
   result
 
-and fromAttribute ({ Name = name; Occurrence = occurs; Type = sType; Comment = comm } : Attribute) =
+and fromAttribute ns ({ Name = name; Occurrence = occurs; Type = sType; Comment = comm } : Attribute) =
   let result = XmlSchemaAttribute()
   result.Name <- name
   setOccurrenceForAttr occurs result 
-  setSimpleType sType result
+  setSimpleType ns sType result
   comm |> Option.iter(fun comm -> setDoc comm result) 
   result
 
@@ -74,7 +74,7 @@ and fromNodeGeneratorInvoke ns invoke =
 and fromNode ns node = 
   match node with
   | Element element -> fromElement ns element :> XmlSchemaObject
-  | Attribute attr -> fromAttribute attr :> _
+  | Attribute attr -> fromAttribute ns attr :> _
   | NodeGeneratorInvoke nodeGeneratorInvoke -> fromNodeGeneratorInvoke ns nodeGeneratorInvoke
 
 let fromRoot ns element = 

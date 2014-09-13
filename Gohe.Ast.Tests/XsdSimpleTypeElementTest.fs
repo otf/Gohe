@@ -9,19 +9,6 @@ open XdefUtility
 open Xsd
 open XsdUtility
 
-let primitiveTypeTestCases : obj [][] = [|
-  [|Xdef.Boolean; "boolean"|]
-  [|Xdef.Byte; "byte"|]
-  [|Xdef.String; "string"|]
-  [|Xdef.Int; "int"|]
-  [|Xdef.Float; "float"|]
-  [|Xdef.Decimal; "decimal"|]
-  [|Xdef.Date; "date"|]
-  [|Xdef.Time; "time"|]
-  [|Xdef.DateTime; "dateTime"|]
-  [|Xdef.Duration; "duration"|]
-|]
-
 let fixedTypeTestCases : obj [][] = [|
   [|Xdef.FixedBoolean(true); "true"|]
   [|Xdef.FixedByte(100y); "100"|]
@@ -29,13 +16,6 @@ let fixedTypeTestCases : obj [][] = [|
   [|Xdef.FixedInt(100); "100"|]
   [|Xdef.FixedFloat(100.001); "100.001"|]
 |]
-
-[<TestCaseSource("primitiveTypeTestCases")>]
-let ``PrimitiveTypeの要素をXsd化できる`` inputType expected = 
-  let input = elm "Root" required None inputType
-  
-  Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
-  Xsd.fromNode "" input |> asElm |> typeNameOf |> should equal (XmlQualifiedName(expected, "http://www.w3.org/2001/XMLSchema"))
 
 [<TestCaseSource("fixedTypeTestCases")>]
 let ``PrimitiveType(Fixed)の要素をXsd化できる`` inputType expected = 
@@ -95,15 +75,15 @@ let occursTestCases : obj [][] = [|
 
 [<TestCaseSource("occursTestCases")>]
 let ``PrimitiveTypeの要素(出現回数指定)をXsd化できる`` occursInput (minOccursExpected : int) (maxOccursExpected : int option) = 
-  let input = elm "Root" occursInput None Xdef.String
+  let input = elm "Root" occursInput None (Xdef.TypeRef "string")
   
   Xsd.fromNode "" input |> asElm |> minOccurs |> should equal minOccursExpected
   Xsd.fromNode "" input |> asElm |> maxOccurs |> should equal maxOccursExpected
 
 [<Test>]
 let ``PrimitiveTypeの要素(属性あり)をXsd化できる`` () = 
-  let input = elmWithAttrs "Root" required None Xdef.String <| [ 
-                attr "Attr" useRequired None Xdef.String
+  let input = elmWithAttrs "Root" required None (Xdef.TypeRef "string") <| [ 
+                attr "Attr" useRequired None (Xdef.TypeRef "string")
               ]
   
   Xsd.fromNode "" input |> asElm |> typeOf |> extAttrs |> should haveLength 1

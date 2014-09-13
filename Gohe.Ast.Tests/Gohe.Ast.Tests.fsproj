@@ -69,7 +69,6 @@
     <Compile Include="XdefSimpleElementTest.fs" />
     <Compile Include="XdefComplexElementTest.fs" />
     <Compile Include="XdefSchemaTest.fs" />
-    <Compile Include="XdefNodeGeneratorInvokeTest.fs" />
     <Compile Include="XdefAcceptanceTest.fs" />
     <Compile Include="XdefFailureTest.fs" />
     <Compile Include="XsdUtility.fs" />
@@ -79,6 +78,7 @@
     <Compile Include="XsdBuiltinNodeGeneratorInvokeTest.fs" />
     <Compile Include="XsdDocumentationTest.fs" />
     <Compile Include="XsdSchemaTest.fs" />
+    <Compile Include="XdefNodeGeneratorInvokeTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">

@@ -5,12 +5,12 @@ open FParsec.Applicative
 
 type SimpleType = 
   | FixedBoolean of bool | FixedByte of sbyte | FixedString of string | FixedInt of int | FixedFloat of float
-  | Boolean | Byte | String | Int  | Float | Decimal | Date | Time | DateTime | Duration
   | EnumeratedString of string list
   | FixedLengthString of int
   | VariableLengthString of min : int * max : int option
   | IntRange of int * int
   | Pattern of string
+  | TypeRef of string
 
 // [b, e)
 let intRange b e = IntRange(b, e - 1)
@@ -140,22 +140,6 @@ let pVariableLengthString : Parser<_> =
   pstring "string" *> 
   pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
 
-let pPrimitiveType : Parser<_> = parse {
-  let! nm = pToken
-  match nm with
-  | "boolean" -> return Boolean
-  | "string" -> return String
-  | "byte" -> return Byte
-  | "int" -> return Int
-  | "float" -> return Float
-  | "decimal" -> return Decimal
-  | "date" -> return Date
-  | "time" -> return Time
-  | "dateTime" -> return DateTime
-  | "duration" -> return Duration
-  | _ -> return! fail ("is not primitive type") 
-}
-
 let pSimpleType =
   pEnumeratedString
   <||> pIntRange
@@ -168,7 +152,7 @@ let pSimpleType =
   <||> pFixedFloat 
   <||> pVariableLengthString 
   <||> pFixedLengthString
-  <||> pPrimitiveType
+  <||> (TypeRef <!> pToken)
   <??> "指定された型が未定義です。"
 
 let pResolveSimpleType = pchar ':' *> pSpaces *> pSimpleType

@@ -22,18 +22,23 @@ let fromFacets qName facets =
     restriction.Facets.Add(facet) |> ignore
   simpleTypeWithFacets
 
-let fromSimpleType etype = 
+let (|IsPrimitiveTypeName|_|) =
+  function
+  | "boolean"
+  | "byte"
+  | "string"
+  | "int"
+  | "float"
+  | "decimal"
+  | "date"
+  | "time"
+  | "dateTime"
+  | "duration" -> Some ()
+  | _ -> None
+  
+
+let fromSimpleType ns etype = 
   match etype with
-  | Boolean -> QName <| schemaQName "boolean"
-  | Byte -> QName <| schemaQName "byte"
-  | String -> QName <| schemaQName "string"
-  | Int -> QName <| schemaQName "int"
-  | Float -> QName <| schemaQName "float"
-  | Decimal -> QName <| schemaQName "decimal"
-  | Date -> QName <| schemaQName "date"
-  | Time -> QName <| schemaQName "time"
-  | DateTime -> QName <| schemaQName "dateTime"
-  | Duration -> QName <| schemaQName "duration"
   | FixedBoolean value -> FixedValue (schemaQName "boolean", (value.ToString()).ToLower())
   | FixedByte value -> FixedValue (schemaQName "byte", value.ToString())
   | FixedString value -> FixedValue (schemaQName "string", value)
@@ -74,10 +79,14 @@ let fromSimpleType etype =
       let facet = XmlSchemaPatternFacet()
       facet.Value <- pattern
       SimpleTypeWithFacets <| fromFacets (schemaQName "string") [facet]
+  | TypeRef (IsPrimitiveTypeName as name) ->
+      QName <| schemaQName name
+  | TypeRef name ->
+      QName <| XmlQualifiedName(name, ns)
   | _ -> failwith "unsupported type"
   
-let inline setSimpleType sType (x:^a) =
-  match fromSimpleType sType with
+let inline setSimpleType ns sType (x:^a) =
+  match fromSimpleType ns sType with
   | QName qname -> 
       ((^a) : (member set_SchemaTypeName : XmlQualifiedName -> unit) (x, qname))
   | FixedValue (qname, value) ->
@@ -86,8 +95,8 @@ let inline setSimpleType sType (x:^a) =
   | SimpleTypeWithFacets typ ->
       ((^a) : (member set_SchemaType : XmlSchemaSimpleType -> unit) (x, typ))
 
-let inline setBaseSimpleType sType (ext:^a) (elm:^b) =
-  match fromSimpleType sType with
+let inline setBaseSimpleType ns sType (ext:^a) (elm:^b) =
+  match fromSimpleType ns sType with
   | QName qname -> 
       ((^a) : (member set_BaseTypeName : XmlQualifiedName -> unit) (ext, qname))
   | FixedValue (qname, value) ->
