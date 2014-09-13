@@ -10,10 +10,10 @@ open Xsd
 open XsdUtility
 
 [<Test>]
-let ``NodeGeneratorInvoke(Choice)をXsd化できる`` () = 
+let ``NodeGeneratorInvoke(choice)をXsd化できる`` () = 
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "Choice" required None [] [
+      nodeGeneratorInvokeNode "choice" required None [] [
           elm "Elm1" required None Xdef.String
           elm "Elm2" required None Xdef.String
         ]
@@ -26,10 +26,10 @@ let ``NodeGeneratorInvoke(Choice)をXsd化できる`` () =
   result |> atOfSchema 0  |> asElm |> typeOfAsComplex |> particle |> at 0 |> at 1 |> should be ofExactType<XmlSchemaElement>
 
 [<Test>]
-let ``NodeGeneratorInvoke(Any)をXsd化できる`` () = 
+let ``NodeGeneratorInvoke(any)をXsd化できる`` () = 
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "Any" required None [] []
+      nodeGeneratorInvokeNode "any" required None [] []
     ]
   
   let xdefSchema = Xdef.schema [root]
@@ -38,11 +38,11 @@ let ``NodeGeneratorInvoke(Any)をXsd化できる`` () =
 
 
 [<Test>]
-let ``NodeGeneratorInvoke(ElementRef)をXsd化できる`` () = 
+let ``NodeGeneratorInvoke(elementRef)をXsd化できる`` () = 
   let elmA = elm "ElmA" required None Xdef.String
   let root = 
     celm "Root" required None <| seq required [ 
-      nodeGeneratorInvokeNode "ElementRef" required None [Xdef.FixedString "ElmA"] []
+      nodeGeneratorInvokeNode "elementRef" required None [Xdef.FixedString "ElmA"] []
     ]
   
   let xdefSchema = Xdef.schema [elmA; root]
@@ -51,9 +51,9 @@ let ``NodeGeneratorInvoke(ElementRef)をXsd化できる`` () =
 
 [<Test>]
 [<Explicit("外部のスキーマを参照するので実行が遅い")>]
-let ``NodeGeneratorInvoke(Include)をXsd化できる`` () = 
+let ``NodeGeneratorInvoke(include)をXsd化できる`` () = 
   let includeInvoke =
-    nodeGeneratorInvokeNode "Include" required None [Xdef.FixedString "http://www.w3.org/2001/xml.xsd"] []
+    nodeGeneratorInvokeNode "include" required None [Xdef.FixedString "http://www.w3.org/2001/xml.xsd"] []
   let ns = attr "xmlns" useRequired None (Xdef.FixedString "http://www.w3.org/XML/1998/namespace")
   let xdefSchema = Xdef.schema [ns; includeInvoke]
   let result = Xsd.fromSchema xdefSchema

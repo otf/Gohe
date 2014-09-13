@@ -97,7 +97,7 @@ let fromSchema { Nodes = nodes } =
         schema.TargetNamespace <- ns
         schema.Namespaces.Add("", schema.TargetNamespace)
         schema.ElementFormDefault <- XmlSchemaForm.Qualified
-    | NodeGeneratorInvoke ({Name = "Include"} as invoke) ->
+    | NodeGeneratorInvoke ({Name = "include"} as invoke) ->
         let invoke = fromNodeGeneratorInvoke schema.TargetNamespace invoke
         schema.Includes.Add(invoke) |> ignore
     | unsupported -> failwithf "このノードは、このスキーマ階層ではサポートされません。:%A" unsupported

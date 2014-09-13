@@ -15,21 +15,21 @@ type NodeGeneratorSignature = {
 }
 
 let choiceElementGeneratorSignature = { 
-  Name = "Choice"
+  Name = "choice"
   ParameterCount = 0
   HasOccurrence = true
   HasChildren = true
 }
 
 let anyElementGeneratorSignature = { 
-  Name = "Any"
+  Name = "any"
   ParameterCount = 0
   HasOccurrence = true
   HasChildren = false
 }
 
 let includeGeneratorSignature = { 
-  Name = "Include"
+  Name = "include"
   ParameterCount = 1
   HasOccurrence = false
   HasChildren = false
@@ -37,7 +37,7 @@ let includeGeneratorSignature = {
 
 
 let elementRefGeneratorSignature = { 
-  Name = "ElementRef"
+  Name = "elementRef"
   ParameterCount = 1
   HasOccurrence = true
   HasChildren = false
