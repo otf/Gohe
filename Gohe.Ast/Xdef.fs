@@ -178,8 +178,8 @@ let pAttributeOccurrence : Parser<_> =
   <|> (preturn AttributeOccurrence.Required)
 
 let pOccurrence : Parser<_> =
-  (Required <! ((skipNoneOf "{*+?" <|> eof) |> lookAhead)) // 指定がなかった場合はRequired 
-  <||> (pBracket "{" "}" (specific <!> pint32 <* pSpaces <* pstring "," <* pSpaces <*> (pint32 |> opt)))
+  (Required <! ((skipNoneOf "[*+?" <|> eof) |> lookAhead)) // 指定がなかった場合はRequired 
+  <||> (pBracket "[" "]" (specific <!> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> ((Some <!> pint32) <|> (None <! pchar '*'))))
   <||> (Many <! pstring "*")
   <||> (RequiredMany <! pstring "+")
   <||> (Optional <! pstring "?")

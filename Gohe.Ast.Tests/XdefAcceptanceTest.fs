@@ -75,9 +75,9 @@ let ``パーティクルが指定されたXdefNodeをパースできる`` () =
   let xdef = """
 Root
   MustSeqImplicitly
-  MustSeq :: Sequence{0,10}
-  MustChoice :: Choice{0,10}
-  MustAll :: All{0,10}""".Trim()
+  MustSeq :: Sequence[0..10]
+  MustChoice :: Choice[0..10]
+  MustAll :: All[0..10]""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [
@@ -95,7 +95,7 @@ Root
 let ``NodeGeneratorCallを含むXdefNodeをパースできる`` () =  
   let xdef = """
 Root
-  !HogeGenerator{0,10} "param1" "param2"
+  !HogeGenerator[0..10] "param1" "param2"
     @Id : Int
     Elm : String""".Trim()
 
