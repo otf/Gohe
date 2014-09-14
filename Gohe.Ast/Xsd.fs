@@ -109,7 +109,7 @@ let fromSchema { Nodes = nodes } =
     | Element elm ->
         let root = fromElement schema.TargetNamespace elm
         schema.Items.Add(root) |> ignore
-    | Attribute { Name = "xmlns"; Type = (FixedString ns)} -> 
+    | NodeGeneratorInvoke ({Name = "targetNamespace"; Parameters = [FixedString ns]} as invoke) ->
         schema.TargetNamespace <- ns
         schema.Namespaces.Add("", schema.TargetNamespace)
         schema.ElementFormDefault <- XmlSchemaForm.Qualified

@@ -10,14 +10,14 @@ open Xsd
 open XsdUtility
 
 [<Test>]
-let ``Xmlnsを指定してXdefをXsd化できる`` () = 
+let ``targetNamespaceを指定してXdefをXsd化できる`` () = 
   let inputRoot =
     celm "Root" required None <| seq required [ 
       elmWithAttrs "Elm" required None (Xdef.FixedBoolean true) [
         attr "Attr" useRequired None (Xdef.TypeRef "string")
       ]
     ]
-  let inputNs = attr "xmlns" useRequired None (Xdef.FixedString "http://example.com/myschema")
+  let inputNs = nodeGeneratorInvokeNode "targetNamespace" required None [Xdef.FixedString "http://example.com/myschema"] []
   let input = Xdef.schema [inputNs; inputRoot]
 
   Xsd.fromSchema input |> targetNamespace |> should equal "http://example.com/myschema"
