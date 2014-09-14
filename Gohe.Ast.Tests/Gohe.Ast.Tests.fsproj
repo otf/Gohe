@@ -65,9 +65,11 @@
     <None Include="app.config" />
     <Compile Include="XdefUtility.fs" />
     <Compile Include="XdefSimpleTypeTest.fs" />
+    <Compile Include="XdefSimpleTypeDefineTest.fs" />
     <Compile Include="XdefSimpleAttributeTest.fs" />
     <Compile Include="XdefSimpleElementTest.fs" />
     <Compile Include="XdefComplexElementTest.fs" />
+    <Compile Include="XdefNodeGeneratorInvokeTest.fs" />
     <Compile Include="XdefSchemaTest.fs" />
     <Compile Include="XdefAcceptanceTest.fs" />
     <Compile Include="XdefFailureTest.fs" />
@@ -75,10 +77,10 @@
     <Compile Include="XsdAttributeTest.fs" />
     <Compile Include="XsdComplexTypeElementTest.fs" />
     <Compile Include="XsdSimpleTypeElementTest.fs" />
+    <Compile Include="XsdSimpleTypeDefineTest.fs" />
     <Compile Include="XsdBuiltinNodeGeneratorInvokeTest.fs" />
     <Compile Include="XsdDocumentationTest.fs" />
     <Compile Include="XsdSchemaTest.fs" />
-    <Compile Include="XdefNodeGeneratorInvokeTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">

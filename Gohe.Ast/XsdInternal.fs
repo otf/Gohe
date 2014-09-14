@@ -95,6 +95,26 @@ let inline setSimpleType ns sType (x:^a) =
   | SimpleTypeWithFacets typ ->
       ((^a) : (member set_SchemaType : XmlSchemaSimpleType -> unit) (x, typ))
 
+let inline getSimpleType ns sType =
+  match fromSimpleType ns sType with
+  | QName qname -> 
+      let simpleTypeWithFacets = XmlSchemaSimpleType()
+      let restriction = XmlSchemaSimpleTypeRestriction()
+      simpleTypeWithFacets.Content <- restriction
+      restriction.BaseTypeName <- qname
+      simpleTypeWithFacets
+  | FixedValue (qname, value) ->
+      let simpleTypeWithFacets = XmlSchemaSimpleType()
+      let restriction = XmlSchemaSimpleTypeRestriction()
+      simpleTypeWithFacets.Content <- restriction
+      restriction.BaseTypeName <- qname
+      let facet = XmlSchemaEnumerationFacet()
+      facet.Value <- value
+      restriction.Facets.Add(facet) |> ignore
+      simpleTypeWithFacets
+  | SimpleTypeWithFacets typ ->
+      typ
+
 let inline setBaseSimpleType ns sType (ext:^a) (elm:^b) =
   match fromSimpleType ns sType with
   | QName qname -> 

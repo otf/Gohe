@@ -31,6 +31,7 @@ let inline useOfAttr (x:XmlSchemaAttribute) = x.Use
 let getElm (x : XmlSchema) = 
   [ for (:? XmlSchemaElement as elm) in x.Elements.Values do yield elm ] |> List.head
 let asElm (x : XmlSchemaObject) = x :?> XmlSchemaElement
+let asType (x : XmlSchemaObject) = x :?> XmlSchemaType
 let asAttr (x : XmlSchemaObject) = x :?> XmlSchemaAttribute
 let enumString (x: XmlSchemaType) = 
   let facets = (((x:?>XmlSchemaSimpleType).Content) :?> XmlSchemaSimpleTypeRestriction).Facets

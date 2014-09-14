@@ -71,6 +71,22 @@ and fromNodeGeneratorInvoke ns invoke =
   | _ -> 
       failwith "未定義のNodeGeneratorが指定されました。"
 
+and fromTypeDef ns ({ Name = name; Type = eType; Comment = comm } : TypeDefine) = 
+
+  match eType with
+  | Simple(sType, []) ->
+      let result = getSimpleType ns sType 
+      result.Name <- name
+      comm |> Option.iter(fun comm -> setDoc comm result) 
+      result :> XmlSchemaType
+  | Simple(sType, attrs) ->
+      failwith "属性付きのSimpleTypeは定義できません。"
+  | Complex cType ->
+      let result = fromComplexType ns cType
+      result.Name <- name
+      comm |> Option.iter(fun comm -> setDoc comm result) 
+      result :> _
+
 and fromNode ns node = 
   match node with
   | Element element -> fromElement ns element :> XmlSchemaObject
@@ -100,6 +116,9 @@ let fromSchema { Nodes = nodes } =
     | NodeGeneratorInvoke ({Name = "include"} as invoke) ->
         let invoke = fromNodeGeneratorInvoke schema.TargetNamespace invoke
         schema.Includes.Add(invoke) |> ignore
+    | TypeDefine typeDef ->
+        let typeDef = fromTypeDef schema.TargetNamespace typeDef
+        schema.Items.Add(typeDef) |> ignore
     | unsupported -> failwithf "このノードは、このスキーマ階層ではサポートされません。:%A" unsupported
 
   nodes |> List.iter nodeF

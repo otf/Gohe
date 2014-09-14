@@ -32,3 +32,5 @@ let specific min max = Xdef.Occurrence.Specified (min, Some max)
 let min n = Xdef.Occurrence.Specified (n, None)
 let nodeGeneratorInvoke nm occurs comm parameters nodes = Xdef.nodeGeneratorInvoke nm occurs comm parameters nodes
 let nodeGeneratorInvokeNode nm occurs comm parameters nodes = Xdef.NodeGeneratorInvoke <| Xdef.nodeGeneratorInvoke nm occurs comm parameters nodes
+let simpleTypeDef nm comm stype = Xdef.TypeDefine <| Xdef.typeDefine nm (Xdef.Simple <| (stype, [])) comm 
+let simpleTypeDefWithAttrs nm comm stype attrs = Xdef.TypeDefine <| Xdef.typeDefine nm (Xdef.Simple <| (stype, attrs |> List.map (function Xdef.Attribute attr -> attr))) comm 

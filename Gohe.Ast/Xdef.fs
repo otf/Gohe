@@ -74,9 +74,16 @@ and Element = {
   Comment : string option
 }
 
+and TypeDefine = {
+  Name : string
+  Type : ElementType
+  Comment : string option
+}
+
 and Node = 
   | Element of Element
   | Attribute of Attribute
+  | TypeDefine of TypeDefine
   | NodeGeneratorInvoke of NodeGeneratorInvoke
 // TODO:  | Module of string
 
@@ -91,9 +98,11 @@ and NodeGeneratorInvoke = {
 let (<||>) p1 p2 = attempt p1 <|> p2
 
 let complexType particle occurs nodes = { Particle = particle; Occurrence = occurs; Nodes = nodes }
+let complex cType = Complex cType
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm } : Element
 let simple sType attrs = Simple(sType, attrs)
 let nodeGeneratorInvoke nm occurs comm parameters nodes = { Name = nm; Occurrence = occurs; Parameters = parameters; Nodes = nodes; Comment = comm } : NodeGeneratorInvoke
+let typeDefine nm typ comm = { Name = nm; Type = typ; Comment = comm } : TypeDefine
 
 type Schema = {
   Nodes : Node list
@@ -220,7 +229,7 @@ let pResolveParticle =
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pResolveComplexType = 
-  complexType 
+  (fun particle occurrence -> complexType particle occurrence )
   <!> pResolveParticle 
   <*> pOccurrence
 
@@ -240,12 +249,38 @@ let pNodeGeneratorInvoke =
   <*> many (pSpaces *> pSimpleType)
   <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
 
+// CommentはTypeDefineに対してつけたいため、AttributesだけあとでParseする
+let pSimpleTypeDefineBody = simple <!> pchar '=' *> pSpaces *> pSimpleType
+
+let pSimpleTypeDefine =
+  (fun nm fType comm attrs -> typeDefine nm (fType attrs) comm)
+  <!> pIndent *> pToken <* pSpaces
+  <*> pSimpleTypeDefineBody
+  <*> pSpaces *> pComment 
+  <*> ((eof *> (preturn [])) <|> (newline *> indent *> pAttrs))
+
+// CommentはTypeに対してつけたいため、NodesだけあとでParseする
+let pComplexTypeDefineBody = 
+  (fun particle occurs nodes -> complex <| complexType particle occurs nodes)
+  <!> pResolveParticle
+  <*> pOccurrence <* pSpaces <* pchar '='
+  
+
+let pComplexTypeDefine =
+  (fun nm fType comm attrs -> typeDefine nm (fType attrs) comm)
+  <!> pIndent *> pToken <* pSpaces
+  <*> pComplexTypeDefineBody
+  <*> pSpaces *> pComment 
+  <*> ((eof *> (preturn [])) <|> (newline *> indent *> pNodes))
+
 do pAttrsImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pAttribute)) <* unindent)
 
 do pNodesImpl := (List.choose id) <!> (many ((None <! pSpaces *> newline) <||> (Some <!> pNode)) <* unindent)
 
 do pNodeImpl :=
   (Attribute <!> pAttribute)
+  <||> (TypeDefine <!> pSimpleTypeDefine)
+  <||> (TypeDefine <!> pComplexTypeDefine)
   <||> (NodeGeneratorInvoke <!> pNodeGeneratorInvoke)
   <||> (Element <!> pSimpleElement)
   <||> (Element <!> pComplexElement)
