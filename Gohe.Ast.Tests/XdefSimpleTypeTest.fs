@@ -37,6 +37,10 @@ let ``FixedFloatをパースできる`` (input, expected) =
 let ``EnumeratedStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.EnumeratedString (expected |> Array.toList))
 
+[<TestCase("char", 1)>]
+let ``FixedLengthString(char)をパースできる`` (input, expected) =  
+  (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.FixedLengthString(expected))
+
 [<TestCase("char[100]", 100)>]
 let ``FixedLengthStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.FixedLengthString(expected))
