@@ -77,7 +77,7 @@ Root
   MustSeqImplicitly
   MustSeq :: sequence[0..10]
   MustChoice :: choice[0..10]
-  MustAll :: all[0..10]""".Trim()
+  MustAll :: all""".Trim()
 
   let expected = 
     celm "Root" required None <| seq required [
@@ -85,7 +85,7 @@ Root
       celm "MustSeqImplicitly" required None <| seq required [ ]
       celm "MustSeq" required None <| seq (specific 0 10) [ ] 
       celm "MustChoice" required None <| choice (specific 0 10) [ ] 
-      celm "MustAll" required None <| all (specific 0 10) [ ] 
+      celm "MustAll" required None <| all [ ] 
     ]
 
   parse Xdef.pNode xdef

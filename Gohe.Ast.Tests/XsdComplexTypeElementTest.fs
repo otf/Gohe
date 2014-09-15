@@ -27,7 +27,7 @@ let ``ComplexType(Choice)の要素をXsd化できる`` () =
 
 [<Test>]
 let ``ComplexType(All)の要素をXsd化できる`` () = 
-  let input = celm "Root" required None <| all required []
+  let input = celm "Root" required None <| all []
   
   Xsd.fromNode "" input |> asElm |> name |> should equal "Root"
 
@@ -48,7 +48,7 @@ let occursTestCases : obj [][] = [|
 
 [<TestCaseSource("occursTestCases")>]
 let ``ComplexTypeの要素(出現回数指定)をXsd化できる`` occursInput (minOccursExpected : int) (maxOccursExpected : int option) = 
-  let input = celm "Root" required None <| all occursInput []
+  let input = celm "Root" required None <| seq occursInput []
   
   Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> minOccurs |> should equal minOccursExpected
   Xsd.fromNode "" input |> asElm |> typeOfAsComplex |> particle |> maxOccurs |> should equal maxOccursExpected

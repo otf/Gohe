@@ -8,7 +8,7 @@ open XdefUtility
 [<Test>]
 let ``XdefParticle(Sequence)の指定をパースできる`` () =  
   parse Xdef.pParticle "sequence"
-  |> should equal (Some Xdef.Particle.Sequence)
+  |> should equal (Some (Xdef.Particle.Sequence required))
 
 [<Test>]
 let ``XdefElement(暗黙のSequence)をパースできる`` () =  
@@ -19,7 +19,6 @@ let ``XdefElement(暗黙のSequence)をパースできる`` () =
 let particleTestFactors = [
   "sequence", seq
   "choice", choice
-  "all", all
 ]
 
 let occursTestFactors = [
@@ -43,11 +42,11 @@ let complexTypeTestCases : obj [][] = [|
   for (particleInput, particleExpected) in particleTestFactors do
   for (occursInput, occursExpected) in occursTestFactors do
   for (childrenInput, childrenExpected) in childrenTestFactors do
-    yield [| particleInput; particleExpected; occursInput; occursExpected; childrenInput; childrenExpected |]
+    yield [| particleInput; particleExpected occursExpected; occursInput; childrenInput; childrenExpected |]
 |]
 
 [<TestCaseSource("complexTypeTestCases")>]
-let ``複雑型のXdefElementをパースできる`` particleInput particleExpected occursInput occursExpected childrenInput childrenExpected =
-  let expected = celm "Root" required None <| particleExpected (occursExpected: Xdef.Occurrence) childrenExpected
+let ``複雑型のXdefElementをパースできる`` particleInput particleExpected occursInput childrenInput childrenExpected =
+  let expected = celm "Root" required None <| particleExpected childrenExpected
   parse Xdef.pNode (sprintf "Root :: %s%s%s" particleInput occursInput childrenInput)
   |> should equal (Some expected)

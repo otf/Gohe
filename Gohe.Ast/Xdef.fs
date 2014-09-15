@@ -51,13 +51,12 @@ let attribute nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ;
 /// パーティクルを表す型です。
 /// 明示的に指定されなかった場合、Sequenceと推論されます。
 type Particle =
-  | Sequence
-  | Choice
+  | Sequence of Occurrence
+  | Choice of Occurrence
   | All
 
 type ComplexType = {
   Particle : Particle
-  Occurrence : Occurrence
   Nodes : Node list
 }
 
@@ -97,7 +96,7 @@ and NodeGeneratorInvoke = {
 
 let (<||>) p1 p2 = attempt p1 <|> p2
 
-let complexType particle occurs nodes = { Particle = particle; Occurrence = occurs; Nodes = nodes }
+let complexType particle nodes = { Particle = particle; Nodes = nodes }
 let complex cType = Complex cType
 let element nm occurs typ comm = { Name = nm; Occurrence = occurs; Type = typ; Comment = comm } : Element
 let simple sType attrs = Simple(sType, attrs)
@@ -217,21 +216,25 @@ let pSimpleElement =
 let pParticle : Parser<_> = parse {
   let! nm = pToken
   match nm with
-  | "sequence" -> return Sequence
-  | "choice" -> return Choice
-  | "all" -> return All
+  | "sequence" -> 
+      let! occurs = pOccurrence
+      return Sequence occurs
+  | "choice" -> 
+      let! occurs = pOccurrence
+      return Choice occurs
+  | "all" -> 
+      return All
   | _ -> return! failFatally ("指定されたパーティクルが未定義です。") 
 }
 
 let pResolveParticle =
-  (Sequence <! notFollowedBy (pstring "::"))
+  (Sequence Required <! notFollowedBy (pstring "::"))
   <|> (pstring "::" *> pSpaces *> pParticle)
 
 // CommentはElementに対してつけたいため、NodesだけあとでParseする
 let pResolveComplexType = 
-  (fun particle occurrence -> complexType particle occurrence )
+  (fun particle nodes -> complexType particle nodes )
   <!> pResolveParticle 
-  <*> pOccurrence
 
 let pComplexElement =
   (fun nm occurs fType comm nodes -> element nm occurs (Complex <| fType nodes) comm)
@@ -261,10 +264,8 @@ let pSimpleTypeDefine =
 
 // CommentはTypeに対してつけたいため、NodesだけあとでParseする
 let pComplexTypeDefineBody = 
-  (fun particle occurs nodes -> complex <| complexType particle occurs nodes)
-  <!> pResolveParticle
-  <*> pOccurrence <* pSpaces <* pchar '='
-  
+  (fun particle nodes -> complex <| complexType particle nodes)
+  <!> pResolveParticle <* spaces <* pchar '='
 
 let pComplexTypeDefine =
   (fun nm fType comm attrs -> typeDefine nm (fType attrs) comm)

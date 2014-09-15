@@ -8,21 +8,26 @@ open Xdef
 open XsdInternal
 open XsdBuildinNodeGenerators
 
-let rec private fromComplexType ns { Particle = particle; Occurrence = occurs; Nodes = nodes } = 
-  let cType (particle:XmlSchemaGroupBase) =
+let rec private fromComplexType ns { Particle = particle; Nodes = nodes } = 
+  let cType (xparticle:XmlSchemaGroupBase) =
     let cType = XmlSchemaComplexType()
-    cType.Particle <- particle
-    setOccurrence occurs particle
+    cType.Particle <- xparticle
+
+    match particle with
+    | Sequence occurs | Choice occurs ->
+        setOccurrence occurs xparticle
+    | All ->
+        ()    
     for node in nodes do
       match node with
       | Element _
-      | NodeGeneratorInvoke _ -> particle.Items.Add(fromNode ns node) |> ignore
+      | NodeGeneratorInvoke _ -> xparticle.Items.Add(fromNode ns node) |> ignore
       | Attribute _ -> cType.Attributes.Add(fromNode ns node) |> ignore
     cType
 
   match particle with
-  | Sequence -> cType (XmlSchemaSequence())
-  | Choice -> cType (XmlSchemaChoice())
+  | Sequence _ -> cType (XmlSchemaSequence())
+  | Choice _ -> cType (XmlSchemaChoice())
   | All -> cType (XmlSchemaAll())
 
 and fromElement ns ({ Name = name; Occurrence = occurs; Type = eType; Comment = comm } : Element) = 
