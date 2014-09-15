@@ -54,7 +54,7 @@ let ``NodeGeneratorInvoke(element)をXsd化できる`` () =
 let ``NodeGeneratorInvoke(include)をXsd化できる`` () = 
   let includeInvoke =
     nodeGeneratorInvokeNode "include" required None [Xdef.FixedString "http://www.w3.org/2001/xml.xsd"] []
-  let ns = attr "xmlns" useRequired None (Xdef.FixedString "http://www.w3.org/XML/1998/namespace")
+  let ns = nodeGeneratorInvokeNode "targetNamespace" required None [Xdef.FixedString "http://www.w3.org/XML/1998/namespace"] []
   let xdefSchema = Xdef.schema [ns; includeInvoke]
   let result = Xsd.fromSchema xdefSchema
   result |> atOfSchemaInclude 0 |> should be ofExactType<XmlSchemaInclude>
