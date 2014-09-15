@@ -37,15 +37,15 @@ let ``FixedFloatをパースできる`` (input, expected) =
 let ``EnumeratedStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.EnumeratedString (expected |> Array.toList))
 
-[<TestCase("string[100]", 100)>]
+[<TestCase("char[100]", 100)>]
 let ``FixedLengthStringをパースできる`` (input, expected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.FixedLengthString(expected))
 
-[<TestCase("string[0, 100]", 0, 100)>]
+[<TestCase("char[0..100]", 0, 100)>]
 let ``VariableLengthStringをパースできる`` (input, minExpected, maxExpected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(minExpected, Some maxExpected))
 
-[<TestCase("string[100, ]", 100)>]
+[<TestCase("char[100..*]", 100)>]
 let ``VariableLengthString(minのみ指定)をパースできる`` (input, minExpected) =  
   (parse Xdef.pSimpleType input) |> should equal (Some <| Xdef.VariableLengthString(minExpected, None))
 

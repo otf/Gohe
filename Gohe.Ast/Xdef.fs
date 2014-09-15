@@ -144,10 +144,10 @@ let pIntRange2 : Parser<_> =
 
 let pPattern : Parser<_> = Pattern <!> pStringLiteral '/' '/'
 
-let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "string" *> (pBracket "[" "]" pint32)
+let pFixedLengthString : Parser<_> = FixedLengthString <!> pstring "char" *> (pBracket "[" "]" pint32)
 let pVariableLengthString : Parser<_> = 
-  pstring "string" *> 
-  pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pchar ',' <* pSpaces <*> (opt pint32))
+  pstring "char" *> 
+  pBracket "[" "]" (variableLengthString <!> pint32 <* pSpaces <* pstring ".." <* pSpaces <*> ((Some <!> pint32) <|> (None <! pchar '*')))
 
 let pSimpleType =
   pEnumeratedString
