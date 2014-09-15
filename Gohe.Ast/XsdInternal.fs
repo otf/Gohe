@@ -133,20 +133,11 @@ let inline setSimpleType ns sType (x:^a) =
 let inline getSimpleType ns sType =
   match fromSimpleType ns sType with
   | QName qname -> 
-      let simpleTypeWithFacets = XmlSchemaSimpleType()
-      let restriction = XmlSchemaSimpleTypeRestriction()
-      simpleTypeWithFacets.Content <- restriction
-      restriction.BaseTypeName <- qname
-      simpleTypeWithFacets
+      fromFacets qname []
   | FixedValue (qname, value) ->
-      let simpleTypeWithFacets = XmlSchemaSimpleType()
-      let restriction = XmlSchemaSimpleTypeRestriction()
-      simpleTypeWithFacets.Content <- restriction
-      restriction.BaseTypeName <- qname
       let facet = XmlSchemaEnumerationFacet()
       facet.Value <- value
-      restriction.Facets.Add(facet) |> ignore
-      simpleTypeWithFacets
+      fromFacets qname [facet]
   | SimpleTypeWithFacets typ ->
       typ
 
