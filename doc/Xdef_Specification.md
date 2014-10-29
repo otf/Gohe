@@ -183,7 +183,7 @@ XML Schemaで定義済みの型(単純型)が、そのまま使用できるこ�
 使用できる型は、[Built-in datatypes](http://www.w3.org/TR/xmlschema-2/#built-in-datatypes)を参照してください。
 
 ### 制限型
-制限型は、XML Schemaのrestrictionによって、制限される型を表します。
+制限型は、XML Schemaの[restriction](http://www.w3schools.com/schema/schema_facets.asp)によって、制限される型を表します。
 
 下記は、その種類と例です。
 
@@ -208,9 +208,42 @@ XML Schemaで定義済みの型(単純型)が、そのまま使用できるこ�
 | 浮動小数点数 | `-100.001` `100.001`                |
 | バイト       | `-100y` `0y` `100y`                 |
 
-XML SchemeのfixedValueや、単一のenumerationによって表現されます。
+XML Schemeの[fixed](http://www.w3.org/TR/xmlschema-0/#attribute-fixed)や、単一の[enumeration](http://www.w3schools.com/schema/schema_facets.asp)によって表現されます。
 
-### 型定義
+### 型の定義
+`=`を使用することで再利用可能な型の定義をすることができます。
+型の定義には、単純型と複雑型の2種類があります。
+
+#### 単純型の定義
+単純型の定義は、下記のように行います。
+
+```xdef
+MyString = char[100]
+```
+
+この例は、`MyString`という型を定義しています。
+この型の定義は`char[100]`なので、長さ100の固定長文字列です。
+
+#### 複雑型の定義
+
+複雑型の定義は、下記のように行います。
+
+```xdef
+MyType =
+  ChildA : string
+```
+
+この例は、`MyType`という型を定義しています。
+この型は、子要素の宣言として`ChildA`を持ちます。
+
+`MyType`のパーティクルを明示的に指定するには下記のようにします。
+
+```xdef
+MyType :: choice =
+  ChildA : string
+```
+
+省略されている場合は、`sequence`になります。
 
 ## ノードジェネレータ
 通常のノードの宣言では任意の要素を許容するanyを宣言することができません。
