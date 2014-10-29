@@ -96,8 +96,8 @@ Root
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Root>
-  <Child Attr="attrValue">
+<Root Attr="attrValue">
+  <Child>
     Hello World!
   </Child>
 </Root>
@@ -248,14 +248,38 @@ MyType :: choice =
 ## ノードジェネレータ
 通常のノードの宣言では任意の要素を許容するanyを宣言することができません。
 この例のように、通常のノード宣言では表せないノードを宣言をしたい場合は、ノードジェネレータを使用します。
-xdefでは、anyの他にも数種類のノードジェネレータが用意されていますが、独自にノードジェネレータを定義することはできません。
+ノードジェネレータは、下記のように`!`を使用して呼び出すことができます。
+
+```xdef
+!any
+```
+
+xdefでは、anyの他にも数種類のノードジェネレータが用意されています。
+例えば`include`ノードジェネレータは、XML Schemaの[incldue](http://www.w3schools.com/schema/el_include.asp)を表現します。
+
+下記のように使用します。
+
+```xdef
+!include "http://www.w3.org/2001/xml.xsd"
+```
+
+`include`ノードジェネレータは固定文字列型の引数を１つ受け取ります。
+
+
 下記は、使用できるノードジェネレータの説明です。
 
-### include
-### targetNamespace
-### choice
-### any
-### element
+| ノードジェネレータ名 | 説明                                                                                           | 引数                 | 出現回数     | 子ノード      |
+|----------------------|------------------------------------------------------------------------------------------------|----------------------|--------------|---------------|
+| include              | XML Schemaの[incldue](http://www.w3schools.com/schema/el_include.asp)を表現します。            | 固定文字列           | 受け取らない | 受け取らない  |
+| targetNamespace      | XML Schemaの[targetNamespace](http://www.w3schools.com/schema/el_include.asp)を表現します。    | 固定文字列           | 受け取らない | 受け取らない  |
+| choice               | 入れ子になるchoiceを表現します。                                                               | 受け取らない         | 受け取る     | 受け取る      |
+| any                  | XML Schemaの[any](http://www.w3schools.com/schema/schema_complex_any.asp)を表現します。        | 受け取らない         | 受け取る     | 受け取らない  |
+| element              | 定義済みである要素の宣言を名前を指定して宣言します。                                           | 固定文字列           | 受け取る     | 受け取る      |
 
-## 字句解析
 ## コメント
+ノードの宣言にはコメントをつけることができます。
+下記の例のように行末に`--`をつけます。
+
+```xdef
+Root : string -- コメントです。
+```
