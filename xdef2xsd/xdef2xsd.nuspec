@@ -10,10 +10,7 @@
     <description>xdef to xsd library</description>
     <copyright>Copyright 2014</copyright>
     <tags>xdef to xsd</tags>
-    <dependencies>
-      <dependency id="FParsec" version="1.0.1" />
-      <dependency id="UnionArgParser" version="0.8.2" />
-    </dependencies>
+    <dependencies />
   </metadata>
   <files>
     <file src="bin\Release\*.exe" target="tools" />
