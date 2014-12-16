@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.0.0</version>
+    <title>Gohe</title>
+    <authors>otf</authors>
+    <projectUrl>https://github.com/otf/Gohe</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>xdef to xsd library</description>
+    <copyright>Copyright 2014</copyright>
+    <tags>xdef to xsd</tags>
+    <dependencies>
+      <dependency id="FParsec" version="1.0.1" />
+      <dependency id="UnionArgParser" version="0.8.2" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\*.exe" target="tools" />
+    <file src="bin\Release\*.exe.config" target="tools" />
+    <file src="bin\Release\*.dll" target="tools" />
+    <file src="bin\Release\ja\*.dll" target="tools\ja" />
+  </files>
+</package>

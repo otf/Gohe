@@ -40,11 +40,11 @@ let main argv =
         | Some inputPath -> File.ReadAllText(inputPath, Encoding.UTF8)
         | None -> Console.In.ReadToEnd()
 
-      let output =
+      use output =
         match args.TryGetResult (<@ Output @>) with
         | Some outputPath -> new StreamWriter(File.OpenWrite(outputPath), Encoding.UTF8) :> TextWriter
         | None -> Console.Out
-
+      
       match input |> Xdef.parse with
       | Success (r, s, p) -> 
           Xsd.fromSchema r |> outputXsd output
