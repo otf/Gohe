@@ -65,6 +65,7 @@
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="xdef2xsd.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gohe.Ast\Gohe.Ast.fsproj">
